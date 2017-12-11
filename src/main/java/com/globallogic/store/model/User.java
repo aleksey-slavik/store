@@ -1,12 +1,37 @@
 package com.globallogic.store.model;
 
-public class User extends Entity {
+import javax.persistence.*;
 
+@Entity
+@Table(name = "public.users")
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column
     private String firstname;
+
+    @Column
     private String lastname;
+
+    @Column
     private String username;
+
+    @Column
     private String password;
+
+    @Column
     private String email;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getFirstname() {
         return firstname;
@@ -46,5 +71,17 @@ public class User extends Entity {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", firstname='" + firstname + '\'' +
+                ", lastname='" + lastname + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 }
