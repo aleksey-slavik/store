@@ -1,11 +1,11 @@
 #top-panel {
     height: 50px;
-    background-color: #002be6;
+    background-color: blue;
     text-align: right;
     font-size: 20px;
 }
 
-#account-panel {
+.account-panel {
     text-decoration: none;
     color: #ffffff;
     position: relative;

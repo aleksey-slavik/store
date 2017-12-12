@@ -14,7 +14,9 @@
                 <prop key="/">homeController</prop>
                 <prop key="/home">homeController</prop>
                 <prop key="/login">loginController</prop>
+                <prop key="/loginProcess">loginProcessController</prop>
                 <prop key="/register">registerController</prop>
+                <prop key="/registerProcess">registerProcessController</prop>
             </props>
         </property>
     </bean>
@@ -22,14 +24,17 @@
     <!-- Controllers -->
     <bean id="homeController" class="com.globallogic.store.controller.HomeController"/>
     <bean id="loginController" class="com.globallogic.store.controller.LoginController"/>
+    <bean id="loginProcessController" class="com.globallogic.store.controller.LoginProcessController"/>
     <bean id="registerController" class="com.globallogic.store.controller.RegisterController"/>
+    <bean id="registerProcessController" class="com.globallogic.store.controller.RegisterProcessController"/>
 
     <!-- Resource resolver -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/pages/"/>
         <property name="suffix" value=".jsp"/>
     </bean>
-
     <mvc:resources mapping="/style/**" location="/style/"/>
+    <mvc:resources mapping="/images/**" location="/images/"/>
+    <mvc:resources mapping="/parts/**" location="/parts/"/>
 
 </beans>
