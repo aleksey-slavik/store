@@ -1,7 +1,10 @@
 package com.globallogic.store.crud;
 
+import com.globallogic.store.exception.SameUserFoundException;
+import com.globallogic.store.exception.UserNotFoundException;
 import com.globallogic.store.model.Login;
 import com.globallogic.store.model.User;
+
 import java.util.List;
 
 /**
@@ -24,9 +27,10 @@ public class CrudManager {
      * Add new user if it already not exist in database
      *
      * @param user user data
+     * @return id of new record in database
      */
-    public static void registerUser(User user) {
-        UserCrud.registerUser(user);
+    public static Long registerUser(User user) throws SameUserFoundException {
+        return UserCrud.registerUser(user);
     }
 
     /**
@@ -35,7 +39,7 @@ public class CrudManager {
      * @param login login data
      * @return user data
      */
-    public static User verifyUser(Login login) {
+    public static User verifyUser(Login login) throws UserNotFoundException {
         return UserCrud.verifyUser(login);
     }
 
