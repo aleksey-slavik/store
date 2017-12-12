@@ -3,7 +3,7 @@ package com.globallogic.store.model;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "product")
+@Table(name = "public.product")
 public class Product {
 
     @Id
@@ -60,5 +60,16 @@ public class Product {
 
     public void setPrice(String price) {
         this.price = price;
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", brand='" + brand + '\'' +
+                ", description='" + description + '\'' +
+                ", price='" + price + '\'' +
+                '}';
     }
 }
