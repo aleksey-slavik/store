@@ -1,4 +1,9 @@
 package com.globallogic.store.exception;
 
-public class SameUserFoundException extends Exception {
-}
+/**
+ * Custom exception for CRUD operations.
+ * Thrown when given user already exist in DB.
+ *
+ * @author oleksii.slavik
+ */
+public class SameUserFoundException extends Exception {}

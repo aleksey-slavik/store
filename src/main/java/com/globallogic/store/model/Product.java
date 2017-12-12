@@ -2,6 +2,11 @@ package com.globallogic.store.model;
 
 import javax.persistence.*;
 
+/**
+ * Product data for product table
+ *
+ * @author oleksii.slavik
+ */
 @Entity
 @Table(name = "public.product")
 public class Product {

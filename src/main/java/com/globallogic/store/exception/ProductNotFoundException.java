@@ -1,4 +1,9 @@
 package com.globallogic.store.exception;
 
-public class ProductNotFoundException extends Exception {
-}
+/**
+ * Custom exception for CRUD operations.
+ * Thrown when no given product in DB.
+ *
+ * @author oleksii.slavik
+ */
+public class ProductNotFoundException extends Exception {}

@@ -3,6 +3,12 @@ package com.globallogic.store.model;
 import javax.persistence.*;
 import java.io.Serializable;
 
+
+/**
+ * User data for users table
+ *
+ * @author oleksii.slavik
+ */
 @Entity
 @Table(name = "public.users")
 public class User implements Serializable{
