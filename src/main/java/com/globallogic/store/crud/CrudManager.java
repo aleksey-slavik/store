@@ -46,18 +46,23 @@ public class CrudManager {
     /**
      * Update given user data
      *
-     * @param user given user data
+     * @param id        id
+     * @param firstname firstname
+     * @param lastname  lastname
+     * @param username  username
+     * @param password  password
+     * @param email     email
      */
-    public static void updateUser(User user) {
-        UserCrud.updateUser(user);
+    public static void updateUser(Long id, String firstname, String lastname, String username, String password, String email) {
+        UserCrud.updateUser(id, firstname, lastname, username, password, email);
     }
 
     /**
      * Delete given user account from database
      *
-     * @param user given user
+     * @param id user id
      */
-    public static void deleteUser(User user) {
-        UserCrud.deleteUser(user);
+    public static void deleteUser(Long id) {
+        UserCrud.deleteUser(id);
     }
 }
