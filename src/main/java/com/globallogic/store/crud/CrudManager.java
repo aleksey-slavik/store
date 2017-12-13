@@ -1,11 +1,10 @@
 package com.globallogic.store.crud;
 
 import com.globallogic.store.exception.SameUserFoundException;
-import com.globallogic.store.exception.UserNotFoundException;
 import com.globallogic.store.model.Login;
 import com.globallogic.store.model.User;
 
-import java.util.List;
+import javax.persistence.NoResultException;
 
 /**
  * CRUD operations related with all tables.
@@ -13,15 +12,6 @@ import java.util.List;
  * @author oleksii.slavik
  */
 public class CrudManager {
-
-    /**
-     * Return list of all users
-     *
-     * @return list of all users
-     */
-    public static List<User> getUserList() {
-        return UserCrud.getUserList();
-    }
 
     /**
      * Add new user if it already not exist in database
@@ -39,7 +29,7 @@ public class CrudManager {
      * @param login login data
      * @return user data
      */
-    public static User verifyUser(Login login) throws UserNotFoundException {
+    public static User verifyUser(Login login) throws NoResultException {
         return UserCrud.verifyUser(login);
     }
 

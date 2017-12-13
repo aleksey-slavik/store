@@ -15,22 +15,19 @@
     <table align="center">
         <tr>
             <td><label for="firstname">First Name</label></td>
-            <td><input type="text" name="firstname" id="firstname"/>
-            </td>
+            <td><input type="text" name="firstname" id="firstname" value="${firstname}"/></td>
         </tr>
         <tr>
             <td><label for="lastname">Last Name</label></td>
-            <td><input type="text" name="lastname" id="lastname"/>
-            </td>
+            <td><input type="text" name="lastname" id="lastname" value="${lastname}"/></td>
         </tr>
         <tr>
             <td><label for="email">Email</label></td>
-            <td><input type="text" name="email" id="email"/></td>
+            <td><input type="text" name="email" id="email" value="${email}"/></td>
         </tr>
         <tr>
             <td><label for="username">Username</label></td>
-            <td><input type="text" name="username" id="username"/>
-            </td>
+            <td><input type="text" name="username" id="username" value="${username}"/></td>
         </tr>
         <tr>
             <td><label for="password">Password</label></td>

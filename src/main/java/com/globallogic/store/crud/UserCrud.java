@@ -1,7 +1,6 @@
 package com.globallogic.store.crud;
 
 import com.globallogic.store.exception.SameUserFoundException;
-import com.globallogic.store.exception.UserNotFoundException;
 import com.globallogic.store.model.Login;
 import com.globallogic.store.model.User;
 import org.hibernate.HibernateException;
@@ -11,10 +10,10 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
 
+import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.List;
 
 /**
  * CRUD operations related with users table.
@@ -22,27 +21,6 @@ import java.util.List;
  * @author oleksii.slavik
  */
 class UserCrud {
-
-    /**
-     * Return list of all users
-     *
-     * @return list of all users
-     */
-    public static List<User> getUserList() {
-        SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
-
-        CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<User> query = builder.createQuery(User.class);
-        Root<User> root = query.from(User.class);
-        query.select(root);
-        Query<User> q = session.createQuery(query);
-        List<User> users = q.getResultList();
-
-        session.close();
-        return users;
-    }
 
     /**
      * Add new user if it already not exist in database
@@ -65,13 +43,10 @@ class UserCrud {
 
             id = (Long) session.save(user);
             transaction.commit();
-
         } catch (HibernateException e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-
-            e.printStackTrace();
         } finally {
             session.close();
         }
@@ -84,9 +59,8 @@ class UserCrud {
      *
      * @param login login data
      * @return user data
-     * @throws UserNotFoundException thrown when user not exist in database
      */
-    public static User verifyUser(Login login) throws UserNotFoundException {
+    public static User verifyUser(Login login) {
         SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
         Session session = sessionFactory.openSession();
         Transaction transaction = null;
@@ -106,21 +80,16 @@ class UserCrud {
 
             Query<User> q = session.createQuery(query);
             user = q.getSingleResult();
+            transaction.commit();
         } catch (HibernateException e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-
-            e.printStackTrace();
         } finally {
             session.close();
         }
 
-        if (user != null) {
-            return user;
-        } else {
-            throw new UserNotFoundException();
-        }
+        return user;
     }
 
     /**
@@ -217,8 +186,10 @@ class UserCrud {
             if (transaction != null) {
                 transaction.rollback();
             }
-
-            e.printStackTrace();
+        }catch (NoResultException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
         } finally {
             session.close();
         }
