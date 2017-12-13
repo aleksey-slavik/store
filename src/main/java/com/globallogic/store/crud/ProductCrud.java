@@ -1,6 +1,5 @@
 package com.globallogic.store.crud;
 
-import com.globallogic.store.exception.ProductNotFoundException;
 import com.globallogic.store.model.Product;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -62,9 +61,8 @@ class ProductCrud {
      *
      * @param id given id
      * @return product by given id
-     * @throws ProductNotFoundException thrown when product with given id not exist in database
      */
-    public static Product getProductById(Long id) throws ProductNotFoundException {
+    public static Product getProductById(Long id) {
         SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
         Session session = sessionFactory.openSession();
         Transaction transaction = null;
@@ -73,21 +71,16 @@ class ProductCrud {
         try {
             transaction = session.beginTransaction();
             product = session.get(Product.class, id);
+            transaction.commit();
         } catch (HibernateException e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-
-            e.printStackTrace();
         } finally {
             session.close();
         }
 
-        if (product != null) {
-            return product;
-        } else {
-            throw new ProductNotFoundException();
-        }
+        return product;
     }
 
     /**
@@ -104,7 +97,7 @@ class ProductCrud {
             String name,
             String brand,
             String description,
-            Double price) {
+            Integer price) {
         SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
         Session session = sessionFactory.openSession();
         Transaction transaction = null;

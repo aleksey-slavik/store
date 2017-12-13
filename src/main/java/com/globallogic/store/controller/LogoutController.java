@@ -14,12 +14,12 @@ import javax.servlet.http.HttpSession;
  */
 public class LogoutController extends AbstractController {
     protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-
         HttpSession session = httpServletRequest.getSession();
+
         if (session != null) {
             session.invalidate();
         }
 
-        return new ModelAndView("home");
+        return new ModelAndView("redirect:/home");
     }
 }

@@ -11,10 +11,13 @@
 <%@include file="/parts/top.jsp" %>
 <div class="wrapper">
     <c:forEach items="${products}" var="product">
-        <div class="box">
-            <p>${product.name}</p>
-            <p>Brand: ${product.brand}</p>
-            <p>Price: ${product.price}</p></div>
+        <a href="product?id=${product.id}">
+            <div class="box">
+                <p>${product.name}</p>
+                <p>Brand: ${product.brand}</p>
+                <p>Price: ${product.price} UAH</p>
+            </div>
+        </a>
     </c:forEach>
 </div>
 </body>

@@ -25,7 +25,7 @@ public class Product {
     private String description;
 
     @Column
-    private Double price;
+    private Integer price;
 
     public Long getId() {
         return id;
@@ -59,11 +59,11 @@ public class Product {
         this.description = description;
     }
 
-    public Double getPrice() {
+    public Integer getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(Integer price) {
         this.price = price;
     }
 

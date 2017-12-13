@@ -52,11 +52,11 @@ public class LoginProcessController extends AbstractController {
             User user = CrudManager.verifyUser(login);
             HttpSession session = httpServletRequest.getSession();
             session.setAttribute("user", user);
-            return new ModelAndView("home");
+            return new ModelAndView("redirect:/home");
         } catch (NoResultException e) {
             Map<String,String> params = new HashMap<String, String>();
             params.put("message", "User with given username and password not found");
-            return new ModelAndView("login", params);
+            return new ModelAndView("redirect:/login", params);
         }
     }
 }

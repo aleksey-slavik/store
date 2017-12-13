@@ -72,7 +72,7 @@ public class RegisterProcessController extends AbstractController {
             params.put("lastname", lastname);
             params.put("username", username);
             params.put("email", email);
-            return new ModelAndView("register", params);
+            return new ModelAndView("redirect:/register", params);
         }
 
         User user = new User();
@@ -87,11 +87,11 @@ public class RegisterProcessController extends AbstractController {
             HttpSession session = httpServletRequest.getSession();
             user.setId(id);
             session.setAttribute("user", user);
-            return new ModelAndView("home");
+            return new ModelAndView("redirect:/home");
         } catch (SameUserFoundException e) {
             Map<String,String> params = new HashMap<String, String>();
             params.put("message", "User with given username is already registered");
-            return new ModelAndView("register", params);
+            return new ModelAndView("redirect:/register", params);
         }
     }
 }

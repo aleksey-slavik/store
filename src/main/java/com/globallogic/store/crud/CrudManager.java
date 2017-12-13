@@ -43,4 +43,14 @@ public class CrudManager {
     public static List<Product> getProductList() {
        return ProductCrud.getProductList();
     }
+
+    /**
+     * Return product by given id
+     *
+     * @param id given id
+     * @return product by given id
+     */
+    public static Product getProductById(Long id) {
+        return ProductCrud.getProductById(id);
+    }
 }

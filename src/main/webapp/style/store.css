@@ -24,7 +24,7 @@
     margin-top: 10px;
     display: grid;
     grid-gap: 10px;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 2fr) minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 150px));
 }
 
 .box {
@@ -32,8 +32,13 @@
     border-radius: 5px;
     padding: 20px;
     font-size: 150%;
+    text-decoration: none;
 }
 
 .box:hover {
     background-color: #9e9c9f;
+}
+
+a {
+    text-decoration: none;
 }

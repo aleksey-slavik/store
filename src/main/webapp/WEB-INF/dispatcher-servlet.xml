@@ -18,6 +18,7 @@
                 <prop key="/register">registerController</prop>
                 <prop key="/registerProcess">registerProcessController</prop>
                 <prop key="/logout">logoutController</prop>
+                <prop key="/product">productController</prop>
             </props>
         </property>
     </bean>
@@ -29,6 +30,7 @@
     <bean id="registerController" class="com.globallogic.store.controller.RegisterController"/>
     <bean id="registerProcessController" class="com.globallogic.store.controller.RegisterProcessController"/>
     <bean id="logoutController" class="com.globallogic.store.controller.LogoutController"/>
+    <bean id="productController" class="com.globallogic.store.controller.ProductController"/>
 
     <!-- Resource resolver -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
