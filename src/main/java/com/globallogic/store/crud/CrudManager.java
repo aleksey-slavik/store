@@ -2,9 +2,11 @@ package com.globallogic.store.crud;
 
 import com.globallogic.store.exception.SameUserFoundException;
 import com.globallogic.store.model.Login;
+import com.globallogic.store.model.Product;
 import com.globallogic.store.model.User;
 
 import javax.persistence.NoResultException;
+import java.util.List;
 
 /**
  * CRUD operations related with all tables.
@@ -34,25 +36,11 @@ public class CrudManager {
     }
 
     /**
-     * Update given user data
+     * Return list of all products
      *
-     * @param id        id
-     * @param firstname firstname
-     * @param lastname  lastname
-     * @param username  username
-     * @param password  password
-     * @param email     email
+     * @return list of all products
      */
-    public static void updateUser(Long id, String firstname, String lastname, String username, String password, String email) {
-        UserCrud.updateUser(id, firstname, lastname, username, password, email);
-    }
-
-    /**
-     * Delete given user account from database
-     *
-     * @param id user id
-     */
-    public static void deleteUser(Long id) {
-        UserCrud.deleteUser(id);
+    public static List<Product> getProductList() {
+       return ProductCrud.getProductList();
     }
 }

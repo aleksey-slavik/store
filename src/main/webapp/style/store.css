@@ -1,4 +1,5 @@
 #top-panel {
+    margin-top: 10px;
     height: 50px;
     background-color: blue;
     text-align: right;
@@ -17,4 +18,22 @@
 #notification {
     font-style: italic;
     color: red;
+}
+
+.wrapper {
+    margin-top: 10px;
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 2fr) minmax(150px, 1fr));
+}
+
+.box {
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 20px;
+    font-size: 150%;
+}
+
+.box:hover {
+    background-color: #9e9c9f;
 }

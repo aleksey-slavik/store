@@ -35,8 +35,12 @@
         <property name="prefix" value="/pages/"/>
         <property name="suffix" value=".jsp"/>
     </bean>
+
+    <!-- Static resources-->
     <mvc:resources mapping="/style/**" location="/style/"/>
     <mvc:resources mapping="/images/**" location="/images/"/>
+
+    <!-- JSP Fragments -->
     <mvc:resources mapping="/parts/**" location="/parts/"/>
 
 </beans>
