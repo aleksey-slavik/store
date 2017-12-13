@@ -13,6 +13,19 @@ import javax.servlet.http.HttpSession;
  * @author oleksii.slavik
  */
 public class LogoutController extends AbstractController {
+
+    /**
+     * Name of home page view
+     */
+    private static final String HOME_VIEW = "redirect:/home";
+
+    /**
+     * Logout controller
+     *
+     * @param httpServletRequest  http request
+     * @param httpServletResponse http response
+     * @return home page
+     */
     protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         HttpSession session = httpServletRequest.getSession();
 
@@ -20,6 +33,6 @@ public class LogoutController extends AbstractController {
             session.invalidate();
         }
 
-        return new ModelAndView("redirect:/home");
+        return new ModelAndView(HOME_VIEW);
     }
 }

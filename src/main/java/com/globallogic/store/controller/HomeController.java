@@ -22,6 +22,11 @@ public class HomeController extends AbstractController {
     private static final String HOME_VIEW = "home";
 
     /**
+     * Key of products list for home page
+     */
+    private static final String PRODUCTS_KEY = "products";
+
+    /**
      * Redirect to home page
      *
      * @param httpServletRequest  page request
@@ -32,7 +37,7 @@ public class HomeController extends AbstractController {
     protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         ModelAndView home = new ModelAndView(HOME_VIEW);
         List<Product> products = CrudManager.getProductList();
-        home.addObject("products", products);
+        home.addObject(PRODUCTS_KEY, products);
         return home;
     }
 }

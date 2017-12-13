@@ -50,6 +50,56 @@ public class RegisterProcessController extends AbstractController {
     private static final String EMAIL = "email";
 
     /**
+     * Key of message value for register page
+     */
+    private static final String MESSAGE_KEY = "message";
+
+    /**
+     * Key of firstname value for register page
+     */
+    private static final String FIRSTNAME_KEY = "firstname";
+
+    /**
+     * Key of lastname value for register page
+     */
+    private static final String LASTNAME_KEY = "lastname";
+
+    /**
+     * Key of username value for register page
+     */
+    private static final String USERNAME_KEY = "username";
+
+    /**
+     * Key of email value for register page
+     */
+    private static final String EMAIL_KEY = "email";
+
+    /**
+     * Key of user value for register page
+     */
+    private static final String USER_KEY = "user";
+
+    /**
+     * Message for check password
+     */
+    private static final String MESSAGE_CHECK_PASSWORD = "Check the correct input of password";
+
+    /**
+     * Message for already registered users
+     */
+    private static final String MESSAGE_SAME_USER = "User with given username is already registered";
+
+    /**
+     * Name of register page view
+     */
+    private static final String REGISTER_VIEW = "register";
+
+    /**
+     * Name of home page view
+     */
+    private static final String HOME_VIEW = "redirect:/home";
+
+    /**
      * Register user
      *
      * @param httpServletRequest  http request
@@ -67,12 +117,12 @@ public class RegisterProcessController extends AbstractController {
 
         if (!password.equals(confirmPassword)) {
             Map<String,String> params = new HashMap<String, String>();
-            params.put("message", "Check the correct input of password");
-            params.put("firstname", firstname);
-            params.put("lastname", lastname);
-            params.put("username", username);
-            params.put("email", email);
-            return new ModelAndView("redirect:/register", params);
+            params.put(MESSAGE_KEY, MESSAGE_CHECK_PASSWORD);
+            params.put(FIRSTNAME_KEY, firstname);
+            params.put(LASTNAME_KEY, lastname);
+            params.put(USERNAME_KEY, username);
+            params.put(EMAIL_KEY, email);
+            return new ModelAndView(REGISTER_VIEW, params);
         }
 
         User user = new User();
@@ -86,12 +136,12 @@ public class RegisterProcessController extends AbstractController {
             Long id = CrudManager.registerUser(user);
             HttpSession session = httpServletRequest.getSession();
             user.setId(id);
-            session.setAttribute("user", user);
-            return new ModelAndView("redirect:/home");
+            session.setAttribute(USER_KEY, user);
+            return new ModelAndView(HOME_VIEW);
         } catch (SameUserFoundException e) {
             Map<String,String> params = new HashMap<String, String>();
-            params.put("message", "User with given username is already registered");
-            return new ModelAndView("redirect:/register", params);
+            params.put(MESSAGE_KEY, MESSAGE_SAME_USER);
+            return new ModelAndView(REGISTER_VIEW, params);
         }
     }
 }

@@ -26,5 +26,6 @@
         <td>${product.price} UAH</td>
     </tr>
 </table>
+<div style="text-align: center;"><a href="home">Home</a></div>
 </body>
 </html>

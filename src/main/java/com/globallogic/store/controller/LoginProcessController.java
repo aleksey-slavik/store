@@ -31,6 +31,31 @@ public class LoginProcessController extends AbstractController {
     private static final String PASSWORD = "password";
 
     /**
+     * Key of message value for register page
+     */
+    private static final String MESSAGE_KEY = "message";
+
+    /**
+     * Key of user value for register page
+     */
+    private static final String USER_KEY = "user";
+
+    /**
+     * Message for invalid login data
+     */
+    private static final String MESSAGE_USER_NOT_FOUND = "User with given username and password not found";
+
+    /**
+     * Name of login page view
+     */
+    private static final String LOGIN_VIEW = "login";
+
+    /**
+     * Name of home page view
+     */
+    private static final String HOME_VIEW = "redirect:/home";
+
+    /**
      * Validate input data in login page.
      * Redirect to home page if valid user.
      * Redirect to login page in otherwise.
@@ -51,12 +76,12 @@ public class LoginProcessController extends AbstractController {
         try {
             User user = CrudManager.verifyUser(login);
             HttpSession session = httpServletRequest.getSession();
-            session.setAttribute("user", user);
-            return new ModelAndView("redirect:/home");
+            session.setAttribute(USER_KEY, user);
+            return new ModelAndView(HOME_VIEW);
         } catch (NoResultException e) {
             Map<String,String> params = new HashMap<String, String>();
-            params.put("message", "User with given username and password not found");
-            return new ModelAndView("redirect:/login", params);
+            params.put(MESSAGE_KEY, MESSAGE_USER_NOT_FOUND);
+            return new ModelAndView(LOGIN_VIEW, params);
         }
     }
 }

@@ -4,9 +4,6 @@
 <div id="top-panel">
     <%
         User user = (User) session.getAttribute("user");
-    %>
-
-    <%
         if (user == null) {
     %>
     <a class="account-panel" href="login">Login</a>
@@ -15,7 +12,8 @@
     } else {
         String firstname = user.getFirstname();
     %>
-    <a class="account-panel"><%=firstname%></a>
+    <a class="account-panel"><%=firstname%>
+    </a>
     <a class="account-panel" href="logout">(logout)</a>
     <%
         }
