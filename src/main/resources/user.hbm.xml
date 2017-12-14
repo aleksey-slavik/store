@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.globallogic.store.model.User" table="users" catalog="public">
+        <id name="id" type="java.lang.Long">
+            <column name="id"/>
+            <generator class="identity"/>
+        </id>
+
+        <property name="firstname" type="java.lang.String">
+            <column name="firstname" not-null="true"/>
+        </property>
+
+        <property name="lastname" type="java.lang.String">
+            <column name="lastname" not-null="true"/>
+        </property>
+
+        <property name="username" type="java.lang.String">
+            <column name="username" not-null="true"/>
+        </property>
+
+        <property name="password" type="java.lang.String">
+            <column name="password" not-null="true"/>
+        </property>
+
+        <property name="email" type="java.lang.String">
+            <column name="email"/>
+        </property>
+
+        <many-to-one name="role" class="com.globallogic.store.model.Role" fetch="select">
+            <column name="role_id" not-null="true"/>
+        </many-to-one>
+    </class>
+</hibernate-mapping>

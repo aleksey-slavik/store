@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.globallogic.store.model.Order" table="order" catalog="public">
+        <id name="id" type="java.lang.Long">
+            <column name="id"/>
+            <generator class="identity"/>
+        </id>
+
+        <property name="bill" type="java.lang.Integer">
+            <column name="bill" not-null="true"/>
+        </property>
+
+        <many-to-one name="user" class="com.globallogic.store.model.User">
+            <column name="user_id" not-null="true"/>
+        </many-to-one>
+
+        <many-to-one name="status" class="com.globallogic.store.model.Status">
+            <column name="status_id" not-null="true"/>
+        </many-to-one>
+
+        <set name="products" table="product_order" catalog="public" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="order_id" not-null="true"/>
+            </key>
+
+            <many-to-many entity-name="com.globallogic.store.model.Product">
+                <column name="product_id" not-null="true"/>
+            </many-to-many>
+        </set>
+    </class>
+</hibernate-mapping>

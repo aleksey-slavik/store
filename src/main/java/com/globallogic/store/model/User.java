@@ -1,36 +1,25 @@
 package com.globallogic.store.model;
 
-import javax.persistence.*;
-import java.io.Serializable;
-
-
 /**
  * User data for users table
  *
  * @author oleksii.slavik
  */
-@Entity
-@Table(name = "public.users")
-public class User implements Serializable{
+public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
     private String firstname;
 
-    @Column
     private String lastname;
 
-    @Column
     private String username;
 
-    @Column
     private String password;
 
-    @Column
     private String email;
+
+    private Role role;
 
     public Long getId() {
         return id;
@@ -80,6 +69,14 @@ public class User implements Serializable{
         this.email = email;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -89,6 +86,7 @@ public class User implements Serializable{
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
+                ", role=" + role +
                 '}';
     }
 }

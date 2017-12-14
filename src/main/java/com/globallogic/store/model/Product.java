@@ -1,30 +1,20 @@
 package com.globallogic.store.model;
 
-import javax.persistence.*;
-
 /**
  * Product data for product table
  *
  * @author oleksii.slavik
  */
-@Entity
-@Table(name = "public.product")
 public class Product {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
     private String name;
 
-    @Column
     private String brand;
 
-    @Column
     private String description;
 
-    @Column
     private Integer price;
 
     public Long getId() {
