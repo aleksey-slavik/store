@@ -2,6 +2,7 @@ package com.globallogic.store.crud;
 
 import com.globallogic.store.exception.SameUserFoundException;
 import com.globallogic.store.model.Login;
+import com.globallogic.store.model.Role;
 import com.globallogic.store.model.User;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -11,9 +12,10 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
 
 import javax.persistence.NoResultException;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * CRUD operations related with users table.
@@ -186,7 +188,7 @@ class UserCrud {
             if (transaction != null) {
                 transaction.rollback();
             }
-        }catch (NoResultException e) {
+        } catch (NoResultException e) {
             if (transaction != null) {
                 transaction.rollback();
             }

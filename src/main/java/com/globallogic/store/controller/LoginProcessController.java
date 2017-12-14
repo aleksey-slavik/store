@@ -2,6 +2,7 @@ package com.globallogic.store.controller;
 
 import com.globallogic.store.crud.CrudManager;
 import com.globallogic.store.model.Login;
+import com.globallogic.store.model.Role;
 import com.globallogic.store.model.User;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -77,9 +78,15 @@ public class LoginProcessController extends AbstractController {
             User user = CrudManager.verifyUser(login);
             HttpSession session = httpServletRequest.getSession();
             session.setAttribute(USER_KEY, user);
-            return new ModelAndView(HOME_VIEW);
+
+            switch (user.getRole()) {
+                case ADMIN:
+                    return new ModelAndView("orders");
+                default:
+                    return new ModelAndView(HOME_VIEW);
+            }
         } catch (NoResultException e) {
-            Map<String,String> params = new HashMap<String, String>();
+            Map<String, String> params = new HashMap<String, String>();
             params.put(MESSAGE_KEY, MESSAGE_USER_NOT_FOUND);
             return new ModelAndView(LOGIN_VIEW, params);
         }
