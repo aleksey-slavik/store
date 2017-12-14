@@ -16,7 +16,7 @@
         <!-- Entities -->
         <mapping resource="user.hbm.xml"/>
         <mapping resource="product.hbm.xml"/>
-        <!--<mapping resource="order.hbm.xml"/>-->
+        <mapping resource="order.hbm.xml"/>
 
     </session-factory>
 </hibernate-configuration>

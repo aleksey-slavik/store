@@ -16,11 +16,15 @@
             <column name="user_id" not-null="true"/>
         </many-to-one>
 
-        <many-to-one name="status" class="com.globallogic.store.model.Status">
-            <column name="status_id" not-null="true"/>
-        </many-to-one>
+        <property name="status">
+            <column name="status" not-null="true"/>
+            <type name="org.hibernate.type.EnumType">
+                <param name="enumClass">com.globallogic.store.model.Status</param>
+                <param name="useNamed">true</param>
+            </type>
+        </property>
 
-        <set name="products" table="product_order" catalog="public" inverse="true" lazy="true" fetch="select">
+        <set name="products" table="product_order" catalog="public" inverse="true" lazy="true" fetch="select" order-by="id asc">
             <key>
                 <column name="order_id" not-null="true"/>
             </key>
