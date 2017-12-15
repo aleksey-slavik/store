@@ -19,7 +19,7 @@ import java.util.List;
  *
  * @author oleksii.slavik
  */
-public class ProductDAO implements DAOInterface<Product, Long> {
+public class ProductDAO implements GenericDAO<Product, Long> {
 
     private Session session;
 

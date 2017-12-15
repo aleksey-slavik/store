@@ -18,7 +18,7 @@ import java.util.List;
  *
  * @author oleksii.slavik
  */
-public class UserDAO implements UserDAOInterface<User, Long, Login> {
+public class UserDAO implements GenericDAO<User, Long> {
 
     private Session session;
 
