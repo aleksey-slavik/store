@@ -1,6 +1,6 @@
 package com.globallogic.store.controller;
 
-import com.globallogic.store.crud.CrudManager;
+import com.globallogic.store.dao.ProductDAO;
 import com.globallogic.store.field.Key;
 import com.globallogic.store.field.View;
 import com.globallogic.store.model.Product;
@@ -28,7 +28,8 @@ public class HomeController extends AbstractController {
     @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         ModelAndView mav = new ModelAndView(View.HOME);
-        List<Product> products = CrudManager.getProductList();
+        ProductDAO productDAO = new ProductDAO();
+        List<Product> products = productDAO.findAll();
         mav.addObject(Key.PRODUCTS, products);
         return mav;
     }

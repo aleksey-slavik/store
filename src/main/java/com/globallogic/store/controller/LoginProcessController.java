@@ -1,6 +1,6 @@
 package com.globallogic.store.controller;
 
-import com.globallogic.store.crud.CrudManager;
+import com.globallogic.store.dao.UserDAO;
 import com.globallogic.store.field.Form;
 import com.globallogic.store.field.Key;
 import com.globallogic.store.field.Param;
@@ -43,7 +43,8 @@ public class LoginProcessController extends AbstractController {
         login.setPassword(password);
 
         try {
-            User user = CrudManager.verifyUser(login);
+            UserDAO userDAO = new UserDAO();
+            User user = userDAO.verify(login);
             HttpSession session = httpServletRequest.getSession();
             session.setAttribute(Key.USER, user);
 

@@ -26,6 +26,7 @@
         <td>${product.price} UAH</td>
     </tr>
 </table>
+<div style="text-align: center;"><a href="addToCart">Add item to my shopping cart</a></div>
 <div style="text-align: center;"><a href="home">Home</a></div>
 </body>
 </html>

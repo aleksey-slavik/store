@@ -7,7 +7,5 @@ package com.globallogic.store.model;
  */
 public enum Status {
     OPENED,
-    CONFIRMED,
-    PAID,
-    CLOSED
+    PAID
 }

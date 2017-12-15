@@ -21,6 +21,17 @@ public class User {
 
     private Role role;
 
+    public User() {}
+
+    public User(String firstname, String lastname, String username, String password, String email) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.role = Role.CLIENT;
+    }
+
     public Long getId() {
         return id;
     }

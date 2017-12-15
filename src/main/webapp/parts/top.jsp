@@ -12,8 +12,8 @@
     } else {
         String firstname = user.getFirstname();
     %>
-    <a class="account-panel"><%=firstname%>
-    </a>
+    <a class="account-panel"><%=firstname%></a>
+    <a class="account-panel" href="cart">(my cart)</a>
     <a class="account-panel" href="logout">(logout)</a>
     <%
         }

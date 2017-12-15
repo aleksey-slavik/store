@@ -1,4 +1,4 @@
-package com.globallogic.store.crud;
+package com.globallogic.store.dao;
 
 import com.globallogic.store.model.Product;
 import org.hibernate.HibernateException;
@@ -19,17 +19,28 @@ import java.util.List;
  *
  * @author oleksii.slavik
  */
-class ProductCrud {
+public class ProductDAO implements DAOInterface<Product, Long> {
+
+    private Session session;
+
+    private Transaction transaction;
+
+    private void openSession() {
+        SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
+        session = sessionFactory.openSession();
+    }
+
+    private void closeSession() {
+        session.close();
+    }
 
     /**
      * Return list of all products
      *
      * @return list of all products
      */
-    public static List<Product> getProductList() {
-        SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
-        Session session = sessionFactory.openSession();
-        Transaction transaction = null;
+    public List<Product> findAll() {
+        openSession();
         List<Product> products = null;
 
         try {
@@ -50,7 +61,7 @@ class ProductCrud {
                 transaction.rollback();
             }
         } finally {
-            session.close();
+            closeSession();
         }
 
         return products;
@@ -62,10 +73,8 @@ class ProductCrud {
      * @param id given id
      * @return product by given id
      */
-    public static Product getProductById(Long id) {
-        SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
-        Session session = sessionFactory.openSession();
-        Transaction transaction = null;
+    public Product findById(Long id) {
+        openSession();
         Product product = null;
 
         try {
@@ -77,102 +86,75 @@ class ProductCrud {
                 transaction.rollback();
             }
         } finally {
-            session.close();
+            closeSession();
         }
 
         return product;
     }
 
     /**
-     * Update given product data
-     *
-     * @param id          id
-     * @param name        name
-     * @param brand       brand
-     * @param description description
-     * @param price       price
-     */
-    public static void updateProduct(
-            Long id,
-            String name,
-            String brand,
-            String description,
-            Integer price) {
-        SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
-        Session session = sessionFactory.openSession();
-        Transaction transaction = null;
-
-        try {
-            transaction = session.beginTransaction();
-            Product product = session.get(Product.class, id);
-            product.setName(name);
-            product.setBrand(brand);
-            product.setDescription(description);
-            product.setPrice(price);
-            session.update(product);
-            transaction.commit();
-        } catch (HibernateException e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-
-            e.printStackTrace();
-        } finally {
-            session.close();
-        }
-    }
-
-    /**
      * Add given product to database
      *
-     * @param product given product
+     * @param entity given product
      */
-    public static Long createProduct(Product product) {
-        SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
-        Session session = sessionFactory.openSession();
-        Transaction transaction = null;
+    public Long create(Product entity) {
+        openSession();
         Long id = null;
 
         try {
             transaction = session.beginTransaction();
-            id = (Long) session.save(product);
+            id = (Long) session.save(entity);
             transaction.commit();
         } catch (HibernateException e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-
-            e.printStackTrace();
         } finally {
-            session.close();
+            closeSession();
         }
 
         return id;
     }
 
     /**
-     * Delete given product from database
+     * Update given product data
      *
-     * @param id product id
+     * @param entity given product data
      */
-    public static void deleteProduct(Long id) {
-        SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
-        Session session = sessionFactory.openSession();
-        Transaction transaction = null;
+    public void update(Product entity) {
+        openSession();
 
         try {
             transaction = session.beginTransaction();
-            Product product = session.get(Product.class, id);
-            session.delete(product);
+            session.update(entity);
             transaction.commit();
         } catch (HibernateException e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-
-            e.printStackTrace();
         } finally {
-            session.close();
+            closeSession();
+        }
+    }
+
+    /**
+     * Delete given product from database
+     *
+     * @param entity given product
+     */
+    public void delete(Product entity) {
+        openSession();
+
+        try {
+            transaction = session.beginTransaction();
+            session.delete(entity);
+            transaction.commit();
+        } catch (HibernateException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+        } finally {
+            closeSession();
         }
     }
 }
