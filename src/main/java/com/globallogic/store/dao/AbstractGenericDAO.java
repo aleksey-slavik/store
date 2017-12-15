@@ -10,7 +10,7 @@ import javax.persistence.criteria.Root;
 import java.io.Serializable;
 import java.util.List;
 
-public abstract class AbstractGenericDAO<T, Id extends Serializable> implements GenericDAO<T, Id> {
+public class AbstractGenericDAO<T, ID extends Serializable> implements GenericDAO<T, ID> {
 
     private Session session;
 
@@ -32,12 +32,12 @@ public abstract class AbstractGenericDAO<T, Id extends Serializable> implements 
         return q.getResultList();
     }
 
-    public T findById(Id id) {
+    public T findById(ID id) {
         return session.get(getGenericType(), id);
     }
 
-    public Id create(T entity) {
-        return (Id) session.save(entity);
+    public ID create(T entity) {
+        return (ID) session.save(entity);
     }
 
     public void update(T entity) {

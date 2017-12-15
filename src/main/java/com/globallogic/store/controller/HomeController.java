@@ -4,6 +4,7 @@ import com.globallogic.store.dao.ProductDAO;
 import com.globallogic.store.field.Key;
 import com.globallogic.store.field.View;
 import com.globallogic.store.model.Product;
+import com.globallogic.store.service.AbstractService;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -28,7 +29,8 @@ public class HomeController extends AbstractController {
     @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         ModelAndView mav = new ModelAndView(View.HOME);
-        ProductDAO productDAO = new ProductDAO();
+        AbstractService<Product, Long> productDAO = new AbstractService<Product, Long>();
+        productDAO.setAbstractDao(new ProductDAO());
         List<Product> products = productDAO.findAll();
         mav.addObject(Key.PRODUCTS, products);
         return mav;

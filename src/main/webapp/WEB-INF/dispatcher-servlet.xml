@@ -49,4 +49,20 @@
     <!-- JSP Fragments -->
     <mvc:resources mapping="/parts/**" location="/parts/"/>
 
+    <!-- DAO injection -->
+    <bean name="adstractDAO" class="com.globallogic.store.dao.AbstractGenericDAO"/>
+    <bean name="abstractService" class="com.globallogic.store.service.AbstractService">
+        <property name="abstractDao" ref="adstractDAO"/>
+    </bean>
+
+    <bean name="userDAO" class="com.globallogic.store.dao.UserDAO"/>
+    <bean name="userService" class="com.globallogic.store.service.AbstractService">
+        <property name="abstractDao" ref="userDAO"/>
+    </bean>
+
+    <bean name="productDAO" class="com.globallogic.store.dao.ProductDAO"/>
+    <bean name="productService" class="com.globallogic.store.service.AbstractService">
+        <property name="abstractDao" ref="productDAO"/>
+    </bean>
+
 </beans>
