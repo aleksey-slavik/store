@@ -1,5 +1,6 @@
 package com.globallogic.store.controller;
 
+import com.globallogic.store.field.View;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -14,12 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 public class RegisterController extends AbstractController {
 
     /**
-     * Name of register page view
-     */
-    private static final String REGISTER_VIEW = "register";
-
-
-    /**
      * Redirect to register page
      *
      * @param httpServletRequest  http request
@@ -28,6 +23,6 @@ public class RegisterController extends AbstractController {
      */
     @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        return new ModelAndView(REGISTER_VIEW);
+        return new ModelAndView(View.REGISTER);
     }
 }

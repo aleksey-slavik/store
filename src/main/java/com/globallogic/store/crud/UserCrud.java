@@ -1,8 +1,8 @@
 package com.globallogic.store.crud;
 
 import com.globallogic.store.exception.SameUserFoundException;
+import com.globallogic.store.field.Table;
 import com.globallogic.store.model.Login;
-import com.globallogic.store.model.Role;
 import com.globallogic.store.model.User;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -12,10 +12,7 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
 
 import javax.persistence.NoResultException;
-import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * CRUD operations related with users table.
@@ -76,8 +73,8 @@ class UserCrud {
             query.select(root);
 
             query.where(builder.and(
-                    builder.equal(root.get("username"), login.getUsername()),
-                    builder.equal(root.get("password"), login.getPassword())
+                    builder.equal(root.get(Table.User.USERNAME), login.getUsername()),
+                    builder.equal(root.get(Table.User.PASSWORD), login.getPassword())
             ));
 
             Query<User> q = session.createQuery(query);
@@ -181,9 +178,10 @@ class UserCrud {
             CriteriaQuery<User> query = builder.createQuery(User.class);
             Root<User> root = query.from(User.class);
             query.select(root);
-            query.where(builder.equal(root.get("username"), user.getUsername()));
+            query.where(builder.equal(root.get(Table.User.USERNAME), user.getUsername()));
             Query<User> q = session.createQuery(query);
             result = q.getSingleResult();
+            transaction.commit();
         } catch (HibernateException e) {
             if (transaction != null) {
                 transaction.rollback();

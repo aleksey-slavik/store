@@ -1,6 +1,8 @@
 package com.globallogic.store.controller;
 
 import com.globallogic.store.crud.CrudManager;
+import com.globallogic.store.field.Key;
+import com.globallogic.store.field.View;
 import com.globallogic.store.model.Product;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -17,16 +19,6 @@ import java.util.List;
 public class HomeController extends AbstractController {
 
     /**
-     * Name of home page view
-     */
-    private static final String HOME_VIEW = "home";
-
-    /**
-     * Key of products list for home page
-     */
-    private static final String PRODUCTS_KEY = "products";
-
-    /**
      * Redirect to home page
      *
      * @param httpServletRequest  page request
@@ -35,9 +27,9 @@ public class HomeController extends AbstractController {
      */
     @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        ModelAndView home = new ModelAndView(HOME_VIEW);
+        ModelAndView mav = new ModelAndView(View.HOME);
         List<Product> products = CrudManager.getProductList();
-        home.addObject(PRODUCTS_KEY, products);
-        return home;
+        mav.addObject(Key.PRODUCTS, products);
+        return mav;
     }
 }

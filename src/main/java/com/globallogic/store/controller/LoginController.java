@@ -1,5 +1,6 @@
 package com.globallogic.store.controller;
 
+import com.globallogic.store.field.View;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -14,11 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 public class LoginController extends AbstractController {
 
     /**
-     * Name of login page view
-     */
-    private static final String LOGIN_VIEW = "login";
-
-    /**
      * Redirect to login page
      *
      * @param httpServletRequest  page request
@@ -27,6 +23,6 @@ public class LoginController extends AbstractController {
      */
     @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        return new ModelAndView(LOGIN_VIEW);
+        return new ModelAndView(View.LOGIN);
     }
 }

@@ -1,5 +1,6 @@
 package com.globallogic.store.controller;
 
+import com.globallogic.store.field.View;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -15,11 +16,6 @@ import javax.servlet.http.HttpSession;
 public class LogoutController extends AbstractController {
 
     /**
-     * Name of home page view
-     */
-    private static final String HOME_VIEW = "redirect:/home";
-
-    /**
      * Logout controller
      *
      * @param httpServletRequest  http request
@@ -33,6 +29,6 @@ public class LogoutController extends AbstractController {
             session.invalidate();
         }
 
-        return new ModelAndView(HOME_VIEW);
+        return new ModelAndView(View.redirect(View.HOME));
     }
 }

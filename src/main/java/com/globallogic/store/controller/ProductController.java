@@ -1,6 +1,8 @@
 package com.globallogic.store.controller;
 
 import com.globallogic.store.crud.CrudManager;
+import com.globallogic.store.field.Key;
+import com.globallogic.store.field.View;
 import com.globallogic.store.model.Product;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -16,21 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 public class ProductController extends AbstractController {
 
     /**
-     * Key of id value
-     */
-    private static final String ID_KEY = "id";
-
-    /**
-     * Key of product value
-     */
-    private static final String PRODUCT_KEY = "product";
-
-    /**
-     * Name of product item page view
-     */
-    private static final String PRODUCT_VIEW = "product";
-
-    /**
      * Product item controller
      *
      * @param httpServletRequest  http request
@@ -38,10 +25,10 @@ public class ProductController extends AbstractController {
      * @return product item page
      */
     protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        Long id = Long.valueOf(httpServletRequest.getParameter(ID_KEY));
-        ModelAndView mav = new ModelAndView(PRODUCT_VIEW);
+        Long id = Long.valueOf(httpServletRequest.getParameter(Key.ID));
+        ModelAndView mav = new ModelAndView(View.PRODUCT);
         Product product = CrudManager.getProductById(id);
-        mav.addObject(PRODUCT_KEY, product);
+        mav.addObject(Key.PRODUCT, product);
         return mav;
     }
 }
