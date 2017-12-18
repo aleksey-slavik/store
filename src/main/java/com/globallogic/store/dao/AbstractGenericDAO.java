@@ -110,6 +110,8 @@ public class AbstractGenericDAO<T> implements GenericDAO<T> {
             if (transaction != null) {
                 transaction.rollback();
             }
+
+            e.printStackTrace();
         } finally {
             closeSession();
         }
