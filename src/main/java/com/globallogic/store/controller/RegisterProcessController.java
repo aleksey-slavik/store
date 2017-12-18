@@ -1,13 +1,13 @@
 package com.globallogic.store.controller;
 
-import com.globallogic.store.dao.UserDAO;
+import com.globallogic.store.dao.AbstractGenericDAO;
 import com.globallogic.store.field.Form;
 import com.globallogic.store.field.Key;
 import com.globallogic.store.field.Param;
 import com.globallogic.store.field.View;
 import com.globallogic.store.model.User;
-import org.hibernate.exception.ConstraintViolationException;
-import org.springframework.dao.DuplicateKeyException;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -46,8 +46,9 @@ public class RegisterProcessController extends AbstractController {
         }
 
         User user = new User(firstname, lastname, username, password, email);
-        UserDAO userDAO = new UserDAO();
-        Long id = userDAO.create(user);
+        WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
+        AbstractGenericDAO<User> userDao = (AbstractGenericDAO<User>) applicationContext.getBean("userDao");
+        Long id = userDao.create(user);
 
         if (id != null) {
             HttpSession session = httpServletRequest.getSession();

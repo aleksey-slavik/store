@@ -1,9 +1,11 @@
 package com.globallogic.store.controller;
 
-import com.globallogic.store.dao.ProductDAO;
+import com.globallogic.store.dao.AbstractGenericDAO;
 import com.globallogic.store.field.Key;
 import com.globallogic.store.field.View;
 import com.globallogic.store.model.Product;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -27,8 +29,9 @@ public class ProductController extends AbstractController {
     protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         Long id = Long.valueOf(httpServletRequest.getParameter(Key.ID));
         ModelAndView mav = new ModelAndView(View.PRODUCT);
-        ProductDAO productDAO = new ProductDAO();
-        Product product = productDAO.findById(id);
+        WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
+        AbstractGenericDAO<Product> productDao = (AbstractGenericDAO<Product>) applicationContext.getBean("productDao");
+        Product product = productDao.findById(id);
         mav.addObject(Key.PRODUCT, product);
         return mav;
     }

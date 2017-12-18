@@ -6,13 +6,11 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
-import org.springframework.core.GenericTypeResolver;
 
 import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.io.Serializable;
 import java.util.List;
 
 public class AbstractGenericDAO<T> implements GenericDAO<T> {
@@ -65,18 +63,71 @@ public class AbstractGenericDAO<T> implements GenericDAO<T> {
     }
 
     public T findById(Long id) {
-        return session.get(type, id);
+        openSession();
+        T item = null;
+
+        try {
+            transaction = session.beginTransaction();
+            item = session.get(type, id);
+        } catch (HibernateException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+        } finally {
+            closeSession();
+        }
+
+        return item;
     }
 
     public Long create(T entity) {
-        return (Long) session.save(entity);
+        openSession();
+        Long id = null;
+
+        try {
+            transaction = session.beginTransaction();
+            id = (Long) session.save(entity);
+            transaction.commit();
+        } catch (HibernateException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+        } finally {
+            closeSession();
+        }
+
+        return id;
     }
 
     public void update(T entity) {
-        session.update(entity);
+        openSession();
+
+        try {
+            transaction = session.beginTransaction();
+            session.update(entity);
+            transaction.commit();
+        } catch (HibernateException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+        } finally {
+            closeSession();
+        }
     }
 
     public void delete(T entity) {
-        session.delete(entity);
+        openSession();
+
+        try {
+            transaction = session.beginTransaction();
+            session.delete(entity);
+            transaction.commit();
+        } catch (HibernateException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+        } finally {
+            closeSession();
+        }
     }
 }

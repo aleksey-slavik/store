@@ -1,12 +1,14 @@
 package com.globallogic.store.controller;
 
-import com.globallogic.store.dao.UserDAO;
+import com.globallogic.store.dao.AbstractGenericDAO;
 import com.globallogic.store.field.Form;
 import com.globallogic.store.field.Key;
 import com.globallogic.store.field.Param;
 import com.globallogic.store.field.View;
 import com.globallogic.store.model.Login;
 import com.globallogic.store.model.User;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -42,9 +44,11 @@ public class LoginProcessController extends AbstractController {
         login.setUsername(username);
         login.setPassword(password);
 
+        /*
         try {
-            UserDAO userDAO = new UserDAO();
-            User user = userDAO.verify(login);
+            WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
+            AbstractGenericDAO<User> userDao = (AbstractGenericDAO<User>) applicationContext.getBean("userDao");
+            User user = userDao.find(login);
             HttpSession session = httpServletRequest.getSession();
             session.setAttribute(Key.USER, user);
 
@@ -58,6 +62,8 @@ public class LoginProcessController extends AbstractController {
             Map<String, String> params = new HashMap<String, String>();
             params.put(Key.MESSAGE, Param.USER_NOT_FOUND);
             return new ModelAndView(View.LOGIN, params);
-        }
+        }*/
+
+        return new ModelAndView(View.redirect(View.HOME)); //todo remove when fix find method
     }
 }
