@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author oleksii.slavik
  */
-public class ProductController extends AbstractController {
+public class ProductItemController extends AbstractController {
 
     /**
      * Product item controller

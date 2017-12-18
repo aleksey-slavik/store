@@ -8,8 +8,7 @@
        http://www.springframework.org/schema/mvc
        http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <mvc:annotation-driven
-            content-negotiation-manager="contentManager" />
+    <mvc:annotation-driven content-negotiation-manager="contentManager" />
 
     <bean id="contentManager"
           class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
@@ -19,13 +18,13 @@
         <property name="useJaf" value="false" />
     </bean>
 
-    <context:component-scan base-package="com.globallogic.store.rest" />
+    <context:component-scan base-package="com.globallogic.store.controller.rest" />
 
     <!-- JSON Support -->
     <bean name="viewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver"/>
     <bean name="jsonTemplate" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView"/>
 
-    <!-- URL Handler
+    <!-- URL Handler -->
     <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
             <props>
@@ -36,12 +35,12 @@
                 <prop key="/register">registerController</prop>
                 <prop key="/registerProcess">registerProcessController</prop>
                 <prop key="/logout">logoutController</prop>
-                <prop key="/product">productController</prop>
+                <!--<prop key="/product-item">productController</prop>-->
                 <prop key="/orders">ordersController</prop>
                 <prop key="/addToCart">addToCartController</prop>
             </props>
         </property>
-    </bean>-->
+    </bean>
 
     <!-- Controllers -->
     <bean id="homeController" class="com.globallogic.store.controller.HomeController"/>
@@ -50,7 +49,7 @@
     <bean id="registerController" class="com.globallogic.store.controller.RegisterController"/>
     <bean id="registerProcessController" class="com.globallogic.store.controller.RegisterProcessController"/>
     <bean id="logoutController" class="com.globallogic.store.controller.LogoutController"/>
-    <bean id="productController" class="com.globallogic.store.controller.ProductController"/>
+    <!--<bean id="productController" class="com.globallogic.store.controller.ProductItemController"/>-->
     <bean id="ordersController" class="com.globallogic.store.controller.OrdersController"/>
     <bean id="addToCartController" class="com.globallogic.store.controller.AddToCartController"/>
 

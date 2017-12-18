@@ -1,14 +1,15 @@
-package com.globallogic.store.rest;
+package com.globallogic.store.controller.rest;
 
 import com.globallogic.store.dao.AbstractGenericDAO;
 import com.globallogic.store.model.Role;
 import com.globallogic.store.model.User;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@Controller
 public class UserController {
 
     @RequestMapping(value = "/user/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -38,6 +39,7 @@ public class UserController {
 
     @RequestMapping(value = "/delete-user/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public void deleteUserById(@PathVariable Long id) {
-
+        AbstractGenericDAO<User> userDao = new AbstractGenericDAO<User>(User.class);
+        userDao.delete(id);
     }
 }

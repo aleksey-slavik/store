@@ -117,11 +117,12 @@ public class AbstractGenericDAO<T> implements GenericDAO<T> {
         }
     }
 
-    public void delete(T entity) {
+    public void delete(Long id) {
         openSession();
 
         try {
             transaction = session.beginTransaction();
+            T entity = session.load(type, id);
             session.delete(entity);
             transaction.commit();
         } catch (HibernateException e) {
