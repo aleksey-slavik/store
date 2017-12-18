@@ -3,13 +3,13 @@ package com.globallogic.store.dao;
 import java.io.Serializable;
 import java.util.List;
 
-public interface GenericDAO<T, ID extends Serializable> {
+public interface GenericDAO<T> {
 
     List<T> findAll();
 
-    T findById(ID id);
+    T findById(Long id);
 
-    ID create(T entity);
+    Long create(T entity);
 
     void update(T entity);
 

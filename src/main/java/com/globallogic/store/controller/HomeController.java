@@ -1,12 +1,9 @@
 package com.globallogic.store.controller;
 
-import com.globallogic.store.dao.ProductDAO;
+import com.globallogic.store.dao.AbstractGenericDAO;
 import com.globallogic.store.field.Key;
 import com.globallogic.store.field.View;
 import com.globallogic.store.model.Product;
-import com.globallogic.store.service.AbstractService;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -34,12 +31,10 @@ public class HomeController extends AbstractController {
     protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         ModelAndView mav = new ModelAndView(View.HOME);
 
-        //ApplicationContext context = new ClassPathXmlApplicationContext("springContext.xml");
-        //AbstractService abstractService = (AbstractService) context.getBean("productDAO");
+        WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
+        AbstractGenericDAO<Product> productDao = (AbstractGenericDAO<Product>) applicationContext.getBean("productDao");
 
-        AbstractService<Product, Long> productDAO = new AbstractService<Product, Long>();
-        productDAO.setAbstractDao(new ProductDAO());
-        List<Product> products = productDAO.findAll();
+        List<Product> products = productDao.findAll();
         mav.addObject(Key.PRODUCTS, products);
         return mav;
     }
