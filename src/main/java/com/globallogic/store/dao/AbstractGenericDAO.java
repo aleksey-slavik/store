@@ -69,6 +69,7 @@ public class AbstractGenericDAO<T> implements GenericDAO<T> {
         try {
             transaction = session.beginTransaction();
             item = session.get(type, id);
+            transaction.commit();
         } catch (HibernateException e) {
             if (transaction != null) {
                 transaction.rollback();
@@ -110,8 +111,6 @@ public class AbstractGenericDAO<T> implements GenericDAO<T> {
             if (transaction != null) {
                 transaction.rollback();
             }
-
-            e.printStackTrace();
         } finally {
             closeSession();
         }
