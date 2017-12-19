@@ -3,7 +3,6 @@ package com.globallogic.store.controller.rest;
 import com.globallogic.store.dao.AbstractGenericDAO;
 import com.globallogic.store.model.Product;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

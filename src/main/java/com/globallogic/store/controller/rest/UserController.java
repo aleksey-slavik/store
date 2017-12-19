@@ -4,12 +4,11 @@ import com.globallogic.store.dao.AbstractGenericDAO;
 import com.globallogic.store.model.Role;
 import com.globallogic.store.model.User;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 public class UserController {
 
     @RequestMapping(value = "/user/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -27,7 +26,6 @@ public class UserController {
     @RequestMapping(value = "/create-user", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public Long createUser(@RequestBody User user) {
         AbstractGenericDAO<User> userDao = new AbstractGenericDAO<User>(User.class);
-        user.setRole(Role.CLIENT);
         return userDao.create(user);
     }
 
