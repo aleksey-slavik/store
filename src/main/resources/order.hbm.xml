@@ -8,8 +8,8 @@
             <generator class="identity"/>
         </id>
 
-        <property name="bill" type="java.lang.Integer">
-            <column name="bill" not-null="true"/>
+        <property name="totalCost" type="java.lang.Integer">
+            <column name="total-cost" not-null="true"/>
         </property>
 
         <many-to-one name="user" class="com.globallogic.store.model.User">
@@ -24,7 +24,7 @@
             </type>
         </property>
 
-        <set name="products" table="product_order" catalog="public" inverse="true" lazy="true" fetch="select" order-by="id asc">
+        <set name="products" table="order_item" catalog="public" inverse="true" lazy="true" fetch="select" order-by="id asc">
             <key>
                 <column name="order_id" not-null="true"/>
             </key>

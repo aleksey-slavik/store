@@ -5,7 +5,7 @@ import java.util.Set;
 public class Order {
 
     private Long id;
-    private Integer bill;
+    private Double totalCost;
     private User user;
     private Status status;
     private Set<Product> products;
@@ -18,12 +18,12 @@ public class Order {
         this.id = id;
     }
 
-    public Integer getBill() {
-        return bill;
+    public Double getTotalCost() {
+        return totalCost;
     }
 
-    public void setBill(Integer bill) {
-        this.bill = bill;
+    public void setTotalCost(Double totalCost) {
+        this.totalCost = totalCost;
     }
 
     public User getUser() {
