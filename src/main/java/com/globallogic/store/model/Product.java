@@ -15,7 +15,7 @@ public class Product {
 
     private String description;
 
-    private Integer price;
+    private Integer price;//todo double
 
     public Long getId() {
         return id;

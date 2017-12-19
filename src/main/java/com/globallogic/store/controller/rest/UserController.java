@@ -12,38 +12,35 @@ import java.util.List;
 @RestController
 public class UserController {
 
-    @RequestMapping(value = "/user", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public User getUserById(@RequestParam Long id) {
-        ApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
-        AbstractGenericDAO userDao = (AbstractGenericDAO) context.getBean("userDao");
+    private AbstractGenericDAO userDao;
+
+    @RequestMapping(value = "/users/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public User getUserById(@PathVariable Long id) {
         return (User) userDao.findById(id);
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<User> getUserList() {
-        ApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
-        AbstractGenericDAO userDao = (AbstractGenericDAO) context.getBean("userDao");
         return userDao.findAll();
     }
 
-    @RequestMapping(value = "/create-user", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/users", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public Long createUser(@RequestBody User user) {
-        ApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
-        AbstractGenericDAO userDao = (AbstractGenericDAO) context.getBean("userDao");
         return userDao.create(user);
     }
 
-    @RequestMapping(value = "/update-user", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public void updateUser(@RequestBody User user) {
-        ApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
-        AbstractGenericDAO userDao = (AbstractGenericDAO) context.getBean("userDao");
+    @RequestMapping(value = "/users/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public void updateUser(@PathVariable Long id, @RequestBody User user) {
+        user.setId(id);
         userDao.update(user);
     }
 
-    @RequestMapping(value = "/delete-user", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public void deleteUserById(@RequestParam Long id) {
-        ApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
-        AbstractGenericDAO userDao = (AbstractGenericDAO) context.getBean("userDao");
+    @RequestMapping(value = "/users/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public void deleteUserById(@PathVariable Long id) {
         userDao.delete(id);
+    }
+
+    public void setUserDao(AbstractGenericDAO userDao) {
+        this.userDao = userDao;
     }
 }

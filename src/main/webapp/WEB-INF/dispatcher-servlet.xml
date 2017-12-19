@@ -67,12 +67,18 @@
     <mvc:resources mapping="/parts/**" location="/parts/"/>
 
     <!-- DAO injection -->
-    <bean id="productDao" class="com.globallogic.store.dao.AbstractGenericDAO">
-        <constructor-arg value="com.globallogic.store.model.Product"/>
+    <bean name="userDao" class="com.globallogic.store.dao.AbstractGenericDAO">
+        <constructor-arg value="com.globallogic.store.model.User"/>
+    </bean>
+    <bean name="userController" class="com.globallogic.store.controller.rest.UserController">
+        <property name="userDao" ref="userDao"/>
     </bean>
 
-    <bean id="userDao" class="com.globallogic.store.dao.AbstractGenericDAO">
-        <constructor-arg value="com.globallogic.store.model.User"/>
+    <bean name="productDao" class="com.globallogic.store.dao.AbstractGenericDAO">
+        <constructor-arg value="com.globallogic.store.model.Product"/>
+    </bean>
+    <bean name="productController" class="com.globallogic.store.controller.rest.ProductController">
+        <property name="productDao" ref="productDao"/>
     </bean>
 
 </beans>

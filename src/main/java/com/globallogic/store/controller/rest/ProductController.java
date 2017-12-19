@@ -10,33 +10,35 @@ import java.util.List;
 @RestController
 public class ProductController {
 
-    @RequestMapping(value = "/product/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    private AbstractGenericDAO productDao;
+
+    @RequestMapping(value = "/products/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Product getProductById(@PathVariable Long id) {
-        AbstractGenericDAO<Product> productDao = new AbstractGenericDAO<Product>(Product.class);
-        return productDao.findById(id);
+        return (Product) productDao.findById(id);
     }
 
     @RequestMapping(value = "/products", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Product> getProductList() {
-        AbstractGenericDAO<Product> productDao = new AbstractGenericDAO<Product>(Product.class);
         return productDao.findAll();
     }
 
-    @RequestMapping(value = "/create-product", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/products", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public Long createProduct(@RequestBody Product product) {
-        AbstractGenericDAO<Product> userDao = new AbstractGenericDAO<Product>(Product.class);
-        return userDao.create(product);
+        return productDao.create(product);
     }
 
-    @RequestMapping(value = "/update-product", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public void updateProduct(@RequestBody Product product) {
-        AbstractGenericDAO<Product> productDao = new AbstractGenericDAO<Product>(Product.class);
+    @RequestMapping(value = "/products/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public void updateProduct(@PathVariable Long id, @RequestBody Product product) {
+        product.setId(id);
         productDao.update(product);
     }
 
-    @RequestMapping(value = "/delete-product/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/products/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public void deleteProductById(@PathVariable Long id) {
-        AbstractGenericDAO<Product> productDao = new AbstractGenericDAO<Product>(Product.class);
         productDao.delete(id);
+    }
+
+    public void setProductDao(AbstractGenericDAO productDao) {
+        this.productDao = productDao;
     }
 }
