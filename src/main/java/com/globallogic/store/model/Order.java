@@ -1,5 +1,6 @@
 package com.globallogic.store.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class Order {
@@ -8,7 +9,7 @@ public class Order {
     private Double totalCost;
     private User user;
     private Status status;
-    private Set<Product> products;
+    private Set<Product> products = new HashSet<Product>(0);
 
     public Long getId() {
         return id;

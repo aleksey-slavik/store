@@ -13,11 +13,14 @@
         <property name="hibernate.connection.password">root</property>
         <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/store</property>
 
+        <property name="show_sql">true</property>
+        <property name="format_sql">true</property>
+
         <!-- Entities -->
         <mapping resource="user.hbm.xml"/>
         <mapping resource="product.hbm.xml"/>
         <mapping resource="order.hbm.xml"/>
-        <mapping resource="order.item.hbm.xml"/>
+        <mapping resource="orderItem.hbm.xml"/>
 
     </session-factory>
 </hibernate-configuration>

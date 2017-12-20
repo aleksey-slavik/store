@@ -21,7 +21,7 @@
             <column name="description" not-null="true"/>
         </property>
 
-        <property name="price" type="java.lang.Integer">
+        <property name="price" type="java.lang.Double">
             <column name="price" not-null="true"/>
         </property>
     </class>

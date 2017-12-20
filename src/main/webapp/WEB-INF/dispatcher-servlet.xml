@@ -36,7 +36,7 @@
                 <prop key="/registerProcess">registerProcessController</prop>
                 <prop key="/logout">logoutController</prop>
                 <!--<prop key="/product-item">productController</prop>-->
-                <prop key="/orders">ordersController</prop>
+                <!--<prop key="/orders">ordersController</prop>-->
                 <prop key="/addToCart">addToCartController</prop>
             </props>
         </property>
@@ -50,7 +50,7 @@
     <bean id="registerProcessController" class="com.globallogic.store.controller.RegisterProcessController"/>
     <bean id="logoutController" class="com.globallogic.store.controller.LogoutController"/>
     <!--<bean id="productController" class="com.globallogic.store.controller.ProductItemController"/>-->
-    <bean id="ordersController" class="com.globallogic.store.controller.OrdersController"/>
+    <!--<bean id="ordersController" class="com.globallogic.store.controller.OrdersController"/>-->
     <bean id="addToCartController" class="com.globallogic.store.controller.AddToCartController"/>
 
     <!-- Resource resolver -->
@@ -79,6 +79,20 @@
     </bean>
     <bean name="productController" class="com.globallogic.store.controller.rest.ProductController">
         <property name="productDao" ref="productDao"/>
+    </bean>
+
+    <bean name="orderDao" class="com.globallogic.store.dao.AbstractGenericDAO">
+        <constructor-arg value="com.globallogic.store.model.Order"/>
+    </bean>
+    <bean name="orderController" class="com.globallogic.store.controller.rest.OrderController">
+        <property name="orderDao" ref="orderDao"/>
+    </bean>
+
+    <bean name="orderItemDao" class="com.globallogic.store.dao.AbstractGenericDAO">
+        <constructor-arg value="com.globallogic.store.model.OrderItem"/>
+    </bean>
+    <bean name="orderItemController" class="com.globallogic.store.controller.rest.OrderItemController">
+        <property name="orderItemDao" ref="orderItemDao"/>
     </bean>
 
 </beans>

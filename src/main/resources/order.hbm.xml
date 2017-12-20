@@ -2,17 +2,17 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
         "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="com.globallogic.store.model.Order" table="order" catalog="public">
+    <class name="com.globallogic.store.model.Order" table="orders" catalog="public">
         <id name="id" type="java.lang.Long">
             <column name="id"/>
             <generator class="identity"/>
         </id>
 
-        <property name="totalCost" type="java.lang.Integer">
-            <column name="total-cost" not-null="true"/>
+        <property name="totalCost" type="java.lang.Double">
+            <column name="total_cost" not-null="true"/>
         </property>
 
-        <many-to-one name="user" class="com.globallogic.store.model.User">
+        <many-to-one name="user" class="com.globallogic.store.model.User" fetch="select" lazy="false">
             <column name="user_id" not-null="true"/>
         </many-to-one>
 
@@ -24,7 +24,7 @@
             </type>
         </property>
 
-        <set name="products" table="order_item" catalog="public" inverse="true" lazy="true" fetch="select" order-by="id asc">
+        <set name="products" table="order_item" catalog="public" lazy="false" fetch="select" cascade="all">
             <key>
                 <column name="order_id" not-null="true"/>
             </key>
@@ -33,5 +33,6 @@
                 <column name="product_id" not-null="true"/>
             </many-to-many>
         </set>
+
     </class>
 </hibernate-mapping>
