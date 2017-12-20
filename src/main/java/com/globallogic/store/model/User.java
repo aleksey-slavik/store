@@ -29,7 +29,7 @@ public class User {
         this.username = username;
         this.password = password;
         this.email = email;
-        this.role = Role.CLIENT;
+        this.role = Role.CUSTOMER;
     }
 
     public Long getId() {

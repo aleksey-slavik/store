@@ -6,6 +6,6 @@ package com.globallogic.store.model;
  * @author oleksii.slavik
  */
 public enum  Role {
-    CLIENT,
+    CUSTOMER,
     ADMIN
 }

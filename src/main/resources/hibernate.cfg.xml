@@ -13,6 +13,7 @@
         <property name="hibernate.connection.password">root</property>
         <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/store</property>
 
+        <!-- Output hibernate queries -->
         <property name="show_sql">true</property>
         <property name="format_sql">true</property>
 
