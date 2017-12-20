@@ -1,13 +1,7 @@
 package com.globallogic.store.dao;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
 
-import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -17,119 +11,104 @@ public class AbstractGenericDAO<T> implements GenericDAO<T> {
 
     private Class<T> type;
 
-    private Session session;
-
-    private Transaction transaction;
-
     public AbstractGenericDAO(Class<T> type) {
         this.type = type;
     }
 
-    private void openSession() {
-        SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
-        session = sessionFactory.openSession();
-    }
-
-    private void closeSession() {
-        session.close();
-    }
-
     public List<T> findAll() {
-        openSession();
-        List<T> list = null;
-
-        try {
-            transaction = session.beginTransaction();
-            CriteriaBuilder builder = session.getCriteriaBuilder();
-            CriteriaQuery<T> query = builder.createQuery(type);
-            Root<T> root = query.from(type);
-            query.select(root);
-            Query<T> q = session.createQuery(query);
-            list = q.getResultList();
-            transaction.commit();
-        } catch (HibernateException e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-        } catch (NoResultException e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-        } finally {
-            closeSession();
-        }
-
-        return list;
+       FindAllHelper findAllHelper = new FindAllHelper();
+       findAllHelper.processQuery();
+       return findAllHelper.list;
     }
 
     public T findById(Long id) {
-        openSession();
-        T item = null;
-
-        try {
-            transaction = session.beginTransaction();
-            item = session.get(type, id);
-            transaction.commit();
-        } catch (HibernateException e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-        } finally {
-            closeSession();
-        }
-
-        return item;
+        FindByIdHelper findByIdHelper = new FindByIdHelper(id);
+        findByIdHelper.processQuery();
+        return findByIdHelper.item;
     }
 
     public Long create(T entity) {
-        openSession();
-        Long id = null;
-
-        try {
-            transaction = session.beginTransaction();
-            id = (Long) session.save(entity);
-            transaction.commit();
-        } catch (HibernateException e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-        } finally {
-            closeSession();
-        }
-
-        return id;
+        CreateHelper createHelper = new CreateHelper(entity);
+        createHelper.processQuery();
+        return createHelper.id;
     }
 
     public void update(T entity) {
-        openSession();
-
-        try {
-            transaction = session.beginTransaction();
-            session.update(entity);
-            transaction.commit();
-        } catch (HibernateException e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-        } finally {
-            closeSession();
-        }
+        UpdateHelper updateHelper = new UpdateHelper(entity);
+        updateHelper.processQuery();
     }
 
     public void delete(Long id) {
-        openSession();
+        DeleteHelper deleteHelper = new DeleteHelper(id);
+        deleteHelper.processQuery();
+    }
 
-        try {
-            transaction = session.beginTransaction();
-            T entity = session.load(type, id);
-            session.delete(entity);
-            transaction.commit();
-        } catch (HibernateException e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-        } finally {
-            closeSession();
+    private class FindAllHelper extends TemplateGenericDAO {
+
+        private List<T> list;
+
+        public void query() {
+            CriteriaBuilder builder = super.getSession().getCriteriaBuilder();
+            CriteriaQuery<T> query = builder.createQuery(type);
+            Root<T> root = query.from(type);
+            query.select(root);
+            Query<T> q = super.getSession().createQuery(query);
+            list = q.getResultList();
+        }
+    }
+
+    private class FindByIdHelper extends TemplateGenericDAO {
+
+        private T item;
+        private Long id;
+
+        public FindByIdHelper(Long id) {
+            this.id = id;
+        }
+
+        public void query() {
+            item = super.getSession().get(type, id);
+        }
+    }
+
+    private class CreateHelper extends TemplateGenericDAO {
+
+        private Long id;
+        private T item;
+
+        public CreateHelper(T item) {
+            this.item = item;
+        }
+
+        public void query() {
+            id = (Long) super.getSession().save(item);
+        }
+    }
+
+    private class UpdateHelper extends TemplateGenericDAO {
+
+        private T item;
+
+        public UpdateHelper(T item) {
+            this.item = item;
+        }
+
+        public void query() {
+            getSession().update(item);
+        }
+    }
+
+    private class DeleteHelper extends TemplateGenericDAO {
+
+        private Long id;
+
+        public DeleteHelper(Long id) {
+            this.id = id;
+        }
+
+        public void query() {
+            T entity = super.getSession().load(type, id);
+            super.getSession().delete(entity);
         }
     }
 }
