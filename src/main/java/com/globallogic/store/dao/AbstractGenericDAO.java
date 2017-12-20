@@ -16,31 +16,23 @@ public class AbstractGenericDAO<T> implements GenericDAO<T> {
     }
 
     public List<T> findAll() {
-       FindAllHelper findAllHelper = new FindAllHelper();
-       findAllHelper.processQuery();
-       return findAllHelper.list;
+       return new FindAllHelper().list;
     }
 
     public T findById(Long id) {
-        FindByIdHelper findByIdHelper = new FindByIdHelper(id);
-        findByIdHelper.processQuery();
-        return findByIdHelper.item;
+        return new FindByIdHelper(id).item;
     }
 
     public Long create(T entity) {
-        CreateHelper createHelper = new CreateHelper(entity);
-        createHelper.processQuery();
-        return createHelper.id;
+        return new CreateHelper(entity).id;
     }
 
     public void update(T entity) {
-        UpdateHelper updateHelper = new UpdateHelper(entity);
-        updateHelper.processQuery();
+        new UpdateHelper(entity);
     }
 
     public void delete(Long id) {
-        DeleteHelper deleteHelper = new DeleteHelper(id);
-        deleteHelper.processQuery();
+        new DeleteHelper(id);
     }
 
     private class FindAllHelper extends TemplateGenericDAO {

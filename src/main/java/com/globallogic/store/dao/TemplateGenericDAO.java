@@ -25,6 +25,10 @@ abstract public class TemplateGenericDAO {
         return session;
     }
 
+    public TemplateGenericDAO() {
+        processQuery();
+    }
+
     public final void processQuery() {
         openSession();
 
