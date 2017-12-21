@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.ContextLoader;
 
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -22,6 +23,14 @@ public class UserController {
     @RequestMapping(value = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<User> getUserList() {
         return userDao.findAll();
+    }
+
+    @RequestMapping(value = "/users/{username}/{password}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<User> verifyUser(@PathVariable String username, @PathVariable String password) {
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("username", username);
+        params.put("password", password);
+        return userDao.findByCriteria(params);
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

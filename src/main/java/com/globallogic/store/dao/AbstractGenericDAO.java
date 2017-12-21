@@ -4,8 +4,11 @@ import org.hibernate.query.Query;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class AbstractGenericDAO<T> implements GenericDAO<T> {
 
@@ -23,16 +26,8 @@ public class AbstractGenericDAO<T> implements GenericDAO<T> {
         return new FindByIdHelper(id).item;
     }
 
-    public Long create(T entity) {
-        return new CreateHelper(entity).id;
-    }
-
-    public void update(T entity) {
-        new UpdateHelper(entity);
-    }
-
-    public void delete(Long id) {
-        new DeleteHelper(id);
+    public List<T> findByCriteria(Map<String, String> params) {
+        return new FindByCriteriaHelper(params).results;
     }
 
     private class FindAllHelper extends TemplateGenericDAO {
@@ -65,6 +60,46 @@ public class AbstractGenericDAO<T> implements GenericDAO<T> {
 
         public void query() {
             item = super.getSession().get(type, id);
+        }
+    }
+
+    public Long create(T entity) {
+        return new CreateHelper(entity).id;
+    }
+
+    public void update(T entity) {
+        new UpdateHelper(entity);
+    }
+
+    public void delete(Long id) {
+        new DeleteHelper(id);
+    }
+
+    private class FindByCriteriaHelper extends TemplateGenericDAO {
+
+        private List<T> results;
+        private Map<String, String> params;
+
+        public FindByCriteriaHelper(Map<String, String> params) {
+            this.params = params;
+            processQuery();
+        }
+
+        public void query() {
+            CriteriaBuilder builder = super.getSession().getCriteriaBuilder();
+            CriteriaQuery<T> query = builder.createQuery(type);
+            Root<T> root = query.from(type);
+            query.select(root);
+
+            Predicate predicate = null;
+
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                predicate = builder.and(builder.equal(root.get(entry.getKey()), entry.getValue()));
+            }
+
+            query.where(predicate);
+            Query<T> q = super.getSession().createQuery(query);
+            results = q.getResultList();
         }
     }
 
