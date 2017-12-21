@@ -1,6 +1,5 @@
 package com.globallogic.store.dao;
 
-import java.io.Serializable;
 import java.util.List;
 
 public interface GenericDAO<T> {
