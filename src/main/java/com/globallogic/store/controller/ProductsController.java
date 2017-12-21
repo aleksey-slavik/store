@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author oleksii.slavik
  */
-public class ProductItemController extends AbstractController {
+public class ProductsController extends AbstractController {
 
     /**
      * Product item controller
@@ -27,12 +27,6 @@ public class ProductItemController extends AbstractController {
      * @return product item page
      */
     protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        Long id = Long.valueOf(httpServletRequest.getParameter(Key.ID));
-        ModelAndView mav = new ModelAndView(View.PRODUCT);
-        WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
-        AbstractGenericDAO<Product> productDao = (AbstractGenericDAO<Product>) applicationContext.getBean("productDao");
-        Product product = productDao.findById(id);
-        mav.addObject(Key.PRODUCT, product);
-        return mav;
+        return new ModelAndView(View.PRODUCT);
     }
 }

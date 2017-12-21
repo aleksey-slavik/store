@@ -35,7 +35,7 @@
                 <prop key="/register">registerController</prop>
                 <prop key="/registerProcess">registerProcessController</prop>
                 <prop key="/logout">logoutController</prop>
-                <!--<prop key="/product-item">productController</prop>-->
+                <prop key="/productList">productsController</prop>
                 <!--<prop key="/orders">ordersController</prop>-->
                 <prop key="/addToCart">addToCartController</prop>
             </props>
@@ -49,7 +49,7 @@
     <bean id="registerController" class="com.globallogic.store.controller.RegisterController"/>
     <bean id="registerProcessController" class="com.globallogic.store.controller.RegisterProcessController"/>
     <bean id="logoutController" class="com.globallogic.store.controller.LogoutController"/>
-    <!--<bean id="productController" class="com.globallogic.store.controller.ProductItemController"/>-->
+    <bean id="productsController" class="com.globallogic.store.controller.ProductsController"/>
     <!--<bean id="ordersController" class="com.globallogic.store.controller.OrdersController"/>-->
     <bean id="addToCartController" class="com.globallogic.store.controller.AddToCartController"/>
 
@@ -62,6 +62,7 @@
     <!-- Static resources-->
     <mvc:resources mapping="/style/**" location="/style/"/>
     <mvc:resources mapping="/images/**" location="/images/"/>
+    <mvc:resources mapping="/script/**" location="/script/"/>
 
     <!-- JSP Fragments -->
     <mvc:resources mapping="/parts/**" location="/parts/"/>

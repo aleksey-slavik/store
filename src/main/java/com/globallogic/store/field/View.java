@@ -25,7 +25,7 @@ public class View {
     /**
      * Name of product item page view
      */
-    public static final String PRODUCT = "product";
+    public static final String PRODUCT = "productList";
 
     /**
      * Name of register page view
