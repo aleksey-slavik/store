@@ -39,6 +39,10 @@ public class AbstractGenericDAO<T> implements GenericDAO<T> {
 
         private List<T> list;
 
+        public FindAllHelper() {
+            processQuery();
+        }
+
         public void query() {
             CriteriaBuilder builder = super.getSession().getCriteriaBuilder();
             CriteriaQuery<T> query = builder.createQuery(type);
@@ -56,6 +60,7 @@ public class AbstractGenericDAO<T> implements GenericDAO<T> {
 
         public FindByIdHelper(Long id) {
             this.id = id;
+            processQuery();
         }
 
         public void query() {
@@ -70,6 +75,7 @@ public class AbstractGenericDAO<T> implements GenericDAO<T> {
 
         public CreateHelper(T item) {
             this.item = item;
+            processQuery();
         }
 
         public void query() {
@@ -83,6 +89,7 @@ public class AbstractGenericDAO<T> implements GenericDAO<T> {
 
         public UpdateHelper(T item) {
             this.item = item;
+            processQuery();
         }
 
         public void query() {
@@ -96,6 +103,7 @@ public class AbstractGenericDAO<T> implements GenericDAO<T> {
 
         public DeleteHelper(Long id) {
             this.id = id;
+            processQuery();
         }
 
         public void query() {

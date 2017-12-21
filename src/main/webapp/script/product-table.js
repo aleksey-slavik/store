@@ -6,11 +6,14 @@ $("#example-table").tabulator({
         {title: "Name", field: "name", width: 150},
         {title: "Brand", field: "brand"},
         {title: "Description", field: "description"},
-        {title: "Price", field: "price", align: "center"}
-    ]
+        {title: "Price", field: "price"}
+    ],
+    rowClick:function(e, row){ //trigger an alert message when the row is clicked
+        window.location.href = "/products/" + row.getData().id;
+    }
 });
 
-//load sample data into the table
+//load data into the table
 var response = $.getJSON("/products",
     function (data) {
         $("#example-table").tabulator("setData", data);
