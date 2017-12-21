@@ -8,11 +8,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Controller for product list page
+ * Controller for product item page
  *
  * @author oleksii.slavik
  */
-public class ProductsController extends AbstractController {
+public class ProductItemController extends AbstractController{
 
     /**
      * Product item controller
@@ -22,6 +22,6 @@ public class ProductsController extends AbstractController {
      * @return product item page
      */
     protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        return new ModelAndView(View.PRODUCT_LIST);
+        return new ModelAndView(View.PRODUCT_ITEM);
     }
 }

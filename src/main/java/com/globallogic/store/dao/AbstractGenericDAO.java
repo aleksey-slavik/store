@@ -16,7 +16,7 @@ public class AbstractGenericDAO<T> implements GenericDAO<T> {
     }
 
     public List<T> findAll() {
-       return new FindAllHelper().list;
+        return new FindAllHelper().list;
     }
 
     public T findById(Long id) {

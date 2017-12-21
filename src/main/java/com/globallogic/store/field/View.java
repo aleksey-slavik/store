@@ -23,9 +23,14 @@ public class View {
     public static final String ORDERS = "orders";
 
     /**
+     * Name of product list page view
+     */
+    public static final String PRODUCT_LIST = "productList";
+
+    /**
      * Name of product item page view
      */
-    public static final String PRODUCT = "productList";
+    public static final String PRODUCT_ITEM = "productItem";
 
     /**
      * Name of register page view

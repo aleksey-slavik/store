@@ -8,17 +8,17 @@
        http://www.springframework.org/schema/mvc
        http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <mvc:annotation-driven content-negotiation-manager="contentManager" />
+    <mvc:annotation-driven content-negotiation-manager="contentManager"/>
 
     <bean id="contentManager"
           class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
-        <property name="favorPathExtension" value="false" />
-        <property name="ignoreAcceptHeader" value="false" />
-        <property name="defaultContentType" value="application/json" />
-        <property name="useJaf" value="false" />
+        <property name="favorPathExtension" value="false"/>
+        <property name="ignoreAcceptHeader" value="false"/>
+        <property name="defaultContentType" value="application/json"/>
+        <property name="useJaf" value="false"/>
     </bean>
 
-    <context:component-scan base-package="com.globallogic.store.controller.rest" />
+    <context:component-scan base-package="com.globallogic.store.controller.rest"/>
 
     <!-- JSON Support -->
     <bean name="viewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver"/>
@@ -36,6 +36,7 @@
                 <prop key="/registerProcess">registerProcessController</prop>
                 <prop key="/logout">logoutController</prop>
                 <prop key="/productList">productsController</prop>
+                <prop key="/productItem">productListController</prop>
                 <!--<prop key="/orders">ordersController</prop>-->
                 <prop key="/addToCart">addToCartController</prop>
             </props>
@@ -52,6 +53,7 @@
     <bean id="productsController" class="com.globallogic.store.controller.ProductsController"/>
     <!--<bean id="ordersController" class="com.globallogic.store.controller.OrdersController"/>-->
     <bean id="addToCartController" class="com.globallogic.store.controller.AddToCartController"/>
+    <bean id="productListController" class="com.globallogic.store.controller.ProductItemController"/>
 
     <!-- Resource resolver -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">

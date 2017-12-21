@@ -9,5 +9,6 @@
 <%@include file="/parts/top.jsp" %>
 <div id="example-table"></div>
 <%@include file="/parts/scripts.jsp" %>
+<script type="text/javascript" src="${pageContext.request.contextPath}/script/product-table.js"></script>
 </body>
 </html>
