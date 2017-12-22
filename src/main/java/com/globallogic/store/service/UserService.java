@@ -25,14 +25,7 @@ public class UserService implements UserDetailsService {
 
     private User buildUserForAuthentication(com.globallogic.store.model.User user,
                                             List<GrantedAuthority> authorities) {
-        return new User(
-                user.getUsername(),
-                user.getPassword(),
-                true,
-                true,
-                true,
-                true,
-                authorities);
+        return new User(user.getUsername(), user.getPassword(), authorities);
     }
 
     private List<GrantedAuthority> buildUserAuthority() {

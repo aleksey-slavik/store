@@ -15,12 +15,10 @@
         <form-login
                 login-page="/login"
                 default-target-url="/productList"
-                authentication-failure-url="/login?error"
+                authentication-failure-url="/login"
                 username-parameter="username"
                 password-parameter="password"/>
-        <logout logout-success-url="/login?logout"/>
-        <!-- enable csrf protection -->
-        <csrf/>
+        <logout logout-success-url="/logout"/>
     </http>
 
     <authentication-manager>
