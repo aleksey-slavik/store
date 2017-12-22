@@ -27,10 +27,6 @@ public class TemplateGenericDAO<T> {
         session.close();
     }
 
-    public Session getSession() {
-        return session;
-    }
-
     public final T processQuery() {
         openSession();
         T result = null;
