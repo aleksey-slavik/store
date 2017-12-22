@@ -8,39 +8,22 @@ import org.hibernate.cfg.Configuration;
 
 public class TemplateGenericDAO<T> {
 
-    private Session session;
-
-    private Transaction transaction;
-
-    private QueryDAO<T> queryDAO;
-
-    public TemplateGenericDAO(QueryDAO<T> queryDAO) {
-        this.queryDAO = queryDAO;
-    }
-
-    private void openSession() {
+    public final T processQuery(ExecutionCallback<T> executionCallback) {
         SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
-        session = sessionFactory.openSession();
-    }
-
-    private void closeSession() {
-        session.close();
-    }
-
-    public final T processQuery() {
-        openSession();
+        Session session = sessionFactory.openSession();
+        Transaction transaction = null;
         T result = null;
 
         try {
             transaction = session.beginTransaction();
-            result = queryDAO.query(session);
+            result = executionCallback.query(session);
             transaction.commit();
         } catch (HibernateException e) {
             if (transaction != null) {
                 transaction.rollback();
             }
         } finally {
-            closeSession();
+            session.close();
         }
 
         return result;

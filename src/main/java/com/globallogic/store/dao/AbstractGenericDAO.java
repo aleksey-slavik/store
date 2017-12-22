@@ -18,7 +18,7 @@ public class AbstractGenericDAO<T> implements GenericDAO<T> {
     }
 
     public List<T> findAll() {
-        TemplateGenericDAO<List<T>> templateDAO = new TemplateGenericDAO<List<T>>(new QueryDAO<List<T>>() {
+        return new TemplateGenericDAO<List<T>>().processQuery(new ExecutionCallback<List<T>>() {
             public List<T> query(Session session) {
                 CriteriaBuilder builder = session.getCriteriaBuilder();
                 CriteriaQuery<T> query = builder.createQuery(type);
@@ -28,28 +28,23 @@ public class AbstractGenericDAO<T> implements GenericDAO<T> {
                 return q.getResultList();
             }
         });
-
-        return templateDAO.processQuery();
     }
 
     public T findById(final Long id) {
-        TemplateGenericDAO<T> templateDAO = new TemplateGenericDAO<T>(new QueryDAO<T>() {
+        return new TemplateGenericDAO<T>().processQuery(new ExecutionCallback<T>() {
             public T query(Session session) {
                 return session.get(type, id);
             }
         });
-
-        return templateDAO.processQuery();
     }
 
     public List<T> findByCriteria(final Map<String, String> params) {
-        TemplateGenericDAO<List<T>> templateDAO = new TemplateGenericDAO<List<T>>(new QueryDAO<List<T>>() {
+        return new TemplateGenericDAO<List<T>>().processQuery(new ExecutionCallback<List<T>>() {
             public List<T> query(Session session) {
                 CriteriaBuilder builder = session.getCriteriaBuilder();
                 CriteriaQuery<T> query = builder.createQuery(type);
                 Root<T> root = query.from(type);
                 query.select(root);
-
                 Predicate predicate = null;
 
                 for (Map.Entry<String, String> entry : params.entrySet()) {
@@ -61,40 +56,33 @@ public class AbstractGenericDAO<T> implements GenericDAO<T> {
                 return q.getResultList();
             }
         });
-
-        return templateDAO.processQuery();
     }
 
     public T create(final T entity) {
-        TemplateGenericDAO<T> templateDAO = new TemplateGenericDAO<T>(new QueryDAO<T>() {
+        return new TemplateGenericDAO<T>().processQuery(new ExecutionCallback<T>() {
             public T query(Session session) {
                 session.save(entity);
                 return entity;
             }
         });
-
-        return templateDAO.processQuery();
     }
 
     public T update(final T entity) {
-        TemplateGenericDAO<T> templateDAO = new TemplateGenericDAO<T>(new QueryDAO<T>() {
+        return new TemplateGenericDAO<T>().processQuery(new ExecutionCallback<T>() {
             public T query(Session session) {
                 session.update(entity);
                 return entity;
             }
         });
-        return templateDAO.processQuery();
     }
 
     public T delete(final Long id) {
-        TemplateGenericDAO<T> templateDAO = new TemplateGenericDAO<T>(new QueryDAO<T>() {
+        return new TemplateGenericDAO<T>().processQuery(new ExecutionCallback<T>() {
             public T query(Session session) {
                 T entity = session.load(type, id);
                 session.delete(entity);
                 return entity;
             }
         });
-
-        return templateDAO.processQuery();
     }
 }

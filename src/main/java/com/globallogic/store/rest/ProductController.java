@@ -1,11 +1,10 @@
-package com.globallogic.store.controller.rest;
+package com.globallogic.store.rest;
 
 import com.globallogic.store.dao.AbstractGenericDAO;
 import com.globallogic.store.model.Product;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import javax.sql.rowset.Predicate;
 import java.util.List;
 
 @RestController

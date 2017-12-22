@@ -81,28 +81,28 @@
     <bean name="userDao" class="com.globallogic.store.dao.AbstractGenericDAO">
         <constructor-arg value="com.globallogic.store.model.User"/>
     </bean>
-    <bean name="userController" class="com.globallogic.store.controller.rest.UserController">
+    <bean name="userController" class="com.globallogic.store.rest.UserController">
         <property name="userDao" ref="userDao"/>
     </bean>
 
     <bean name="productDao" class="com.globallogic.store.dao.AbstractGenericDAO">
         <constructor-arg value="com.globallogic.store.model.Product"/>
     </bean>
-    <bean name="productController" class="com.globallogic.store.controller.rest.ProductController">
+    <bean name="productController" class="com.globallogic.store.rest.ProductController">
         <property name="productDao" ref="productDao"/>
     </bean>
 
     <bean name="orderDao" class="com.globallogic.store.dao.AbstractGenericDAO">
         <constructor-arg value="com.globallogic.store.model.Order"/>
     </bean>
-    <bean name="orderController" class="com.globallogic.store.controller.rest.OrderController">
+    <bean name="orderController" class="com.globallogic.store.rest.OrderController">
         <property name="orderDao" ref="orderDao"/>
     </bean>
 
     <bean name="orderItemDao" class="com.globallogic.store.dao.AbstractGenericDAO">
         <constructor-arg value="com.globallogic.store.model.OrderItem"/>
     </bean>
-    <bean name="orderItemController" class="com.globallogic.store.controller.rest.OrderItemController">
+    <bean name="orderItemController" class="com.globallogic.store.rest.OrderItemController">
         <property name="orderItemDao" ref="orderItemDao"/>
     </bean>
 

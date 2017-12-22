@@ -1,11 +1,9 @@
-package com.globallogic.store.controller.rest;
+package com.globallogic.store.rest;
 
 import com.globallogic.store.dao.AbstractGenericDAO;
 import com.globallogic.store.model.User;
-import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.ContextLoader;
 
 import java.util.HashMap;
 import java.util.List;

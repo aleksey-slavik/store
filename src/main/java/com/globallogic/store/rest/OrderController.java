@@ -1,4 +1,4 @@
-package com.globallogic.store.controller.rest;
+package com.globallogic.store.rest;
 
 import com.globallogic.store.dao.AbstractGenericDAO;
 import com.globallogic.store.model.Order;
