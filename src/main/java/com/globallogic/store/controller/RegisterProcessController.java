@@ -48,7 +48,7 @@ public class RegisterProcessController extends AbstractController {
         User user = new User(firstname, lastname, username, password, email);
         WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
         AbstractGenericDAO<User> userDao = (AbstractGenericDAO<User>) applicationContext.getBean("userDao");
-        Long id = userDao.create(user);
+        Long id = userDao.create(user).getId();
 
         if (id != null) {
             HttpSession session = httpServletRequest.getSession();

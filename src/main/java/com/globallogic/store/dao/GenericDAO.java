@@ -11,9 +11,9 @@ public interface GenericDAO<T> {
 
     List<T> findByCriteria(Map<String, String> params);
 
-    Long create(T entity);
+    T create(T entity);
 
-    void update(T entity);
+    T update(T entity);
 
-    void delete(Long id);
+    T delete(Long id);
 }

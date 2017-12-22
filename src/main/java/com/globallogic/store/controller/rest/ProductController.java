@@ -5,16 +5,17 @@ import com.globallogic.store.model.Product;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.sql.rowset.Predicate;
 import java.util.List;
 
 @RestController
 public class ProductController {
 
-    private AbstractGenericDAO productDao;
+    private AbstractGenericDAO<Product> productDao;
 
     @RequestMapping(value = "/products/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Product getProductById(@PathVariable Long id) {
-        return (Product) productDao.findById(id);
+        return productDao.findById(id);
     }
 
     @RequestMapping(value = "/products", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -23,22 +24,22 @@ public class ProductController {
     }
 
     @RequestMapping(value = "/products", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Long createProduct(@RequestBody Product product) {
+    public Product createProduct(@RequestBody Product product) {
         return productDao.create(product);
     }
 
     @RequestMapping(value = "/products/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public void updateProduct(@PathVariable Long id, @RequestBody Product product) {
+    public Product updateProduct(@PathVariable Long id, @RequestBody Product product) {
         product.setId(id);
-        productDao.update(product);
+        return productDao.update(product);
     }
 
     @RequestMapping(value = "/products/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public void deleteProductById(@PathVariable Long id) {
-        productDao.delete(id);
+    public Product deleteProductById(@PathVariable Long id) {
+        return productDao.delete(id);
     }
 
-    public void setProductDao(AbstractGenericDAO productDao) {
+    public void setProductDao(AbstractGenericDAO<Product> productDao) {
         this.productDao = productDao;
     }
 }

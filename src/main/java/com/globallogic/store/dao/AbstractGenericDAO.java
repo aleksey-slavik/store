@@ -1,5 +1,6 @@
 package com.globallogic.store.dao;
 
+import org.hibernate.Session;
 import org.hibernate.query.Query;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -17,136 +18,83 @@ public class AbstractGenericDAO<T> implements GenericDAO<T> {
     }
 
     public List<T> findAll() {
-        return new FindAllHelper().list;
-    }
-
-    public T findById(Long id) {
-        return new FindByIdHelper(id).item;
-    }
-
-    public List<T> findByCriteria(Map<String, String> params) {
-        return new FindByCriteriaHelper(params).results;
-    }
-
-    private class FindAllHelper extends TemplateGenericDAO {
-
-        private List<T> list;
-
-        public FindAllHelper() {
-            processQuery();
-        }
-
-        public void query() {
-            CriteriaBuilder builder = super.getSession().getCriteriaBuilder();
-            CriteriaQuery<T> query = builder.createQuery(type);
-            Root<T> root = query.from(type);
-            query.select(root);
-            Query<T> q = super.getSession().createQuery(query);
-            list = q.getResultList();
-        }
-    }
-
-    private class FindByIdHelper extends TemplateGenericDAO {
-
-        private T item;
-        private Long id;
-
-        public FindByIdHelper(Long id) {
-            this.id = id;
-            processQuery();
-            Collections.sort(new ArrayList<String>(), new Comparator<String>() {
-                public int compare(String o1, String o2) {
-                    return 0;
-                }
-            });
-        }
-
-        public void query() {
-            item = super.getSession().get(type, id);
-        }
-    }
-
-    public Long create(T entity) {
-        return new CreateHelper(entity).id;
-    }
-
-    public void update(T entity) {
-        new UpdateHelper(entity);
-    }//todo
-
-    public void delete(Long id) {
-        new DeleteHelper(id);
-    }//todo
-
-    private class FindByCriteriaHelper extends TemplateGenericDAO {
-
-        private List<T> results;
-        private Map<String, String> params;
-
-        public FindByCriteriaHelper(Map<String, String> params) {
-            this.params = params;
-            processQuery();
-        }
-
-        public void query() {
-            CriteriaBuilder builder = super.getSession().getCriteriaBuilder();
-            CriteriaQuery<T> query = builder.createQuery(type);
-            Root<T> root = query.from(type);
-            query.select(root);
-
-            Predicate predicate = null;
-
-            for (Map.Entry<String, String> entry : params.entrySet()) {
-                predicate = builder.and(builder.equal(root.get(entry.getKey()), entry.getValue()));
+        TemplateGenericDAO<List<T>> templateDAO = new TemplateGenericDAO<List<T>>(new QueryDAO<List<T>>() {
+            public List<T> query(Session session) {
+                CriteriaBuilder builder = session.getCriteriaBuilder();
+                CriteriaQuery<T> query = builder.createQuery(type);
+                Root<T> root = query.from(type);
+                query.select(root);
+                Query<T> q = session.createQuery(query);
+                return q.getResultList();
             }
+        });
 
-            query.where(predicate);
-            Query<T> q = super.getSession().createQuery(query);
-            results = q.getResultList();
-        }
+        return templateDAO.processQuery();
     }
 
-    private class CreateHelper extends TemplateGenericDAO {
+    public T findById(final Long id) {
+        TemplateGenericDAO<T> templateDAO = new TemplateGenericDAO<T>(new QueryDAO<T>() {
+            public T query(Session session) {
+                return session.get(type, id);
+            }
+        });
 
-        private Long id;
-        private T item;
-
-        public CreateHelper(T item) {
-            this.item = item;
-            processQuery();
-        }
-
-        public void query() {
-            id = (Long) super.getSession().save(item);
-        }
+        return templateDAO.processQuery();
     }
 
-    private class UpdateHelper extends TemplateGenericDAO {
+    public List<T> findByCriteria(final Map<String, String> params) {
+        TemplateGenericDAO<List<T>> templateDAO = new TemplateGenericDAO<List<T>>(new QueryDAO<List<T>>() {
+            public List<T> query(Session session) {
+                CriteriaBuilder builder = session.getCriteriaBuilder();
+                CriteriaQuery<T> query = builder.createQuery(type);
+                Root<T> root = query.from(type);
+                query.select(root);
 
-        private T item;
+                Predicate predicate = null;
 
-        public UpdateHelper(T item) {
-            this.item = item;
-            processQuery();
-        }
+                for (Map.Entry<String, String> entry : params.entrySet()) {
+                    predicate = builder.and(builder.equal(root.get(entry.getKey()), entry.getValue()));
+                }
 
-        public void query() {
-            getSession().update(item);
-        }
+                query.where(predicate);
+                Query<T> q = session.createQuery(query);
+                return q.getResultList();
+            }
+        });
+
+        return templateDAO.processQuery();
     }
 
-    private class DeleteHelper extends TemplateGenericDAO {
+    public T create(final T entity) {
+        TemplateGenericDAO<T> templateDAO = new TemplateGenericDAO<T>(new QueryDAO<T>() {
+            public T query(Session session) {
+                session.save(entity);
+                return entity;
+            }
+        });
 
-        private Long id;
+        return templateDAO.processQuery();
+    }
 
-        public DeleteHelper(Long id) {
-            this.id = id;
-            processQuery();
-        }
+    public T update(final T entity) {
+        TemplateGenericDAO<T> templateDAO = new TemplateGenericDAO<T>(new QueryDAO<T>() {
+            public T query(Session session) {
+                session.update(entity);
+                return entity;
+            }
+        });
+        return templateDAO.processQuery();
+    }
 
-        public void query() {
-            T entity = super.getSession().load(type, id);
-            super.getSession().delete(entity);
-        }
+    public T delete(final Long id) {
+        TemplateGenericDAO<T> templateDAO = new TemplateGenericDAO<T>(new QueryDAO<T>() {
+            public T query(Session session) {
+                T entity = session.load(type, id);
+                session.delete(entity);
+                return entity;
+            }
+        });
+
+        return templateDAO.processQuery();
     }
 }

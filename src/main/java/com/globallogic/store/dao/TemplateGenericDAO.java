@@ -6,11 +6,17 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
-abstract public class TemplateGenericDAO {
+public class TemplateGenericDAO<T> {
 
     private Session session;
 
     private Transaction transaction;
+
+    private QueryDAO<T> queryDAO;
+
+    public TemplateGenericDAO(QueryDAO<T> queryDAO) {
+        this.queryDAO = queryDAO;
+    }
 
     private void openSession() {
         SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
@@ -25,12 +31,13 @@ abstract public class TemplateGenericDAO {
         return session;
     }
 
-    public final void processQuery() {
+    public final T processQuery() {
         openSession();
+        T result = null;
 
         try {
             transaction = session.beginTransaction();
-            query();
+            result = queryDAO.query(session);
             transaction.commit();
         } catch (HibernateException e) {
             if (transaction != null) {
@@ -39,7 +46,7 @@ abstract public class TemplateGenericDAO {
         } finally {
             closeSession();
         }
-    }
 
-    abstract public void query();
+        return result;
+    }
 }
