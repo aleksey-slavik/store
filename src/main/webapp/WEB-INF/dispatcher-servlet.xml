@@ -18,7 +18,7 @@
         <property name="useJaf" value="false"/>
     </bean>
 
-    <context:component-scan base-package="com.globallogic.store.controller.rest"/>
+    <context:component-scan base-package="com.globallogic.store.*"/>
 
     <!-- JSON Support -->
     <bean name="viewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver"/>
@@ -98,4 +98,7 @@
         <property name="orderItemDao" ref="orderItemDao"/>
     </bean>
 
+    <bean id="userService" class="com.globallogic.store.service.UserService">
+        <property name="userDao" ref="userDao" />
+    </bean>
 </beans>
