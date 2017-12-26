@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -6,9 +7,9 @@
     <title>Login</title>
     <%@include file="/parts/header.jsp" %>
 </head>
-<body>
+<body onload='document.loginForm.username.focus();'>
 <%@include file="/parts/top.jsp" %>
-<form id="loginForm" action="j_spring_security_check" method="post">
+<form name="loginForm" action="${pageContext.request.contextPath}/j_spring_security_check" method="POST">
     <table align="center">
         <tr>
             <td><label for="username">Username:</label></td>
@@ -22,7 +23,7 @@
         <tr>
             <td></td>
             <td align="left">
-                <button id="login" name="login">Login</button>
+                <input type="submit" value="Login"/>
             </td>
         </tr>
         <tr></tr>
@@ -31,6 +32,7 @@
             <td><a href="home">Home</a></td>
         </tr>
     </table>
+    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 </form>
 <table align="center">
     <tr>

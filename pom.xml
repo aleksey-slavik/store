@@ -10,8 +10,8 @@
 
     <properties>
         <jdk.version>1.6</jdk.version>
-        <spring.version>4.3.10.RELEASE</spring.version>
-        <spring.security.version>3.2.3.RELEASE</spring.security.version>
+        <spring.version>4.0.2.RELEASE</spring.version>
+        <spring.security.version>4.0.2.RELEASE</spring.security.version>
         <servlet.version>2.5</servlet.version>
         <hibernate.version>5.2.10.Final</hibernate.version>
         <postgres.version>42.1.4</postgres.version>
@@ -56,6 +56,12 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-config</artifactId>
+            <version>${spring.security.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-taglibs</artifactId>
             <version>${spring.security.version}</version>
         </dependency>
 

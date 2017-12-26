@@ -52,7 +52,7 @@ public class HttpController {
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView login(@RequestParam(value = "error", required = false) String error) {
         if (error != null) {
-            mav.addObject("error", "Error during login process! Check input data!");
+            mav.addObject("message", "Error during login process! Check input data!");
         }
 
         mav.setViewName("login");
