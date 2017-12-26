@@ -9,16 +9,27 @@
 </head>
 <body>
 <%@include file="/parts/top.jsp" %>
-<div class="wrapper">
+<table style="width: 100%">
+    <tr>
+        <th>Name</th>
+        <th>Brand</th>
+        <th>Description</th>
+        <th>Price</th>
+    </tr>
     <c:forEach items="${products}" var="product">
-        <a href="product?id=${product.id}">
-            <div class="box">
-                <p>${product.name}</p>
-                <p>Brand: ${product.brand}</p>
-                <p>Price: ${product.price} UAH</p>
-            </div>
-        </a>
+        <tr onclick="window.location='productItem?id=${product.id}'">
+            <td>${product.name}</td>
+            <td>${product.brand}</td>
+            <td>${product.description}</td>
+            <td>${product.price}</td>
+        </tr>
     </c:forEach>
-</div>
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td><a href="/addProduct">Add new product</a></td>
+    </tr>
+</table>
 </body>
 </html>

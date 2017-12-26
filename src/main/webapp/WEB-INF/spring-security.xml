@@ -7,22 +7,22 @@
 	http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
     <!-- enable use-expressions -->
-    <http auto-config="true" use-expressions="true">
-        <intercept-url pattern="/product**" access="hasRole('ADMIN')"/>
+    <http use-expressions="true">
+        <!--<intercept-url pattern="/product**" access="hasRole('ADMIN')"/>-->
 
         <!-- access denied page -->
         <access-denied-handler error-page="/403"/>
         <form-login
                 login-page="/login"
-                default-target-url="/productList"
-                authentication-failure-url="/register"
+                default-target-url="/home"
+                authentication-failure-url="/login?error"
                 username-parameter="username"
                 password-parameter="password"/>
+        <logout logout-success-url="/home" />
     </http>
 
     <authentication-manager>
         <authentication-provider user-service-ref="userService">
-            <password-encoder hash="plaintext"/>
         </authentication-provider>
     </authentication-manager>
 
