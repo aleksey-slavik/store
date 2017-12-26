@@ -10,24 +10,22 @@
 <table style="width: 80%" align="center">
     <tr>
         <td style="width: 10%">Name:</td>
-        <td id="name"></td>
+        <td>${product.name}</td>
     </tr>
     <tr>
         <td style="width: 10%">Brand:</td>
-        <td id="brand"></td>
+        <td>${product.brand}</td>
     </tr>
     <tr>
         <td style="width: 10%">Description:</td>
-        <td id="description"></td>
+        <td>${product.description}</td>
     </tr>
     <tr>
         <td style="width: 10%">Price:</td>
-        <td id="price"></td>
+        <td>${product.price}</td>
     </tr>
 </table>
-<div style="text-align: center;"><a href="addToCart">Add item to my shopping cart</a></div>
-<div style="text-align: center;"><a href="home">Home</a></div>
-<%@include file="/parts/scripts.jsp" %>
-<script type="text/javascript" src="${pageContext.request.contextPath}/script/product-item.js"></script>
+<div style="text-align: center;"><a href="/addToCart">Add item to my shopping cart</a></div>
+<div style="text-align: center;"><a href="/home">Home</a></div>
 </body>
 </html>

@@ -21,12 +21,12 @@ public class HttpController {
 
     @RequestMapping(value = {"/", "/home", "/productList"}, method = RequestMethod.GET)
     public ModelAndView home() {
-
         ObjectMapper mapper = new ObjectMapper();
+
         try {
             Product[] products = mapper.readValue(new URL("http://localhost:8080/products"), Product[].class);
             mav.addObject("products", products);
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -35,7 +35,16 @@ public class HttpController {
     }
 
     @RequestMapping(value = "/productItem", method = RequestMethod.GET)
-    public ModelAndView productItem(@PathVariable Long id) {
+    public ModelAndView productItem(@RequestParam(value = "id") Long id) {
+        ObjectMapper mapper = new ObjectMapper();
+
+        try {
+            Product product = mapper.readValue(new URL("http://localhost:8080/products/" + id), Product.class);
+            mav.addObject("product", product);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         mav.setViewName("productItem");
         return mav;
     }
