@@ -8,10 +8,15 @@
 
     <!-- enable use-expressions -->
     <http auto-config="true" use-expressions="true">
-        <!--<intercept-url pattern="/product**" access="hasRole('ADMIN')"/>-->
+        <!--<intercept-url pattern="/edit**" access="hasRole('ADMIN')"/>
+        <intercept-url pattern="/create**" access="hasRole('ADMIN')"/>
+        <intercept-url pattern="/delete**" access="hasRole('ADMIN')"/>
+        <intercept-url pattern="/cart**" access="hasRole('USER')"/>-->
 
         <!-- access denied page -->
-        <access-denied-handler error-page="/403"/>
+        <access-denied-handler
+                error-page="/403"/>
+
         <form-login
                 login-page="/login"
                 login-processing-url="/j_spring_security_check"
@@ -19,20 +24,14 @@
                 password-parameter="password"
                 default-target-url="/home"
                 authentication-failure-url="/login?error"/>
-        <logout logout-url="/j_spring_security_logout"
+
+        <logout
+                logout-url="/j_spring_security_logout"
                 logout-success-url="/home"/>
     </http>
 
     <authentication-manager>
-        <!--
-        <authentication-provider user-service-ref="userService">
-            <password-encoder hash="plaintext"/>
-        </authentication-provider>-->
-        <authentication-provider>
-            <user-service>
-                <user name="admin" password="admin" authorities="ADMIN"/>
-            </user-service>
-        </authentication-provider>
+        <authentication-provider user-service-ref="userService"/>
     </authentication-manager>
 
 </beans:beans>

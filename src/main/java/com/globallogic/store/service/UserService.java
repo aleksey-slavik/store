@@ -1,7 +1,6 @@
 package com.globallogic.store.service;
 
 import com.globallogic.store.dao.AbstractGenericDAO;
-import com.globallogic.store.model.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -18,8 +17,8 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("username", s);
-        com.globallogic.store.model.User user = (com.globallogic.store.model.User) userDao.findByCriteria(params);
-        List<GrantedAuthority> authorities = buildUserAuthority();
+        com.globallogic.store.model.User user = (com.globallogic.store.model.User) userDao.findByCriteria(params).get(0);
+        List<GrantedAuthority> authorities = buildUserAuthority(user);
         return buildUserForAuthentication(user, authorities);
     }
 
@@ -27,14 +26,10 @@ public class UserService implements UserDetailsService {
         return new User(user.getUsername(), user.getPassword(), authorities);
     }
 
-    private List<GrantedAuthority> buildUserAuthority() {
-        Set<GrantedAuthority> setAuths = new HashSet<GrantedAuthority>();
-
-        for (Role userRole : Role.values()) {
-            setAuths.add(new SimpleGrantedAuthority(userRole.name()));
-        }
-
-        return new ArrayList<GrantedAuthority>(setAuths);
+    private List<GrantedAuthority> buildUserAuthority(com.globallogic.store.model.User user) {
+        Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
+        authorities.add(new SimpleGrantedAuthority(user.getRole().name()));
+        return new ArrayList<GrantedAuthority>(authorities);
     }
 
     public void setUserDao(AbstractGenericDAO userDao) {
