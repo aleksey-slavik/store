@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <html>
 <head>
     <%@ include file="/parts/meta.jsp" %>
@@ -25,7 +26,20 @@
         <td>${product.price}</td>
     </tr>
 </table>
-<div style="text-align: center;"><a href="/addToCart">Add item to my shopping cart</a></div>
+<sec:authorize access="hasAuthority('CUSTOMER')">
+    <div style="text-align: center;"><a href="/addToCart">Add item to my shopping cart</a></div>
+</sec:authorize>
+<sec:authorize access="hasAuthority('ADMIN')">
+    <div style="text-align: center;">
+        <a href="/updateProduct?id=<%= request.getParameter("id") %>">Save changes</a>
+    </div>
+    <div style="text-align: center;">
+        <a href="/deleteProduct?id=<%= request.getParameter("id") %>">Remove product</a>
+    </div>
+    <div style="text-align: center;">
+        <a href="/createProduct">Add new product</a>
+    </div>
+</sec:authorize>
 <div style="text-align: center;"><a href="/home">Home</a></div>
 </body>
 </html>
