@@ -95,4 +95,12 @@ public class ProductsController{
         mav.setViewName("redirect:/home");
         return mav;
     }
+
+    @RequestMapping(value = {"/deleteProduct"}, method = RequestMethod.GET)
+    public ModelAndView delete(@RequestParam(value = "id") Long id) {
+        RestTemplate template = new RestTemplate();
+        template.delete("http://localhost:8080/products/" + id);
+        mav.setViewName("redirect:/home");
+        return mav;
+    }
 }
