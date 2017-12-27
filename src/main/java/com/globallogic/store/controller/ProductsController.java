@@ -58,14 +58,14 @@ public class ProductsController{
 
     @RequestMapping(value = "/createProductProcess", method = RequestMethod.POST)
     public ModelAndView saveProductItem(@ModelAttribute("productForm") Product product, HttpServletRequest request, HttpServletResponse response) {
-        try {
+        /*try {
             RequestDispatcher dispatcher = request.getRequestDispatcher("http://localhost:8080/products/");
             dispatcher.forward(request, response);
         } catch (ServletException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
 
         mav.setViewName("home");
         return mav;

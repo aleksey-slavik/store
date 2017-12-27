@@ -28,6 +28,8 @@
         <logout
                 logout-url="/j_spring_security_logout"
                 logout-success-url="/home"/>
+
+        <csrf disabled="true"/>
     </http>
 
     <authentication-manager>

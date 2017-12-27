@@ -1,5 +1,6 @@
 package com.globallogic.store.rest;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.globallogic.store.dao.AbstractGenericDAO;
 import com.globallogic.store.model.Product;
 import org.springframework.http.MediaType;

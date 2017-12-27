@@ -1,5 +1,6 @@
 package com.globallogic.store.dao;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
@@ -79,7 +80,7 @@ public class AbstractGenericDAO<T> implements GenericDAO<T> {
     public T delete(final Long id) {
         return new TemplateGenericDAO<T>().processQuery(new ExecutionCallback<T>() {
             public T query(Session session) {
-                T entity = session.load(type, id);
+                T entity = session.get(type, id);
                 session.delete(entity);
                 return entity;
             }
