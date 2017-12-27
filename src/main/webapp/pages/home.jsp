@@ -30,7 +30,7 @@
             <td></td>
             <td></td>
             <td></td>
-            <td><a href="/addProduct">Add new product</a></td>
+            <td><a href="/createProduct">Add new product</a></td>
         </tr>
     </sec:authorize>
 </table>

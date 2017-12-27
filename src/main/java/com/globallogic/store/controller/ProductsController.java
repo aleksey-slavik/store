@@ -1,7 +1,6 @@
 package com.globallogic.store.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.globallogic.store.model.Product;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
@@ -12,10 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URL;
 
@@ -72,6 +67,32 @@ public class ProductsController{
     @RequestMapping(value = {"/createProduct"}, method = RequestMethod.GET)
     public ModelAndView create() {
         mav.setViewName("createProductItem");
+        return mav;
+    }
+
+    @RequestMapping(value = {"/updateProduct"}, method = RequestMethod.GET)
+    public ModelAndView update(@RequestParam(value = "id") Long id) {
+        ObjectMapper mapper = new ObjectMapper();
+
+        try {
+            Product product = mapper.readValue(new URL("http://localhost:8080/products/" + id), Product.class);
+            mav.addObject("product", product);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        mav.setViewName("updateProductItem");
+        return mav;
+    }
+
+    @RequestMapping(value = "/updateProductProcess", method = RequestMethod.POST)
+    public ModelAndView updateProductItem(@RequestParam(value = "id") Long id, @ModelAttribute("productForm") Product product) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Accept", MediaType.APPLICATION_JSON_VALUE);
+        HttpEntity<Product> request = new HttpEntity<Product>(product, headers);
+        RestTemplate template = new RestTemplate();
+        template.exchange("http://localhost:8080/products/" + id, HttpMethod.PUT, request, Void.class);
+        mav.setViewName("redirect:/home");
         return mav;
     }
 }

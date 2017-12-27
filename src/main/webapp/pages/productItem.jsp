@@ -31,7 +31,7 @@
 </sec:authorize>
 <sec:authorize access="hasAuthority('ADMIN')">
     <div style="text-align: center;">
-        <a href="${pageContext.request.contextPath}/updateProduct?id=<%= request.getParameter("id") %>">Save changes</a>
+        <a href="${pageContext.request.contextPath}/updateProduct?id=<%= request.getParameter("id") %>">Change product</a>
     </div>
     <div style="text-align: center;">
         <a href="${pageContext.request.contextPath}/deleteProduct?id=<%= request.getParameter("id") %>">Remove product</a>
