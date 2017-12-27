@@ -8,10 +8,10 @@
 
     <!-- enable use-expressions -->
     <http auto-config="true" use-expressions="true">
-        <!--<intercept-url pattern="/edit**" access="hasRole('ADMIN')"/>
-        <intercept-url pattern="/create**" access="hasRole('ADMIN')"/>
-        <intercept-url pattern="/delete**" access="hasRole('ADMIN')"/>
-        <intercept-url pattern="/cart**" access="hasRole('USER')"/>-->
+        <intercept-url pattern="/edit**" access="hasAuthority('ADMIN')"/>
+        <intercept-url pattern="/create**" access="hasAuthority('ADMIN')"/>
+        <intercept-url pattern="/delete**" access="hasAuthority('ADMIN')"/>
+        <intercept-url pattern="/cart**" access="hasAuthority('USER')"/>
 
         <!-- access denied page -->
         <access-denied-handler

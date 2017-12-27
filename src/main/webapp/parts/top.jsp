@@ -2,9 +2,8 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <div id="top-panel">
-    <sec:authentication var="user" property="principal.username"/>
-
     <sec:authorize access="hasAnyAuthority('ADMIN', 'CUSTOMER')">
+        <sec:authentication var="user" property="principal.username"/>
         <a class="account-panel">${user}</a>
         <a class="account-panel" href="logout">(logout)</a>
     </sec:authorize>

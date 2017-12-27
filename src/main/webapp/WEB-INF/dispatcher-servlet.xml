@@ -16,7 +16,16 @@
        http://www.springframework.org/schema/aop
        http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-    <mvc:annotation-driven/>
+    <mvc:annotation-driven content-negotiation-manager="contentManager"/>
+
+    <bean id="contentManager"
+          class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+        <property name="favorPathExtension" value="false"/>
+        <property name="ignoreAcceptHeader" value="false"/>
+        <property name="defaultContentType" value="application/json"/>
+        <property name="useJaf" value="false"/>
+    </bean>
+
     <context:component-scan base-package="com.globallogic.store.*"/>
 
     <!-- JSON Support -->

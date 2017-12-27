@@ -31,13 +31,13 @@
 </sec:authorize>
 <sec:authorize access="hasAuthority('ADMIN')">
     <div style="text-align: center;">
-        <a href="/updateProduct?id=<%= request.getParameter("id") %>">Save changes</a>
+        <a href="${pageContext.request.contextPath}/updateProduct?id=<%= request.getParameter("id") %>">Save changes</a>
     </div>
     <div style="text-align: center;">
-        <a href="/deleteProduct?id=<%= request.getParameter("id") %>">Remove product</a>
+        <a href="${pageContext.request.contextPath}/deleteProduct?id=<%= request.getParameter("id") %>">Remove product</a>
     </div>
     <div style="text-align: center;">
-        <a href="/createProduct">Add new product</a>
+        <a href="${pageContext.request.contextPath}/createProduct">Add new product</a>
     </div>
 </sec:authorize>
 <div style="text-align: center;"><a href="/home">Home</a></div>
