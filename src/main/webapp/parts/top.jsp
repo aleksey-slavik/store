@@ -5,7 +5,7 @@
     <sec:authorize access="hasAnyAuthority('ADMIN', 'CUSTOMER')">
         <sec:authentication var="user" property="principal.username"/>
         <a class="account-panel">${user}</a>
-        <a class="account-panel" href="logout">(logout)</a>
+        <a class="account-panel" href="j_spring_security_logout">(logout)</a>
     </sec:authorize>
 
     <sec:authorize access="hasAuthority('CUSTOMER')">

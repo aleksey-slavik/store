@@ -1,6 +1,5 @@
 package com.globallogic.store.dao;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
