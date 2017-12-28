@@ -27,7 +27,7 @@
     </tr>
 </table>
 <sec:authorize access="hasAuthority('CUSTOMER')">
-    <div style="text-align: center;"><a href="/addToCart">Add item to my shopping cart</a></div>
+    <div style="text-align: center;"><a href="addToCart">Add item to my shopping cart</a></div>
 </sec:authorize>
 <sec:authorize access="hasAuthority('ADMIN')">
     <div style="text-align: center;">
@@ -40,6 +40,6 @@
         <a href="${pageContext.request.contextPath}/createProduct">Add new product</a>
     </div>
 </sec:authorize>
-<div style="text-align: center;"><a href="/home">Home</a></div>
+<div style="text-align: center;"><a href="home">Home</a></div>
 </body>
 </html>

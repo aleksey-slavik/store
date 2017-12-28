@@ -20,7 +20,7 @@ import java.net.URL;
  * @author oleksii.slavik
  */
 @Controller
-public class ProductsController{
+public class ProductsController {
 
     private ModelAndView mav = new ModelAndView();
 
