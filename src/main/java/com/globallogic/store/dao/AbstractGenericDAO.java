@@ -45,13 +45,13 @@ public class AbstractGenericDAO<T> implements GenericDAO<T> {
                 CriteriaQuery<T> query = builder.createQuery(type);
                 Root<T> root = query.from(type);
                 query.select(root);
-                Predicate predicate = null;
+                ArrayList<Predicate> predicates = new ArrayList<Predicate>();
 
                 for (Map.Entry<String, String> entry : params.entrySet()) {
-                    predicate = builder.and(builder.equal(root.get(entry.getKey()), entry.getValue()));
+                    predicates.add(builder.equal(root.get(entry.getKey()), entry.getValue()));
                 }
 
-                query.where(predicate);
+                query.where(builder.and(predicates.toArray(new Predicate[] {})));
                 Query<T> q = session.createQuery(query);
                 return q.getResultList();
             }
