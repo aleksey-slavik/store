@@ -22,6 +22,11 @@ public class ProductController {
         return productDao.findAll();
     }
 
+    @RequestMapping(value = "/products/search/{key}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Product> searchProduct(@PathVariable String key) {
+        return productDao.findByKey(key, "name", "brand", "description");
+    }
+
     @RequestMapping(value = "/products", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public Product createProduct(@RequestBody Product product) {
         return productDao.create(product);
