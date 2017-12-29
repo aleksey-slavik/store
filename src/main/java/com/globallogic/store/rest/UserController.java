@@ -31,6 +31,11 @@ public class UserController {
         return userDao.findByCriteria(params);
     }
 
+    @RequestMapping(value = "/users/search/{key}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<User> searchUser(@PathVariable String key) {
+        return userDao.findByKey(key, "firstname", "lastname", "username");
+    }
+
     @RequestMapping(value = "/users", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public User createUser(@RequestBody User user) {
         return userDao.create(user);

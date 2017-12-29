@@ -11,6 +11,8 @@ public interface GenericDAO<T> {
 
     List<T> findByCriteria(Map<String, String> params);
 
+    List<T> findByKey(String key, String... columns);
+
     T create(T entity);
 
     T update(T entity);

@@ -1,6 +1,7 @@
 package com.globallogic.store.dao;
 
 import org.hibernate.Session;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.query.Query;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -57,6 +58,27 @@ public class AbstractGenericDAO<T> implements GenericDAO<T> {
             }
         });
     }
+
+    public List<T> findByKey(final String key, final String... columns) {
+        return new TemplateGenericDAO<List<T>>().processQuery(new ExecutionCallback<List<T>>() {
+            public List<T> query(Session session) {
+                CriteriaBuilder builder = session.getCriteriaBuilder();
+                CriteriaQuery<T> query = builder.createQuery(type);
+                Root<T> root = query.from(type);
+                query.select(root);
+                ArrayList<Predicate> predicates = new ArrayList<Predicate>();
+
+                for (String column : columns) {
+                    predicates.add(builder.like(root.<String>get(column), "%" + key + "%"));
+                }
+
+                query.where(builder.or(predicates.toArray(new Predicate[] {})));
+                Query<T> q = session.createQuery(query);
+                return q.getResultList();
+            }
+        });
+    }
+
 
     public T create(final T entity) {
         return new TemplateGenericDAO<T>().processQuery(new ExecutionCallback<T>() {
