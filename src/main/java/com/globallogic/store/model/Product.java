@@ -17,6 +17,16 @@ public class Product {
 
     private Double price;
 
+    public Product() {
+    }
+
+    public Product(String name, String brand, String description, Double price) {
+        this.name = name;
+        this.brand = brand;
+        this.description = description;
+        this.price = price;
+    }
+
     public Long getId() {
         return id;
     }

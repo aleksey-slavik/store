@@ -18,7 +18,7 @@
         <th>Price</th>
     </tr>
     <c:forEach items="${products}" var="product">
-        <tr onclick="window.location='productItem?id=${product.id}'">
+        <tr onclick="window.location='product?id=${product.id}'">
             <td>${product.name}</td>
             <td>${product.brand}</td>
             <td>${product.description}</td>

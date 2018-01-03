@@ -1,4 +1,4 @@
-package com.globallogic.store.controller;
+package com.globallogic.store.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.globallogic.store.model.Product;
@@ -16,7 +16,7 @@ import java.net.URL;
  *
  * @author oleksii.slavik
  */
-@Controller
+
 public class ProductsController {
 
     private ModelAndView mav = new ModelAndView();
@@ -24,7 +24,6 @@ public class ProductsController {
     @RequestMapping(value = {"/", "/home", "/productList"}, method = RequestMethod.GET)
     public ModelAndView home() {
         ObjectMapper mapper = new ObjectMapper();
-        ModelAndView mav = new ModelAndView();
 
         try {
             Product[] products = mapper.readValue(new URL("http://localhost:8080/products"), Product[].class);
@@ -57,7 +56,6 @@ public class ProductsController {
         HttpEntity<Product> request = new HttpEntity<Product>(product);
         RestTemplate template = new RestTemplate();
         ResponseEntity<Product> response = template.postForEntity("http://localhost:8080/products/", request, Product.class);
-        System.out.println(response.getStatusCode());
         mav.setViewName("redirect:/home");
         return mav;
     }
