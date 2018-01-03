@@ -32,8 +32,8 @@
         <csrf disabled="true"/>
     </http>
 
-    <authentication-manager>
-        <authentication-provider user-service-ref="userService"/>
+    <authentication-manager alias="authenticationManager">
+        <authentication-provider user-service-ref="loginUserService"/>
     </authentication-manager>
 
 </beans:beans>

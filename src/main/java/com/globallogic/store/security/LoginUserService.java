@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.*;
 
-public class UserService implements UserDetailsService {
+public class LoginUserService implements UserDetailsService {
 
     private AbstractGenericDAO userDao;
 

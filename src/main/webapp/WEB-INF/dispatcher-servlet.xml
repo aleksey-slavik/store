@@ -47,6 +47,7 @@
                 <prop key="/login">login</prop>
                 <prop key="/403">accessDenied</prop>
                 <prop key="/register">register</prop>
+                <prop key="/registerProcess">registerProcess</prop>
             </props>
         </property>
     </bean>
@@ -62,6 +63,7 @@
     <bean id="login" class="com.globallogic.store.web.login.Login"/>
     <bean id="accessDenied" class="com.globallogic.store.web.security.AccessDenied"/>
     <bean id="register" class="com.globallogic.store.web.registration.Registration"/>
+    <bean id="registerProcess" class="com.globallogic.store.web.registration.RegisterProcess"/>
 
     <!-- Resource resolver -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -106,8 +108,13 @@
         <property name="orderItemDao" ref="orderItemDao"/>
     </bean>
 
-    <bean id="userService" class="com.globallogic.store.security.UserService">
+    <bean id="loginUserService" class="com.globallogic.store.security.LoginUserService">
         <property name="userDao" ref="userDao"/>
+    </bean>
+
+    <bean id="registerUserService" class="com.globallogic.store.security.RegisterUserService">
+        <property name="authenticationManager" ref="authenticationManager"/>
+        <property name="userDetailsService" ref="loginUserService"/>
     </bean>
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
