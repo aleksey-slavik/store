@@ -24,6 +24,7 @@ public class ProductsController {
     @RequestMapping(value = {"/", "/home", "/productList"}, method = RequestMethod.GET)
     public ModelAndView home() {
         ObjectMapper mapper = new ObjectMapper();
+        ModelAndView mav = new ModelAndView();
 
         try {
             Product[] products = mapper.readValue(new URL("http://localhost:8080/products"), Product[].class);

@@ -54,7 +54,7 @@ public class ProductController {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Product DeleteProduct(@PathParam("id") Long id) {
+    public Product deleteProduct(@PathParam("id") Long id) {
         return productDao.delete(id);
     }
 }

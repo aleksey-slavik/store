@@ -54,7 +54,7 @@ public class UserController {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public User DeleteUser(@PathParam("id") Long id) {
+    public User deleteUser(@PathParam("id") Long id) {
         return userDao.delete(id);
     }
 }
