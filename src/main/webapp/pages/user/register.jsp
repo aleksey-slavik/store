@@ -8,7 +8,7 @@
 </head>
 <body>
 <%@include file="/parts/top.jsp" %>
-<form id="regForm" action="registerProcess" method="post">
+<form id="regForm" action="${pageContext.request.contextPath}/register" method="post">
     <table align="center">
         <tr>
             <td><label for="firstname">First Name</label></td>

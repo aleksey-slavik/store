@@ -30,7 +30,7 @@
             <td></td>
             <td></td>
             <td></td>
-            <td><a href="/product/create">Add new product</a></td>
+            <td><a href="${pageContext.request.contextPath}/product/create">Create product</a></td>
         </tr>
     </sec:authorize>
 </table>

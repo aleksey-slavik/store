@@ -7,7 +7,7 @@
 </head>
 <body>
 <%@include file="/parts/top.jsp" %>
-<form id="regForm" action="/product/update?id=${product.id}" method="post">
+<form id="regForm" action="${pageContext.request.contextPath}/product/update?id=${product.id}" method="post">
     <table align="center">
         <tr>
             <td><label for="name">Name</label></td>

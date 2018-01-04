@@ -41,7 +41,7 @@ public class Registration extends AbstractController {
         ModelAndView mav = new ModelAndView();
         HttpEntity<User> request = new HttpEntity<User>(user);
         RestTemplate template = new RestTemplate();
-        ResponseEntity<User> response = template.postForEntity("http://localhost:8080/users/", request, User.class);
+        template.postForEntity("http://localhost:8080/users/", request, User.class);
 
         RegisterUserService userService = new RegisterUserService();
         userService.autoLogin(username, password);
