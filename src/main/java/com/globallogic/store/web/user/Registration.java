@@ -1,4 +1,4 @@
-package com.globallogic.store.web.registration;
+package com.globallogic.store.web.user;
 
 import com.globallogic.store.model.User;
 import com.globallogic.store.security.RegisterUserService;
@@ -11,10 +11,26 @@ import org.springframework.web.servlet.mvc.AbstractController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class RegisterProcess extends AbstractController {
+public class Registration extends AbstractController {
 
     @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        String method = httpServletRequest.getMethod();
+
+        if (method.equals(METHOD_GET)) {
+            return getRegisterForm();
+        } else if (method.equals(METHOD_POST)) {
+            return registerUser(httpServletRequest);
+        } else {
+            return new ModelAndView("error/error");
+        }
+    }
+
+    private ModelAndView getRegisterForm() {
+        return new ModelAndView("user/register");
+    }
+
+    private ModelAndView registerUser(HttpServletRequest httpServletRequest) {
         String firstname = httpServletRequest.getParameter("firstname");
         String lastname = httpServletRequest.getParameter("lastname");
         String username = httpServletRequest.getParameter("username");

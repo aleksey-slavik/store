@@ -9,6 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 public class AccessDenied extends AbstractController{
     @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
-        return new ModelAndView("403");
+        return new ModelAndView("error/403");
     }
 }

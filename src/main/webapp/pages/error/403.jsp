@@ -7,6 +7,8 @@
 </head>
 <body>
 <%@include file="/parts/top.jsp" %>
-<h2>You do not have permission to access this page!</h2>
+<div style="text-align: center;">
+    <h2>You do not have permission to access this page!</h2>
+</div>
 </body>
 </html>

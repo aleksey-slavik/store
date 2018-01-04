@@ -36,18 +36,15 @@
     <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
             <props>
-                <prop key="/">productList</prop>
-                <prop key="/home">productList</prop>
-                <prop key="/product">productItem</prop>
-                <prop key="/createProduct">createProduct</prop>
-                <prop key="/createProductProcess">createProductProcess</prop>
-                <prop key="/updateProduct">updateProduct</prop>
-                <prop key="/updateProductProcess">updateProductProcess</prop>
-                <prop key="/deleteProduct">deleteProduct</prop>
+                <prop key="/">product</prop>
+                <prop key="/home">product</prop>
+                <prop key="/product">product</prop>
+                <prop key="/product/create">createProduct</prop>
+                <prop key="/product/update">updateProduct</prop>
+                <prop key="/product/delete">deleteProduct</prop>
                 <prop key="/login">login</prop>
                 <prop key="/403">accessDenied</prop>
                 <prop key="/register">register</prop>
-                <prop key="/registerProcess">registerProcess</prop>
                 <prop key="/addToCart">addToCart</prop>
                 <prop key="/cart">cart</prop>
                 <prop key="/makeOrder">makeOrder</prop>
@@ -58,17 +55,13 @@
     </bean>
 
     <!-- Controllers -->
-    <bean id="productList" class="com.globallogic.store.web.product.ProductList"/>
-    <bean id="productItem" class="com.globallogic.store.web.product.ProductItem"/>
+    <bean id="product" class="com.globallogic.store.web.product.ShowProduct"/>
     <bean id="createProduct" class="com.globallogic.store.web.product.CreateProduct"/>
-    <bean id="createProductProcess" class="com.globallogic.store.web.product.CreateProductProcess"/>
     <bean id="updateProduct" class="com.globallogic.store.web.product.UpdateProduct"/>
-    <bean id="updateProductProcess" class="com.globallogic.store.web.product.UpdateProductProcess"/>
     <bean id="deleteProduct" class="com.globallogic.store.web.product.DeleteProduct"/>
-    <bean id="login" class="com.globallogic.store.web.login.Login"/>
+    <bean id="login" class="com.globallogic.store.web.user.Login"/>
     <bean id="accessDenied" class="com.globallogic.store.web.security.AccessDenied"/>
-    <bean id="register" class="com.globallogic.store.web.registration.Registration"/>
-    <bean id="registerProcess" class="com.globallogic.store.web.registration.RegisterProcess"/>
+    <bean id="register" class="com.globallogic.store.web.user.Registration"/>
     <bean id="addToCart" class="com.globallogic.store.web.order.AddToCart"/>
     <bean id="cart" class="com.globallogic.store.web.order.Cart"/>
     <bean id="makeOrder" class="com.globallogic.store.web.order.MakeOrder"/>

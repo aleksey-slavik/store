@@ -7,7 +7,7 @@
 </head>
 <body>
 <%@include file="/parts/top.jsp" %>
-<form id="regForm" action="createProductProcess" method="post">
+<form id="regForm" action="/product/create" method="post">
     <table align="center">
         <tr>
             <td><label for="name">Name</label></td>

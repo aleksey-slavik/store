@@ -1,4 +1,4 @@
-package com.globallogic.store.web.login;
+package com.globallogic.store.web.user;
 
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -17,7 +17,7 @@ public class Login extends AbstractController {
             mav.addObject("message", "Error during login process! Check input data!");
         }
 
-        mav.setViewName("login");
+        mav.setViewName("user/login");
         return mav;
     }
 }
