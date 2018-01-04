@@ -23,22 +23,27 @@
             <td><a href="${pageContext.request.contextPath}/user?id=${order.user.id}">${order.user.username}</a></td>
             <td>
                 <table width="100%">
-                    <c:forEach items="${order.items}" var="product">
+                    <th>Name</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <c:forEach items="${order.items}" var="item">
                         <tr>
-                            <td>${product.name}</td>
+                            <td>${item.product.name}</td>
+                            <td>${item.quantity}</td>
+                            <td>${item.price}</td>
                         </tr>
                     </c:forEach>
                 </table>
             </td>
             <td>${order.totalCost}</td>
             <td>${order.status}</td>
-            <td><a href="${pageContext.request.contextPath}/user/update?id=${order.id}">Edit</a></td>
-            <td><a href="${pageContext.request.contextPath}/user/delete?id=${order.id}">Delete</a></td>
+            <td><a href="${pageContext.request.contextPath}/order/update?id=${order.id}">Edit</a></td>
+            <td><a href="${pageContext.request.contextPath}/order/delete?id=${order.id}">Delete</a></td>
         </tr>
     </c:forEach>
 </table>
 <div style="text-align: center;">
-    <a href="${pageContext.request.contextPath}/user/create">Create user</a>
+    <a href="${pageContext.request.contextPath}/order/create">Create user</a>
 </div>
 <%@include file="/parts/bottom.jsp" %>
 </body>

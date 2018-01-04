@@ -8,10 +8,6 @@
             <generator class="identity"/>
         </id>
 
-        <!--<many-to-one name="order" class="com.globallogic.store.model.Order" fetch="select" lazy="false">
-            <column name="order_id" not-null="true"/>
-        </many-to-one>-->
-
         <many-to-one name="product" class="com.globallogic.store.model.Product" fetch="select" lazy="false">
             <column name="product_id" not-null="true"/>
         </many-to-one>
