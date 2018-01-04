@@ -21,15 +21,15 @@
             <th>Delete</th>
         </sec:authorize>
     </tr>
-    <c:forEach items="${products}" var="users">
-        <tr onclick="window.location='product?id=${users.id}'">
-            <td>${users.name}</td>
-            <td>${users.brand}</td>
-            <td>${users.description}</td>
-            <td>${users.price}</td>
+    <c:forEach items="${products}" var="order">
+        <tr onclick="window.location='product?id=${order.id}'">
+            <td>${order.name}</td>
+            <td>${order.brand}</td>
+            <td>${order.description}</td>
+            <td>${order.price}</td>
             <sec:authorize access="hasAuthority('ADMIN')">
-                <td><a href="${pageContext.request.contextPath}/product/update?id=${users.id}">Edit</a></td>
-                <td><a href="${pageContext.request.contextPath}/product/delete?id=${users.id}">Delete</a></td>
+                <td><a href="${pageContext.request.contextPath}/product/update?id=${order.id}">Edit</a></td>
+                <td><a href="${pageContext.request.contextPath}/product/delete?id=${order.id}">Delete</a></td>
             </sec:authorize>
         </tr>
     </c:forEach>

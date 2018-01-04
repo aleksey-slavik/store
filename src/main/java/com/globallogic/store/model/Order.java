@@ -9,7 +9,7 @@ public class Order {
     private Double totalCost;
     private User user;
     private Status status;
-    private Set<Product> items = new HashSet<Product>(0);
+    private Set<OrderItem> items = new HashSet<OrderItem>(0);
 
     public Long getId() {
         return id;
@@ -43,11 +43,11 @@ public class Order {
         this.status = status;
     }
 
-    public Set<Product> getItems() {
+    public Set<OrderItem> getItems() {
         return items;
     }
 
-    public void setItems(Set<Product> products) {
-        this.items = products;
+    public void setItems(Set<OrderItem> items) {
+        this.items = items;
     }
 }

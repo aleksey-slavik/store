@@ -4,30 +4,34 @@
 <html>
 <head>
     <%@ include file="/parts/meta.jsp" %>
-    <title>User List</title>
+    <title>Order List</title>
     <%@include file="/parts/header.jsp" %>
 </head>
 <body>
 <%@include file="/parts/top.jsp" %>
 <table style="width: 100%">
     <tr>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Username</th>
-        <th>Password</th>
-        <th>E-mail</th>
-        <th>Permissions</th>
+        <th>User</th>
+        <th>Products</th>
+        <th>Total Cost</th>
+        <th>Status</th>
         <th>Edit</th>
         <th>Delete</th>
     </tr>
-    <c:forEach items="${users}" var="order">
-        <tr onclick="window.location='user?id=${order.id}'">
-            <td>${order.firstname}</td>
-            <td>${order.lastname}</td>
-            <td>${order.username}</td>
-            <td>${order.password}</td>
-            <td>${order.email}</td>
-            <td>${order.role}</td>
+    <c:forEach items="${orders}" var="order">
+        <tr onclick="window.location='order?id=${order.id}'">
+            <td><a href="${pageContext.request.contextPath}/user?id=${order.user.id}">${order.user.username}</a></td>
+            <td>
+                <table width="100%">
+                    <c:forEach items="${order.items}" var="product">
+                        <tr>
+                            <td>${product.name}</td>
+                        </tr>
+                    </c:forEach>
+                </table>
+            </td>
+            <td>${order.totalCost}</td>
+            <td>${order.status}</td>
             <td><a href="${pageContext.request.contextPath}/user/update?id=${order.id}">Edit</a></td>
             <td><a href="${pageContext.request.contextPath}/user/delete?id=${order.id}">Delete</a></td>
         </tr>

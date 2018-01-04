@@ -3,7 +3,6 @@ package com.globallogic.store.model;
 public class OrderItem {
 
     private Long id;
-    private Order order;
     private Product product;
     private Integer quantity;
     private Double price;
@@ -14,14 +13,6 @@ public class OrderItem {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Order getOrder() {
-        return order;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
     }
 
     public Product getProduct() {

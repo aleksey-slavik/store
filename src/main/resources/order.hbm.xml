@@ -24,14 +24,12 @@
             </type>
         </property>
 
-        <set name="items" table="order_item" catalog="public" lazy="false" fetch="select" cascade="all">
+        <set name="items" table="order_item" catalog="public" lazy="false" fetch="select" cascade="all" >
             <key>
                 <column name="order_id" not-null="true"/>
             </key>
 
-            <many-to-many entity-name="com.globallogic.store.model.Product">
-                <column name="product_id" not-null="true"/>
-            </many-to-many>
+            <one-to-many class="com.globallogic.store.model.OrderItem"/>
         </set>
 
     </class>
