@@ -27,7 +27,12 @@
     </tr>
 </table>
 <sec:authorize access="hasAuthority('CUSTOMER')">
-    <div style="text-align: center;"><a href="addToCart">Add item to my shopping cart</a></div>
+    <form id="regForm" action="addToCart" method="post">
+        <label>
+            <input type="number" name="count" min="1" value="1"/>
+        </label>
+        <button type="submit">Add item to my shopping cart</button>
+    </form>
 </sec:authorize>
 <sec:authorize access="hasAuthority('ADMIN')">
     <div style="text-align: center;">
