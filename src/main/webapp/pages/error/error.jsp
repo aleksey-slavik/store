@@ -10,5 +10,6 @@
 <div style="text-align: center;">
     <h2>Error during request process!</h2>
 </div>
+<%@include file="/parts/bottom.jsp" %>
 </body>
 </html>

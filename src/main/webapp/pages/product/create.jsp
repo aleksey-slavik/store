@@ -5,9 +5,9 @@
     <title>Create new product</title>
     <%@ include file="/parts/header.jsp" %>
 </head>
-<body>
+<body onload='document.createForm.name.focus();'>
 <%@include file="/parts/top.jsp" %>
-<form id="regForm" action="${pageContext.request.contextPath}/product/create" method="post">
+<form id="createForm" action="${pageContext.request.contextPath}/product/create" method="post">
     <table align="center">
         <tr>
             <td><label for="name">Name</label></td>
@@ -39,5 +39,6 @@
     </table>
     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
 </form>
+<%@include file="/parts/bottom.jsp" %>
 </body>
 </html>

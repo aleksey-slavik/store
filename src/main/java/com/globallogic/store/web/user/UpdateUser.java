@@ -1,7 +1,8 @@
-package com.globallogic.store.web.product;
+package com.globallogic.store.web.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.globallogic.store.model.Product;
+import com.globallogic.store.model.Role;
+import com.globallogic.store.model.User;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -15,52 +16,52 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URL;
 
-public class UpdateProduct extends AbstractController {
-
+public class UpdateUser extends AbstractController {
     @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         Long id = Long.valueOf(httpServletRequest.getParameter("id"));
         String method = httpServletRequest.getMethod();
 
         if (method.equals(METHOD_GET)) {
-            return getProductItem(id);
+            return getUserData(id);
         } else if (method.equals(METHOD_POST)) {
-            return updateProductItem(id, httpServletRequest);
+            return updateUserData(id, httpServletRequest);
         } else {
             return new ModelAndView("error/error");
         }
     }
 
-    private ModelAndView getProductItem(Long id) {
+    private ModelAndView getUserData(Long id) {
         ModelAndView mav = new ModelAndView();
-
         ObjectMapper mapper = new ObjectMapper();
 
         try {
-            Product product = mapper.readValue(new URL("http://localhost:8080/products/" + id), Product.class);
-            mav.addObject("product", product);
+            User user = mapper.readValue(new URL("http://localhost:8080/users/" + id), User.class);
+            mav.addObject("user", user);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        mav.setViewName("product/update");
+        mav.setViewName("user/update");
         return mav;
     }
 
-    private ModelAndView updateProductItem(Long id, HttpServletRequest httpServletRequest) {
-        String name = httpServletRequest.getParameter("name");
-        String brand = httpServletRequest.getParameter("brand");
-        String description = httpServletRequest.getParameter("description");
-        Double price = Double.valueOf(httpServletRequest.getParameter("price"));
-        Product product = new Product(name, brand, description, price);
+    private ModelAndView updateUserData(Long id, HttpServletRequest httpServletRequest) {
+        String firstname = httpServletRequest.getParameter("firstname");
+        String lastname = httpServletRequest.getParameter("lastname");
+        String username = httpServletRequest.getParameter("username");
+        String password = httpServletRequest.getParameter("password");
+        String email = httpServletRequest.getParameter("email");
+        Role role = Role.valueOf(httpServletRequest.getParameter("role"));
+        User user = new User(firstname, lastname, username, password, email, role);
 
         ModelAndView mav = new ModelAndView();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Accept", MediaType.APPLICATION_JSON_VALUE);
-        HttpEntity<Product> request = new HttpEntity<Product>(product, headers);
+        HttpEntity<User> request = new HttpEntity<User>(user, headers);
         RestTemplate template = new RestTemplate();
-        template.exchange("http://localhost:8080/products/" + id, HttpMethod.PUT, request, Void.class);
-        mav.setViewName("redirect:/product");
+        template.exchange("http://localhost:8080/users/" + id, HttpMethod.PUT, request, Void.class);
+        mav.setViewName("redirect:/user");
         return mav;
     }
 }

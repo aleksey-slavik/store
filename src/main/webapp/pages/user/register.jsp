@@ -6,7 +6,7 @@
     <title>Register</title>
     <%@include file="/parts/header.jsp" %>
 </head>
-<body>
+<body onload='document.regForm.firstname.focus();'>
 <%@include file="/parts/top.jsp" %>
 <form id="regForm" action="${pageContext.request.contextPath}/register" method="post">
     <table align="center">

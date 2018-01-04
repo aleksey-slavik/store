@@ -39,5 +39,6 @@
         <td id="notification">${message}</td>
     </tr>
 </table>
+<%@include file="/parts/bottom.jsp" %>
 </body>
 </html>

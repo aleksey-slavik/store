@@ -16,23 +16,29 @@
         <th>Brand</th>
         <th>Description</th>
         <th>Price</th>
+        <sec:authorize access="hasAuthority('ADMIN')">
+            <th>Edit</th>
+            <th>Delete</th>
+        </sec:authorize>
     </tr>
-    <c:forEach items="${products}" var="product">
-        <tr onclick="window.location='product?id=${product.id}'">
-            <td>${product.name}</td>
-            <td>${product.brand}</td>
-            <td>${product.description}</td>
-            <td>${product.price}</td>
+    <c:forEach items="${products}" var="users">
+        <tr onclick="window.location='product?id=${users.id}'">
+            <td>${users.name}</td>
+            <td>${users.brand}</td>
+            <td>${users.description}</td>
+            <td>${users.price}</td>
+            <sec:authorize access="hasAuthority('ADMIN')">
+                <td><a href="${pageContext.request.contextPath}/product/update?id=${users.id}">Edit</a></td>
+                <td><a href="${pageContext.request.contextPath}/product/delete?id=${users.id}">Delete</a></td>
+            </sec:authorize>
         </tr>
     </c:forEach>
-    <sec:authorize access="hasAuthority('ADMIN')">
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td><a href="${pageContext.request.contextPath}/product/create">Create product</a></td>
-        </tr>
-    </sec:authorize>
 </table>
+<sec:authorize access="hasAuthority('ADMIN')">
+    <div style="text-align: center;">
+        <a href="${pageContext.request.contextPath}/product/create">Create product</a>
+    </div>
+</sec:authorize>
+<%@include file="/parts/bottom.jsp" %>
 </body>
 </html>

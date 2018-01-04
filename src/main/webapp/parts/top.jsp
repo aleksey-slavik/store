@@ -3,8 +3,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <div id="top-panel">
     <sec:authorize access="hasAnyAuthority('ADMIN', 'CUSTOMER')">
-        <sec:authentication var="user" property="principal.username"/>
-        <a class="account-panel">${user}</a>
+        <sec:authentication var="username" property="principal.username"/>
+        <a class="account-panel">${username}</a>
         <a class="account-panel" href="${pageContext.request.contextPath}/j_spring_security_logout">(logout)</a>
     </sec:authorize>
 

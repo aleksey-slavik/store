@@ -32,6 +32,11 @@ public class User {
         this.role = Role.CUSTOMER;
     }
 
+    public User(String firstname, String lastname, String username, String password, String email, Role role) {
+        this(firstname, lastname, username, password, email);
+        this.role = role;
+    }
+
     public Long getId() {
         return id;
     }

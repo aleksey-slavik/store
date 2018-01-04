@@ -5,9 +5,9 @@
     <title>Update product</title>
     <%@ include file="/parts/header.jsp" %>
 </head>
-<body>
+<body onload='document.updateForm.name.focus();'>
 <%@include file="/parts/top.jsp" %>
-<form id="regForm" action="${pageContext.request.contextPath}/product/update?id=${product.id}" method="post">
+<form id="updateForm" action="${pageContext.request.contextPath}/product/update?id=${product.id}" method="post">
     <table align="center">
         <tr>
             <td><label for="name">Name</label></td>
@@ -39,5 +39,6 @@
     </table>
     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 </form>
+<%@include file="/parts/bottom.jsp" %>
 </body>
 </html>

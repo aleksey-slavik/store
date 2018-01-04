@@ -27,7 +27,7 @@
     </tr>
 </table>
 <sec:authorize access="hasAuthority('CUSTOMER')">
-    <form id="regForm" action="addToCart" method="post">
+    <form style="text-align: center;" action="${pageContext.request.contextPath}/cart" method="post">
         <label>
             <input type="number" name="count" min="1" value="1"/>
         </label>
@@ -35,16 +35,18 @@
     </form>
 </sec:authorize>
 <sec:authorize access="hasAuthority('ADMIN')">
-    <div style="text-align: center;">
-        <a href="${pageContext.request.contextPath}/product/update?id=<%= request.getParameter("id") %>">Update product</a>
+    <div>
+        <a href="${pageContext.request.contextPath}/product/update?id=<%= request.getParameter("id") %>">Update
+            product</a>
     </div>
     <div style="text-align: center;">
-        <a href="${pageContext.request.contextPath}/product/delete?id=<%= request.getParameter("id") %>">Delete product</a>
+        <a href="${pageContext.request.contextPath}/product/delete?id=<%= request.getParameter("id") %>">Delete
+            product</a>
     </div>
     <div style="text-align: center;">
         <a href="${pageContext.request.contextPath}/product/create">Create product</a>
     </div>
 </sec:authorize>
-<div style="text-align: center;"><a href="home">Home</a></div>
+<%@include file="/parts/bottom.jsp" %>
 </body>
 </html>
