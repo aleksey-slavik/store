@@ -6,8 +6,8 @@
 	http://www.springframework.org/schema/security
 	http://www.springframework.org/schema/security/spring-security-4.0.xsd">
 
-    <!-- enable use-expressions -->
     <http auto-config="true" use-expressions="true">
+        <!-- url intercepts -->
         <intercept-url pattern="/cart**" access="hasAuthority('CUSTOMER')"/>
 
         <intercept-url method="POST" pattern="/*" access="hasAuthority('ADMIN')"/>
