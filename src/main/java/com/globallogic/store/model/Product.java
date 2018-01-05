@@ -1,7 +1,7 @@
 package com.globallogic.store.model;
 
 /**
- * Product data for product table
+ * Simple JavaBean domain object that represents a Product
  *
  * @author oleksii.slavik
  */

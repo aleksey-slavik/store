@@ -1,7 +1,7 @@
 package com.globallogic.store.model;
 
 /**
- * User data for users table
+ * Simple JavaBean domain object that represents a User
  *
  * @author oleksii.slavik
  */

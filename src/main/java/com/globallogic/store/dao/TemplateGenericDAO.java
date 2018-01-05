@@ -6,9 +6,22 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
+/**
+ * Implementation of {@link Queryable} interface.
+ * Consist logic of the query to the database.
+ *
+ * @param <T> type of data
+ * @author oleksii.slavik
+ */
 public class TemplateGenericDAO<T> {
 
-    public final T processQuery(ExecutionCallback<T> executionCallback) {
+    /**
+     * Process of given query.
+     *
+     * @param queryable given query
+     * @return result of query
+     */
+    public final T processQuery(Queryable<T> queryable) {
         SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
         Session session = sessionFactory.openSession();
         Transaction transaction = null;
@@ -16,7 +29,7 @@ public class TemplateGenericDAO<T> {
 
         try {
             transaction = session.beginTransaction();
-            result = executionCallback.query(session);
+            result = queryable.query(session);
             transaction.commit();
         } catch (HibernateException e) {
             if (transaction != null) {

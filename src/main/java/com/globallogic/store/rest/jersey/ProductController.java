@@ -1,17 +1,30 @@
 package com.globallogic.store.rest.jersey;
 
-import com.globallogic.store.dao.AbstractGenericDAO;
+import com.globallogic.store.dao.AbstractDAO;
 import com.globallogic.store.model.Product;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
+/**
+ * Jersey rest controller for {@link Product}.
+ *
+ * @author oleksii.slavik
+ */
 @Path("/products")
 public class ProductController {
 
-    private AbstractGenericDAO<Product> productDao = new AbstractGenericDAO<Product>(Product.class);
+    /**
+     * {@link Product} DAO object for access to database.
+     */
+    private AbstractDAO<Product> productDao = new AbstractDAO<Product>(Product.class);
 
+    /**
+     * Return list of {@link Product} represented as json.
+     *
+     * @return list of {@link Product}
+     */
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
@@ -19,6 +32,12 @@ public class ProductController {
         return productDao.findAll();
     }
 
+    /**
+     * Return {@link Product} item with given id
+     *
+     * @param id given id
+     * @return {@link Product} item
+     */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -26,6 +45,12 @@ public class ProductController {
         return productDao.findById(id);
     }
 
+    /**
+     * Return list of {@link Product} items result of search by given key.
+     *
+     * @param key given key
+     * @return list of {@link Product}
+     */
     @GET
     @Path("/search/{key}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -33,6 +58,12 @@ public class ProductController {
         return productDao.findByKey(key, "name", "brand", "description");
     }
 
+    /**
+     * Create given {@link Product}
+     *
+     * @param product given {@link Product}
+     * @return created {@link Product}
+     */
     @POST
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
@@ -41,6 +72,13 @@ public class ProductController {
         return productDao.create(product);
     }
 
+    /**
+     * Update {@link Product} item with given id
+     *
+     * @param id      given id of {@link Product}
+     * @param product updated {@link Product} data
+     * @return updated {@link Product}
+     */
     @PUT
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -50,6 +88,12 @@ public class ProductController {
         return productDao.update(product);
     }
 
+    /**
+     * Delete {@link Product} item with given id
+     *
+     * @param id given id of {@link Product}
+     * @return deleted {@link Product}
+     */
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)

@@ -1,7 +1,7 @@
 package com.globallogic.store.model;
 
 /**
- * Status of order
+ * Enum which consist statuses of {@link Order}
  *
  * @author oleksii.slavik
  */

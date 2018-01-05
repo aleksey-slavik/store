@@ -1,5 +1,10 @@
 package com.globallogic.store.model;
 
+/**
+ * Simple JavaBean domain object that represents a item of {@link Order}
+ *
+ * @author oleksii.slavik
+ */
 public class OrderItem {
 
     private Long id;

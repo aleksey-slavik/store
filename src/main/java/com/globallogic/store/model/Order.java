@@ -3,6 +3,11 @@ package com.globallogic.store.model;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Simple JavaBean domain object that represents a Order
+ *
+ * @author oleksii.slavik
+ */
 public class Order {
 
     private Long id;

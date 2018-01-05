@@ -1,7 +1,7 @@
 package com.globallogic.store.model;
 
 /**
- * User roles
+ * Enum which consist roles of {@link User}
  *
  * @author oleksii.slavik
  */

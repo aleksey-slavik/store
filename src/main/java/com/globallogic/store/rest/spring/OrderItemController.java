@@ -1,44 +1,85 @@
 package com.globallogic.store.rest.spring;
 
-import com.globallogic.store.dao.AbstractGenericDAO;
+import com.globallogic.store.dao.AbstractDAO;
 import com.globallogic.store.model.OrderItem;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Spring rest controller for {@link OrderItem}.
+ *
+ * @author oleksii.slavik
+ */
 @RestController
 public class OrderItemController {
 
-    private AbstractGenericDAO<OrderItem> orderItemDao;
+    /**
+     * {@link OrderItem} DAO object for access to database.
+     */
+    private AbstractDAO<OrderItem> orderItemDao;
 
+    /**
+     * Injection of {@link OrderItem} DAO object for access to database.
+     */
+    public void setOrderItemDao(AbstractDAO<OrderItem> orderItemDao) {
+        this.orderItemDao = orderItemDao;
+    }
+
+    /**
+     * Return {@link OrderItem} item with given id
+     *
+     * @param id given id
+     * @return {@link OrderItem} item
+     */
     @RequestMapping(value = "/orderItems/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public OrderItem getOrderItemById(@PathVariable Long id) {
         return orderItemDao.findById(id);
     }
 
+    /**
+     * Return list of {@link OrderItem} represented as json.
+     *
+     * @return list of {@link OrderItem}
+     */
     @RequestMapping(value = "/orderItems", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<OrderItem> getOrderItemList() {
         return orderItemDao.findAll();
     }
 
+    /**
+     * Create given {@link OrderItem}
+     *
+     * @param orderItem given {@link OrderItem}
+     * @return created {@link OrderItem}
+     */
     @RequestMapping(value = "/orderItems", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public OrderItem createOrderItem(@RequestBody OrderItem orderItem) {
         return orderItemDao.create(orderItem);
     }
 
+    /**
+     * Update {@link OrderItem} item with given id
+     *
+     * @param id    given id of {@link OrderItem}
+     * @param orderItem updated {@link OrderItem} data
+     * @return updated {@link OrderItem}
+     */
     @RequestMapping(value = "/orderItems/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public OrderItem updateOrderItem(@PathVariable Long id, @RequestBody OrderItem orderItem) {
         orderItem.setId(id);
         return orderItemDao.update(orderItem);
     }
 
+    /**
+     * Delete {@link OrderItem} item with given id
+     *
+     * @param id given id of {@link OrderItem}
+     * @return deleted {@link OrderItem}
+     */
     @RequestMapping(value = "/orderItems/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public OrderItem deleteOrderItemById(@PathVariable Long id) {
         return orderItemDao.delete(id);
-    }
-
-    public void setOrderItemDao(AbstractGenericDAO<OrderItem> orderItemDao) {
-        this.orderItemDao = orderItemDao;
     }
 }
