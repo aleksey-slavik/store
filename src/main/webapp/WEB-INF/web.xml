@@ -11,7 +11,7 @@
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
-            /WEB-INF/dispatcher-servlet.xml,
+            /WEB-INF/spring-servlet.xml,
             /WEB-INF/spring-security.xml
         </param-value>
     </context-param>
@@ -22,19 +22,19 @@
 
     <!-- Spring Dispatcher -->
     <servlet>
-        <servlet-name>dispatcher</servlet-name>
+        <servlet-name>spring</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>dispatcher</servlet-name>
+        <servlet-name>spring</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
 
     <!-- Jersey Container -->
     <servlet>
-        <servlet-name>jersey-servlet</servlet-name>
+        <servlet-name>jersey</servlet-name>
         <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
         <init-param>
             <param-name>com.sun.jersey.config.property.packages</param-name>
@@ -48,7 +48,7 @@
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>jersey-servlet</servlet-name>
+        <servlet-name>jersey</servlet-name>
         <url-pattern>/rest/*</url-pattern>
     </servlet-mapping>
 
