@@ -11,19 +11,19 @@
 <table style="width: 80%" align="center">
     <tr>
         <td style="width: 10%">Name:</td>
-        <td>${product.name}</td>
+        <td>${item.name}</td>
     </tr>
     <tr>
         <td style="width: 10%">Brand:</td>
-        <td>${product.brand}</td>
+        <td>${item.brand}</td>
     </tr>
     <tr>
         <td style="width: 10%">Description:</td>
-        <td>${product.description}</td>
+        <td>${item.description}</td>
     </tr>
     <tr>
         <td style="width: 10%">Price:</td>
-        <td>${product.price}</td>
+        <td>${item.price}</td>
     </tr>
 </table>
 <sec:authorize access="hasAuthority('CUSTOMER')">

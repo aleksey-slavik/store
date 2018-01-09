@@ -111,11 +111,11 @@
         <property name="orderItemDao" ref="orderItemDao"/>
     </bean>
 
-    <bean id="loginUserService" class="com.globallogic.store.security.LoginUserService">
+    <bean id="loginUserService" class="com.globallogic.store.security.spring.LoginUserService">
         <property name="userDao" ref="userDao"/>
     </bean>
 
-    <bean id="registerUserService" class="com.globallogic.store.security.RegisterUserService">
+    <bean id="registerUserService" class="com.globallogic.store.security.spring.RegisterUserService">
         <property name="authenticationManager" ref="authenticationManager"/>
         <property name="userDetailsService" ref="loginUserService"/>
     </bean>
@@ -151,4 +151,6 @@
                       expression="execution(* com.globallogic.store.security.*Service.*(..))"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="userServicePointCut"/>
     </aop:config>
+
+    <aop:aspectj-autoproxy/>
 </beans>

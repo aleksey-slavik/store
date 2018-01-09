@@ -7,23 +7,23 @@
 </head>
 <body onload='document.updateForm.name.focus();'>
 <%@include file="/parts/top.jsp" %>
-<form id="updateForm" action="${pageContext.request.contextPath}/product/update?id=${product.id}" method="post">
+<form id="updateForm" action="${pageContext.request.contextPath}/product/update?id=${item.id}" method="post">
     <table align="center">
         <tr>
             <td><label for="name">Name</label></td>
-            <td><input type="text" name="name" id="name" value="${product.name}"/></td>
+            <td><input type="text" name="name" id="name" value="${item.name}"/></td>
         </tr>
         <tr>
             <td><label for="brand">Brand</label></td>
-            <td><input type="text" name="brand" id="brand" value="${product.brand}"/></td>
+            <td><input type="text" name="brand" id="brand" value="${item.brand}"/></td>
         </tr>
         <tr>
             <td><label for="description">Description</label></td>
-            <td><input type="text" name="description" id="description" value="${product.description}"/></td>
+            <td><input type="text" name="description" id="description" value="${item.description}"/></td>
         </tr>
         <tr>
             <td><label for="price">Price</label></td>
-            <td><input type="text" name="price" id="price" value="${product.price}"/></td>
+            <td><input type="text" name="price" id="price" value="${item.price}"/></td>
         </tr>
         <tr>
             <td></td>

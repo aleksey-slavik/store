@@ -1,5 +1,7 @@
 package com.globallogic.store.model;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * Simple JavaBean domain object that represents a Product
  *
@@ -25,6 +27,13 @@ public class Product {
         this.brand = brand;
         this.description = description;
         this.price = price;
+    }
+
+    public Product(HttpServletRequest request) {
+        this.name = request.getParameter("name");
+        this.brand = request.getParameter("brand");
+        this.description = request.getParameter("description");
+        this.price = Double.valueOf(request.getParameter("price"));
     }
 
     public Long getId() {

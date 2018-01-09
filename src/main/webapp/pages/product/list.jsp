@@ -21,7 +21,7 @@
             <th>Delete</th>
         </sec:authorize>
     </tr>
-    <c:forEach items="${products}" var="order">
+    <c:forEach items="${items}" var="order">
         <tr onclick="window.location='product?id=${order.id}'">
             <td>${order.name}</td>
             <td>${order.brand}</td>

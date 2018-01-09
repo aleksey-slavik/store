@@ -5,7 +5,7 @@ package com.globallogic.store.model;
  *
  * @author oleksii.slavik
  */
-public enum  Role {
+public enum Role {
     CUSTOMER,
     ADMIN
 }

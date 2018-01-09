@@ -1,4 +1,4 @@
-package com.globallogic.store.security;
+package com.globallogic.store.security.spring;
 
 import com.globallogic.store.dao.AbstractDAO;
 import org.springframework.security.core.GrantedAuthority;

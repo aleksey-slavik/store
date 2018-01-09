@@ -1,9 +1,8 @@
 package com.globallogic.store.web.user;
 
 import com.globallogic.store.model.User;
-import com.globallogic.store.security.RegisterUserService;
+import com.globallogic.store.security.spring.RegisterUserService;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
