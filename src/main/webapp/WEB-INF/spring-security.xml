@@ -23,7 +23,7 @@
         <intercept-url method="GET" pattern="/*/delete**" access="hasAuthority('ADMIN')"/>
 
         <intercept-url method="GET" pattern="/order" access="hasAuthority('ADMIN')"/>
-        <intercept-url method="GET" pattern="/user" access="hasAuthority('ADMIN')"/>
+        <!--<intercept-url method="GET" pattern="/user" access="hasAuthority('ADMIN')"/>-->
 
         <!-- access denied page -->
         <access-denied-handler

@@ -115,10 +115,10 @@
         <property name="userDao" ref="userDao"/>
     </bean>
 
-    <bean id="registerUserService" class="com.globallogic.store.security.spring.RegisterUserService">
+    <!--<bean id="registerUserService" class="com.globallogic.store.security.spring.RegisterUserService">
         <property name="authenticationManager" ref="authenticationManager"/>
         <property name="userDetailsService" ref="loginUserService"/>
-    </bean>
+    </bean>-->
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.postgresql.Driver"/>
@@ -146,11 +146,22 @@
         </tx:attributes>
     </tx:advice>
 
-    <aop:config>
+   <aop:config>
         <aop:pointcut id="userServicePointCut"
                       expression="execution(* com.globallogic.store.security.*Service.*(..))"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="userServicePointCut"/>
     </aop:config>
 
-    <aop:aspectj-autoproxy/>
+    <aop:aspectj-autoproxy />
+
+    <aop:config>
+        <aop:pointcut id="userAspectPointCut" expression="execution(* com.globallogic.store.web.user.*.*(..))" />
+        <aop:aspect id="authenticationAspect" ref="securityAspect">
+            <aop:around method="checkAccess" pointcut-ref="userAspectPointCut" />
+        </aop:aspect>
+    </aop:config>
+
+    <bean id="securityAspect" class="com.globallogic.store.security.aspect.SecurityManager">
+        <property name="userDAO" ref="userDao" />
+    </bean>
 </beans>
