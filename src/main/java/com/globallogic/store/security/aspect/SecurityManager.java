@@ -17,21 +17,19 @@ public class SecurityManager {
         this.userDAO = userDAO;
     }
 
-    public ModelAndView checkAccess(ProceedingJoinPoint joinPoint) {
+    public ModelAndView checkAccess(ProceedingJoinPoint joinPoint) throws Throwable {
+        System.out.println("AROUND");
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        System.out.println(username);
+        System.out.println("USERNAME : " + username);
 
         if (username != null) {
             HashMap<String, String> params = new HashMap<String, String>();
             params.put("username", username);
             User user = userDAO.findByCriteria(params).get(0);
+            System.out.println("USER : " + user);
 
             if (user.getRole() == Role.ADMIN) {
-                try {
-                    joinPoint.proceed();
-                } catch (Throwable throwable) {
-                    return new ModelAndView("error/403");
-                }
+                return (ModelAndView) joinPoint.proceed();
             }
         }
 
