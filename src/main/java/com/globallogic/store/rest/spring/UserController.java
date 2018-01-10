@@ -1,6 +1,7 @@
 package com.globallogic.store.rest.spring;
 
 import com.globallogic.store.dao.AbstractDAO;
+import com.globallogic.store.exception.EmptyResponseException;
 import com.globallogic.store.model.User;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -46,7 +47,8 @@ public class UserController {
      */
     @RequestMapping(value = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<User> getUserList() {
-        return userDao.findAll();
+        throw new EmptyResponseException();
+        //return userDao.findAll();
     }
 
     /**
