@@ -12,6 +12,12 @@ import javax.servlet.http.HttpServletResponse;
 
 public class Registration extends AbstractController {
 
+    private RegisterUserService registerUserService;
+
+    public void setRegisterUserService(RegisterUserService registerUserService) {
+        this.registerUserService = registerUserService;
+    }
+
     @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         String method = httpServletRequest.getMethod();
@@ -42,10 +48,11 @@ public class Registration extends AbstractController {
         RestTemplate template = new RestTemplate();
         template.postForEntity("http://localhost:8080/users/", request, User.class);
 
-        RegisterUserService userService = new RegisterUserService();
-        userService.autoLogin(username, password);
+        registerUserService.autoLogin(username, password);
 
         mav.setViewName("redirect:/home");
         return mav;
     }
+
+
 }

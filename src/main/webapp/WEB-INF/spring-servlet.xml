@@ -61,7 +61,9 @@
     <bean id="deleteProduct" class="com.globallogic.store.web.product.DeleteProduct"/>
     <bean id="login" class="com.globallogic.store.web.user.Login"/>
     <bean id="accessDenied" class="com.globallogic.store.web.security.AccessDenied"/>
-    <bean id="register" class="com.globallogic.store.web.user.Registration"/>
+    <bean id="register" class="com.globallogic.store.web.user.Registration">
+        <property name="registerUserService" ref="registerUserService"/>
+    </bean>
     <bean id="user" class="com.globallogic.store.web.user.ShowUser"/>
     <bean id="createUser" class="com.globallogic.store.web.user.CreateUser"/>
     <bean id="updateUser" class="com.globallogic.store.web.user.UpdateUser"/>
@@ -115,10 +117,10 @@
         <property name="userDao" ref="userDao"/>
     </bean>
 
-    <!--<bean id="registerUserService" class="com.globallogic.store.security.spring.RegisterUserService">
+    <bean id="registerUserService" class="com.globallogic.store.security.spring.RegisterUserService">
         <property name="authenticationManager" ref="authenticationManager"/>
         <property name="userDetailsService" ref="loginUserService"/>
-    </bean>-->
+    </bean>
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.postgresql.Driver"/>
@@ -146,21 +148,22 @@
         </tx:attributes>
     </tx:advice>
 
+    <aop:aspectj-autoproxy/>
+
     <aop:config>
         <aop:pointcut id="userServicePointCut" expression="execution(* com.globallogic.store.security.*Service.*(..))"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="userServicePointCut"/>
     </aop:config>
 
-    <!--<aop:aspectj-autoproxy/>-->
-
-    <!-- Security Aspects -->
     <aop:config>
-        <aop:pointcut id="userAspectPointCut" expression="execution(* com.globallogic.store.web.user.ShowUser.*(..))"/>
+        <aop:pointcut id="userAspectPointCut" expression="execution(* com.globallogic.store.web.user.*User.*(..))"/>
+
         <aop:aspect id="authorizationAspect" ref="securityAspect">
             <aop:around method="checkAccess" pointcut-ref="userAspectPointCut"/>
         </aop:aspect>
     </aop:config>
 
+    <!-- Security Aspect -->
     <bean id="securityAspect" class="com.globallogic.store.security.aspect.SecurityManager">
         <property name="userDAO" ref="userDao"/>
     </bean>
