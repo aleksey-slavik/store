@@ -42,18 +42,19 @@ public class UserController {
     }
 
     /**
-     * Return list of {@link User} represented as json.
+     * Return list of {@link User} items result of search by given parameters.
+     * If parameter list throws {@link EmptyResponseException}.
      *
+     * @param params given parameters
      * @return list of {@link User}
      */
     @RequestMapping(value = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<User> findUserByCriteria(@RequestParam MultiValueMap<String, String> params) {
+    public List<User> findUser(@RequestParam MultiValueMap<String, String> params) {
         if (params.isEmpty()) {
             throw new EmptyResponseException();
         }
 
         return userDao.findByCriteria(params.toSingleValueMap());
-        //return userDao.findAll();
     }
 
     /**
