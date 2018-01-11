@@ -7,7 +7,6 @@ import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -51,36 +50,11 @@ public class UserController {
     @RequestMapping(value = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<User> findUser(@RequestParam MultiValueMap<String, String> params) {
         if (params.isEmpty()) {
-            throw new EmptyResponseException();
+            return userDao.findAll();
+            //throw new EmptyResponseException();
         }
 
         return userDao.findByCriteria(params.toSingleValueMap());
-    }
-
-    /**
-     * Return {@link User} data by given username and password if it consist in database.
-     *
-     * @param username given username
-     * @param password given password
-     * @return {@link User} item
-     */
-    @RequestMapping(value = "/users/{username}/{password}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<User> verifyUser(@PathVariable String username, @PathVariable String password) {
-        HashMap<String, String> params = new HashMap<String, String>();
-        params.put("username", username);
-        params.put("password", password);
-        return userDao.findByCriteria(params);
-    }
-
-    /**
-     * Return list of {@link User} items result of search by given key.
-     *
-     * @param key given key
-     * @return list of {@link User}
-     */
-    @RequestMapping(value = "/users/search/{key}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<User> searchUser(@PathVariable String key) {
-        return userDao.findByKey(key, "firstname", "lastname", "username");
     }
 
     /**

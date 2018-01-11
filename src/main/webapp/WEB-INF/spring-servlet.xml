@@ -117,6 +117,8 @@
         <property name="userDao" ref="userDao"/>
     </bean>
 
+    <bean id="storeAuthenticationManager" class="com.globallogic.store.security.spring.StoreAuthenticationManager"/>
+
     <bean id="registerUserService" class="com.globallogic.store.security.spring.RegisterUserService">
         <property name="authenticationManager" ref="authenticationManager"/>
         <property name="userDetailsService" ref="loginUserService"/>
@@ -150,13 +152,13 @@
 
     <aop:aspectj-autoproxy/>
 
-    <aop:config>
+    <aop:config proxy-target-class="true">
         <aop:pointcut id="userServicePointCut" expression="execution(* com.globallogic.store.security.*Service.*(..))"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="userServicePointCut"/>
     </aop:config>
 
     <aop:config>
-        <aop:pointcut id="userAspectPointCut" expression="execution(* com.globallogic.store.web.user.*User.*(..))"/>
+        <aop:pointcut id="userAspectPointCut" expression="bean(order)"/>
 
         <aop:aspect id="authorizationAspect" ref="securityAspect">
             <aop:around method="checkAccess" pointcut-ref="userAspectPointCut"/>
@@ -164,7 +166,5 @@
     </aop:config>
 
     <!-- Security Aspect -->
-    <bean id="securityAspect" class="com.globallogic.store.security.aspect.SecurityManager">
-        <property name="userDAO" ref="userDao"/>
-    </bean>
+    <bean id="securityAspect" class="com.globallogic.store.security.aspect.SecurityManager"/>
 </beans>

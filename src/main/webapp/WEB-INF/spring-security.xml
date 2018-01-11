@@ -8,21 +8,23 @@
 
     <http auto-config="true" use-expressions="true">
         <!-- url intercepts -->
-        <!-- access to cart for customers -->
-        <intercept-url pattern="/cart**" access="hasAuthority('CUSTOMER')"/>
+        <!-- customer access -->
+        <!--<intercept-url pattern="/cart**" access="hasAuthority('CUSTOMER')"/>-->
 
-        <!-- access to register for anonymous -->
-        <intercept-url pattern="/register" access="isAnonymous()"/>
+        <!-- anonymous access -->
+        <!--<intercept-url pattern="/register" access="isAnonymous()"/>
+        <intercept-url pattern="/login" access="isAnonymous()"/>-->
 
-        <intercept-url method="POST" pattern="/*" access="hasAuthority('ADMIN')"/>
+        <!-- admin access -->
+        <!--<intercept-url method="POST" pattern="/*" access="hasAuthority('ADMIN')"/>
         <intercept-url method="PUT" pattern="/*" access="hasAuthority('ADMIN')"/>
         <intercept-url method="DELETE" pattern="/*" access="hasAuthority('ADMIN')"/>
 
         <intercept-url method="GET" pattern="/*/create**" access="hasAuthority('ADMIN')"/>
         <intercept-url method="GET" pattern="/*/update**" access="hasAuthority('ADMIN')"/>
-        <intercept-url method="GET" pattern="/*/delete**" access="hasAuthority('ADMIN')"/>
+        <intercept-url method="GET" pattern="/*/delete**" access="hasAuthority('ADMIN')"/>-->
 
-        <intercept-url method="GET" pattern="/order" access="hasAuthority('ADMIN')"/>
+        <!--<intercept-url method="GET" pattern="/order" access="hasAuthority('ADMIN')"/>-->
         <!--<intercept-url method="GET" pattern="/user" access="hasAuthority('ADMIN')"/>-->
 
         <!-- access denied page -->

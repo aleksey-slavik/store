@@ -41,6 +41,8 @@ public class ShowOrder extends AbstractController {
     private ModelAndView getOrderList() {
         ModelAndView mav = new ModelAndView();
 
+        System.out.println("SHOW ORDERS");
+
         try {
             ObjectMapper mapper = new ObjectMapper();
             Order[] orders = mapper.readValue(new URL("http://localhost:8080/orders"), Order[].class);

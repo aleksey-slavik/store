@@ -4,31 +4,28 @@ import com.globallogic.store.dao.AbstractDAO;
 import com.globallogic.store.model.Role;
 import com.globallogic.store.model.User;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
 
 public class SecurityManager {
 
-    private AbstractDAO<User> userDAO;
-
-    public void setUserDAO(AbstractDAO<User> userDAO) {
-        this.userDAO = userDAO;
-    }
-
     public ModelAndView checkAccess(ProceedingJoinPoint joinPoint) throws Throwable {
-        System.out.println("AROUND");
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        System.out.println("USERNAME : " + username);
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (username != null) {
-            HashMap<String, String> params = new HashMap<String, String>();
-            params.put("username", username);
-            User user = userDAO.findByCriteria(params).get(0);
-            System.out.println("USER : " + user);
+        System.out.println(principal.toString());
 
-            if (user.getRole() == Role.ADMIN) {
+        if (principal instanceof UserDetails) {
+            System.out.println(((UserDetails) principal).getUsername());
+            System.out.println(((UserDetails) principal).getAuthorities());
+
+            if (((UserDetails) principal).getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"))) {
+
                 return (ModelAndView) joinPoint.proceed();
             }
         }
