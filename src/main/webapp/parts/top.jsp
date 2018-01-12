@@ -2,7 +2,7 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <div id="top-panel">
-    <sec:authorize access="hasAnyAuthority('ADMIN', 'CUSTOMER')">
+    <sec:authorize access="isAuthenticated()">
         <sec:authentication var="principal" property="principal.username"/>
         <a class="account-panel">${principal}</a>
         <a class="account-panel" href="${pageContext.request.contextPath}/j_spring_security_logout">(logout)</a>

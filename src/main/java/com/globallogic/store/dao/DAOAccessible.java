@@ -36,15 +36,6 @@ public interface DAOAccessible<T> {
     List<T> findByCriteria(Map<String, String> params);
 
     /**
-     * Find all items which have similar to key values in given columns.
-     *
-     * @param key     search key
-     * @param columns column names
-     * @return list of items with similar values
-     */
-    List<T> findByKey(String key, String... columns);
-
-    /**
      * Create given item
      *
      * @param entity given item

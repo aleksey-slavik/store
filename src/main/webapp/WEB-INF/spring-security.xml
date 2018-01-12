@@ -6,7 +6,7 @@
 	http://www.springframework.org/schema/security
 	http://www.springframework.org/schema/security/spring-security-4.0.xsd">
 
-    <http auto-config="true" use-expressions="true">
+    <http use-expressions="true">
         <!-- url intercepts -->
         <!-- customer access -->
         <!--<intercept-url pattern="/cart**" access="hasAuthority('CUSTOMER')"/>-->
@@ -46,8 +46,8 @@
         <csrf disabled="true"/>
     </http>
 
-    <authentication-manager alias="authenticationManager">
-        <authentication-provider user-service-ref="loginUserService"/>
+    <authentication-manager alias="authenticationManager" >
+        <authentication-provider ref="authenticationProvider"/>
     </authentication-manager>
 
 </beans:beans>

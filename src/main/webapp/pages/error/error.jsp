@@ -9,6 +9,7 @@
 <%@include file="/parts/top.jsp" %>
 <div style="text-align: center;">
     <h2>Error during request process!</h2>
+    <h4>Error message: ${message}</h4>
 </div>
 <%@include file="/parts/bottom.jsp" %>
 </body>

@@ -42,6 +42,7 @@ public class LoginUserService implements UserDetailsService {
         params.put("username", s);
         com.globallogic.store.model.User user = (com.globallogic.store.model.User) userDao.findByCriteria(params).get(0);
         List<GrantedAuthority> authorities = buildUserAuthority(user);
+        System.out.println(authorities);
         return buildUserForAuthentication(user, authorities);
     }
 

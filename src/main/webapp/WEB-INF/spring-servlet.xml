@@ -153,7 +153,7 @@
     <aop:aspectj-autoproxy/>
 
     <aop:config proxy-target-class="true">
-        <aop:pointcut id="userServicePointCut" expression="execution(* com.globallogic.store.security.*Service.*(..))"/>
+        <aop:pointcut id="userServicePointCut" expression="execution(* com.globallogic.store.security.spring.*Service.*(..))"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="userServicePointCut"/>
     </aop:config>
 
@@ -166,5 +166,13 @@
     </aop:config>
 
     <!-- Security Aspect -->
-    <bean id="securityAspect" class="com.globallogic.store.security.aspect.SecurityManager"/>
+    <bean id="securityAspect" class="com.globallogic.store.security.aspect.SecurityManager">
+        <property name="authenticationFacade" ref="authenticationFacade"/>
+    </bean>
+
+    <bean id="authenticationProvider" class="com.globallogic.store.security.spring.StoreAuthenticationProvider">
+        <property name="userDao" ref="userDao"/>
+    </bean>
+
+    <bean id="authenticationFacade" class="com.globallogic.store.security.spring.AuthenticateFacade" />
 </beans>

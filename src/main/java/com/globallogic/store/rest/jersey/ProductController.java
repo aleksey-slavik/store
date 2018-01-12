@@ -46,19 +46,6 @@ public class ProductController {
     }
 
     /**
-     * Return list of {@link Product} items result of search by given key.
-     *
-     * @param key given key
-     * @return list of {@link Product}
-     */
-    @GET
-    @Path("/search/{key}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<Product> searchProduct(@PathParam("key") String key) {
-        return productDao.findByKey(key, "name", "brand", "description");
-    }
-
-    /**
      * Create given {@link Product}
      *
      * @param product given {@link Product}

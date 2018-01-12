@@ -2,6 +2,7 @@ package com.globallogic.store.web.order;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.globallogic.store.model.Order;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -41,7 +42,7 @@ public class ShowOrder extends AbstractController {
     private ModelAndView getOrderList() {
         ModelAndView mav = new ModelAndView();
 
-        System.out.println("SHOW ORDERS");
+        System.out.println("ORDER LIST: " + SecurityContextHolder.getContext().getAuthentication());
 
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -49,6 +50,7 @@ public class ShowOrder extends AbstractController {
             mav.addObject("orders", orders);
             mav.setViewName("order/list");
         } catch (IOException e) {
+            mav.addObject("message", e.getMessage());
             mav.setViewName("error/error");
         }
 

@@ -46,19 +46,6 @@ public class UserController {
     }
 
     /**
-     * Return list of {@link User} items result of search by given key.
-     *
-     * @param key given key
-     * @return list of {@link User}
-     */
-    @GET
-    @Path("/search/{key}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<User> searchUser(@PathParam("key") String key) {
-        return userDao.findByKey(key, "firstname", "lastname", "username");
-    }
-
-    /**
      * Create given {@link User}
      *
      * @param user given {@link User}
