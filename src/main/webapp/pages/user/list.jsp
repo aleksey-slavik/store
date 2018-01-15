@@ -9,33 +9,51 @@
 </head>
 <body>
 <%@include file="/parts/top.jsp" %>
-<table style="width: 100%">
-    <tr>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Username</th>
-        <th>Password</th>
-        <th>E-mail</th>
-        <th>Permissions</th>
-        <th>Edit</th>
-        <th>Delete</th>
-    </tr>
-    <c:forEach items="${users}" var="order">
-        <tr onclick="window.location='user?id=${order.id}'">
-            <td>${order.firstname}</td>
-            <td>${order.lastname}</td>
-            <td>${order.username}</td>
-            <td>${order.password}</td>
-            <td>${order.email}</td>
-            <td>${order.role}</td>
-            <td><a href="${pageContext.request.contextPath}/user/update?id=${order.id}">Edit</a></td>
-            <td><a href="${pageContext.request.contextPath}/user/delete?id=${order.id}">Delete</a></td>
-        </tr>
-    </c:forEach>
-</table>
-<div style="text-align: center;">
-    <a href="${pageContext.request.contextPath}/user/create">Create user</a>
+
+<div class="header">
+    <input type="text" id="searchKey"/>
+    <button id="buttonSearch">Search</button>
+    <button id="buttonCreate">Create</button>
 </div>
+
+<div class="container">
+    <div class="leftArea">
+        <ul id="itemList"></ul>
+    </div>
+
+    <form id="itemForm">
+        <div class="mainArea">
+
+            <label>Id:</label>
+            <input id="id" name="id" type="text" disabled/>
+
+            <label>First Name:</label>
+            <input id="firstName" name="firstName" type="text"/>
+
+            <label>Last Name:</label>
+            <input id="lastName" name="lastName" type="text"/>
+
+            <label>Username:</label>
+            <input id="username" name="username" type="text"/>
+
+            <label>Password:</label>
+            <input id="password" name="password" type="text"/>
+
+            <label>E-mail:</label>
+            <input id="email" name="email" type="text"/>
+
+            <label>Role:</label>
+            <input id="role" name="role" type="text"/>
+
+            <button id="buttonSave">Save</button>
+            <button id="buttonDelete">Delete</button>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.min.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/script/tableEditor.js"></script>
+
 <%@include file="/parts/bottom.jsp" %>
 </body>
 </html>

@@ -27,19 +27,20 @@ public class ShowUser extends AbstractController {
     }
 
     private ModelAndView getUserList() {
-        ModelAndView mav = new ModelAndView();
+       /* ModelAndView mav = new ModelAndView();
 
         try {
             ObjectMapper mapper = new ObjectMapper();
-            User[] users = mapper.readValue(new URL("http://localhost:8080/users"), User[].class);
+            User[] users = mapper.readValue(new URL("http://localhost:8080/users?all"), User[].class);
             mav.addObject("users", users);
             mav.setViewName("user/list");
         } catch (IOException e) {
             mav.setViewName("error/error");
         }
 
+        return mav;*/
 
-        return mav;
+       return new ModelAndView("user/list");
     }
 
     private ModelAndView getUserById(Long id) {

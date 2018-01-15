@@ -1,5 +1,75 @@
+* {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 18px;
+}
+
+.header {
+    padding: 10px;
+}
+
+.container {
+    display: table;
+    margin: 0;
+    border-spacing: 10px 10px;
+}
+
+.leftArea, .mainArea {
+    display: table-cell;
+    width: 300px;
+}
+
+ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 0;
+}
+
+li a {
+    text-decoration: none;
+    display: block;
+    color: #000000;
+    border-bottom: solid 1px #CCCCCC;
+    padding: 8px;
+}
+
+li a:hover {
+    background-color: #4B0A1E;
+    color: #BA8A92;
+}
+
+input, textarea {
+    border: 1px solid #ccc;
+    min-height: 30px;
+    outline: none;
+}
+
+.mainArea input {
+    margin-bottom: 15px;
+    margin-top: 5px;
+    width: 280px;
+}
+
+textarea {
+    margin-bottom: 15px;
+    margin-top: 5px;
+    height: 200px;
+    width: 250px;
+}
+
+label {
+    display: block;
+}
+
+button {
+    padding: 6px;
+}
+
+#searchKey {
+    width: 260px;
+}
+
 #top-panel {
-    margin-top: 10px;
+    margin: 10px;
     height: 50px;
     background-color: blue;
     text-align: right;
