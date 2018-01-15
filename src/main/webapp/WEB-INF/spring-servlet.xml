@@ -117,8 +117,6 @@
         <property name="userDao" ref="userDao"/>
     </bean>
 
-    <bean id="storeAuthenticationManager" class="com.globallogic.store.security.spring.StoreAuthenticationManager"/>
-
     <bean id="registerUserService" class="com.globallogic.store.security.spring.RegisterUserService">
         <property name="authenticationManager" ref="authenticationManager"/>
         <property name="userDetailsService" ref="loginUserService"/>
@@ -175,4 +173,6 @@
     </bean>
 
     <bean id="authenticationFacade" class="com.globallogic.store.security.spring.AuthenticateFacade" />
+
+    <bean id="storeAuthenticationManager" class="com.globallogic.store.security.spring.StoreAuthenticationManager"/>
 </beans>

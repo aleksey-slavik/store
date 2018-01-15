@@ -50,8 +50,11 @@ public class UserController {
     @RequestMapping(value = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<User> findUser(@RequestParam MultiValueMap<String, String> params) {
         if (params.isEmpty()) {
+            throw new EmptyResponseException();
+        }
+
+        if (params.containsKey("all")) {
             return userDao.findAll();
-            //throw new EmptyResponseException();
         }
 
         return userDao.findByCriteria(params.toSingleValueMap());
