@@ -1,25 +1,45 @@
-//root url path for rest service
-var rootURL = "http://localhost:8080/users";
+/**
+ * Consist method for create, update, delete and search operations with rest service.
+ * For correct work needed
+ * variables:
+ *   rootURL - url path of rest service (for example, http://localhost:8080/users);
+ *   searchField - name of column for search;
+ * functions:
+ *   fillList(data) - fill list of <li><a href="#" data-identity="' + item.id + '">' + item.searchField + '</a></li> using given data;
+ *   fillItem(item) - fill form data using given item;
+ *   itemToJSON() - parse form data to json.
+ *
+ * @author oleksii.slavik
+ */
 
+/**
+ * Temporary variable for item
+ */
 var currentItem;
 
 //start statement of page when it is loaded
 findAllItems();
 $('#buttonDelete').hide();
 
-//register listener for create button
+/**
+ * Register listener for create button
+ */
 $('#buttonCreate').click(function () {
     clearForm();
     return false;
 });
 
-//register listener for search button
+/**
+ * Register listener for search button
+ */
 $('#buttonSearch').click(function () {
     search($('#searchKey').val());
     return false;
 });
 
-// Trigger search when pressing 'Return' on search key input field
+/**
+ * Trigger search when pressing 'Enter' on search input field
+ */
 $('#searchKey').keypress(function (e) {
     if (e.which === 13) {
         search($('#searchKey').val());
@@ -28,7 +48,9 @@ $('#searchKey').keypress(function (e) {
     }
 });
 
-//register listener for save button
+/**
+ * Register listener for save button
+ */
 $('#buttonSave').click(function () {
     if ($('#id').val() === '') {
         createItem();
@@ -39,19 +61,27 @@ $('#buttonSave').click(function () {
     return false;
 });
 
-//register listener for delete button
+/**
+ * Register listener for delete button
+ */
 $('#buttonDelete').click(function () {
     deleteItem();
     return false;
 });
 
-//register listener for list item
+/**
+ * Register listener for list item
+ */
 $('#itemList').on('click', 'a', function () {
     findItemById($(this).data('identity'));
 });
 
-//get list of items by given key
-//if key is empty return all items
+/**
+ * Get list of items by given key.
+ * If key is empty return all items
+ *
+ * @param searchKey search key
+ */
 function search(searchKey) {
     if (searchKey === '') {
         findAllItems();
@@ -60,17 +90,23 @@ function search(searchKey) {
     }
 }
 
-//get list of items by given key
+/**
+ * Get list of items by given key
+ *
+ * @param searchKey search key
+ */
 function findItemByKey(searchKey) {
     $.ajax({
         type: 'GET',
-        url: rootURL + '?username=' + searchKey,
+        url: rootURL + '?' + searchField + '=' + searchKey,
         dataType: "json",
         success: fillList
     });
 }
 
-// get list of items
+/**
+ * Sending GET request to rest service for get all items.
+ */
 function findAllItems() {
     $.ajax({
         type: 'GET',
@@ -80,7 +116,11 @@ function findAllItems() {
     });
 }
 
-//get item by given id
+/**
+ * Sending GET request to rest service for get item by given id.
+ *
+ * @param id given id
+ */
 function findItemById(id) {
     $.ajax({
         type: 'GET',
@@ -94,21 +134,25 @@ function findItemById(id) {
     })
 }
 
-//create empty form for insert new data
+/**
+ * Clear form for insert new data
+ */
 function clearForm() {
     $('#buttonDelete').hide();
     currentItem = {};
     fillItem(currentItem);
 }
 
-//create item
+/**
+ * Sending POST request to rest service for create item, which parsed from page form using {@link itemToJSON()} method
+ */
 function createItem() {
     $.ajax({
         type: 'POST',
         contentType: 'application/json',
         url: rootURL,
         dataType: "json",
-        data: formToJSON(),
+        data: itemToJSON(),
         success: function (data, status, param) {
             findAllItems();
             alert('Item successfully created!');
@@ -121,14 +165,16 @@ function createItem() {
     });
 }
 
-//update item
+/**
+ * Sending PUT request to rest service for update item, which parsed from page form using {@link itemToJSON()} method
+ */
 function updateItem() {
     $.ajax({
         type: 'PUT',
         contentType: 'application/json',
         url: rootURL + '/' + $('#id').val(),
         dataType: "json",
-        data: formToJSON(),
+        data: itemToJSON(),
         success: function (data, status, param) {
             alert('Item successfully updated!');
         },
@@ -138,7 +184,9 @@ function updateItem() {
     })
 }
 
-//delete item
+/**
+ * Sending DELETE request to rest service for delete item.
+ */
 function deleteItem() {
     $.ajax({
         type: 'DELETE',
@@ -152,38 +200,4 @@ function deleteItem() {
             alert('Error during delete item!');
         }
     })
-}
-
-//fill list data
-function fillList(data) {
-    var list = data == null ? [] : (data instanceof Array ? data : [data]);
-    $('#itemList').find('li').remove();
-    $.each(list, function (index, item) {
-        $('#itemList').append('<li><a href="#" data-identity="' + item.id + '">' + item.username + '</a></li>');
-    });
-}
-
-//fill form data
-function fillItem(item) {
-    $('#id').val(item.id);
-    $('#firstName').val(item.firstname);
-    $('#lastName').val(item.lastname);
-    $('#username').val(item.username);
-    $('#password').val(item.password);
-    $('#email').val(item.email);
-    $('#role').val(item.role);
-}
-
-//parse data from form to json
-function formToJSON() {
-    var itemId = $('#id').val();
-    return JSON.stringify({
-        "id": itemId === '' ? null : itemId,
-        "firstname": $('#firstName').val(),
-        "lastname": $('#lastName').val(),
-        "username": $('#username').val(),
-        "password": $('#password').val(),
-        "email": $('#email').val(),
-        "role": $('#role').val()
-    });
 }

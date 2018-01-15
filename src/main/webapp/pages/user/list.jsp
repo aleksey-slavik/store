@@ -43,7 +43,10 @@
             <input id="email" name="email" type="text"/>
 
             <label>Role:</label>
-            <input id="role" name="role" type="text"/>
+            <select name="role" id="role">
+                <option>ADMIN</option>
+                <option selected>CUSTOMER</option>
+            </select>
 
             <button id="buttonSave">Save</button>
             <button id="buttonDelete">Delete</button>
@@ -52,7 +55,8 @@
 </div>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/script/tableEditor.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/script/tableUser.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/script/tableCore.js"></script>
 
 <%@include file="/parts/bottom.jsp" %>
 </body>

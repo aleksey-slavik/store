@@ -33,17 +33,17 @@ li a {
 }
 
 li a:hover {
-    background-color: #4B0A1E;
-    color: #BA8A92;
+    background-color: #215f93;
+    color: #ffffff;
 }
 
-input, textarea {
+input, textarea, select {
     border: 1px solid #ccc;
     min-height: 30px;
     outline: none;
 }
 
-.mainArea input {
+.mainArea input, select {
     margin-bottom: 15px;
     margin-top: 5px;
     width: 280px;
@@ -71,7 +71,7 @@ button {
 #top-panel {
     margin: 10px;
     height: 50px;
-    background-color: blue;
+    background-color: #215f93;
     text-align: right;
     font-size: 20px;
 }
