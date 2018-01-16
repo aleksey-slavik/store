@@ -13,9 +13,9 @@
     border-spacing: 10px 10px;
 }
 
-.leftArea, .mainArea, .rightArea {
+.leftArea, .mainArea, .rightArea, .additionalArea {
     display: table-cell;
-    width: 300px;
+    width: 230px;
 }
 
 ul {
@@ -43,17 +43,23 @@ input, textarea, select {
     outline: none;
 }
 
-.mainArea input, select {
+.mainArea, input, select {
     margin-bottom: 15px;
     margin-top: 5px;
-    width: 280px;
+    width: 200px;
+}
+
+.additionalArea, input, select {
+    margin-bottom: 15px;
+    margin-top: 5px;
+    width: 200px;
 }
 
 textarea {
     margin-bottom: 15px;
     margin-top: 5px;
     height: 200px;
-    width: 250px;
+    width: 200px;
 }
 
 label {

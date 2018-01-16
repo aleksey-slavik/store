@@ -49,7 +49,6 @@ function fillItem(item) {
  *
  * @returns {string}
  */
-
 function itemToJSON() {
     var itemId = $('#id').val();
     return JSON.stringify({

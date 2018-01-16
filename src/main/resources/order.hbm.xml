@@ -24,7 +24,7 @@
             </type>
         </property>
 
-        <set name="items" table="order_item" catalog="public" lazy="false" fetch="select" cascade="all" >
+        <set name="items" table="order_item" catalog="public" inverse="true" lazy="true" fetch="select">
             <key>
                 <column name="order_id" not-null="true"/>
             </key>
