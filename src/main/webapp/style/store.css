@@ -9,11 +9,11 @@
 
 .container {
     display: table;
-    margin: 0;
+    margin: 0 auto;
     border-spacing: 10px 10px;
 }
 
-.leftArea, .mainArea {
+.leftArea, .mainArea, .rightArea {
     display: table-cell;
     width: 300px;
 }

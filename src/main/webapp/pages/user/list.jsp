@@ -10,7 +10,7 @@
 <body>
 <%@include file="/parts/top.jsp" %>
 
-<div class="header">
+<div class="header" align="center">
     <input type="text" id="searchKey"/>
     <button id="buttonSearch">Search</button>
     <button id="buttonCreate">Create</button>

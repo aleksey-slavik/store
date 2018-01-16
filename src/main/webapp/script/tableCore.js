@@ -83,6 +83,7 @@ $('#itemList').on('click', 'a', function () {
  * @param searchKey search key
  */
 function search(searchKey) {
+    clearForm();
     if (searchKey === '') {
         findAllItems();
     } else {
