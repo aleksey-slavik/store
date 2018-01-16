@@ -47,7 +47,7 @@
     </http>
 
     <authentication-manager alias="authenticationManager" >
-        <authentication-provider ref="authenticationProvider"/>
+        <authentication-provider user-service-ref="loginUserService"/>
     </authentication-manager>
 
 </beans:beans>

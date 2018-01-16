@@ -156,11 +156,5 @@
         <property name="authenticationFacade" ref="authenticationFacade"/>
     </bean>
 
-    <bean id="authenticationProvider" class="com.globallogic.store.security.spring.StoreAuthenticationProvider">
-        <property name="userDao" ref="userDao"/>
-    </bean>
-
     <bean id="authenticationFacade" class="com.globallogic.store.security.spring.AuthenticateFacade" />
-
-    <bean id="storeAuthenticationManager" class="com.globallogic.store.security.spring.StoreAuthenticationManager"/>
 </beans>
