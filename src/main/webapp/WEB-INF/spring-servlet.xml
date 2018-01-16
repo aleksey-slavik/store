@@ -39,16 +39,10 @@
                 <prop key="/">product</prop>
                 <prop key="/home">product</prop>
                 <prop key="/product">product</prop>
-                <prop key="/product/create">createProduct</prop>
-                <prop key="/product/update">updateProduct</prop>
-                <prop key="/product/delete">deleteProduct</prop>
                 <prop key="/login">login</prop>
                 <prop key="/403">accessDenied</prop>
                 <prop key="/register">register</prop>
                 <prop key="/user">user</prop>
-                <prop key="/user/create">createUser</prop>
-                <prop key="/user/update">updateUser</prop>
-                <prop key="/user/delete">deleteUser</prop>
                 <prop key="/order">order</prop>
             </props>
         </property>
@@ -56,18 +50,12 @@
 
     <!-- Controllers -->
     <bean id="product" class="com.globallogic.store.web.product.ShowProduct"/>
-    <bean id="createProduct" class="com.globallogic.store.web.product.CreateProduct"/>
-    <bean id="updateProduct" class="com.globallogic.store.web.product.UpdateProduct"/>
-    <bean id="deleteProduct" class="com.globallogic.store.web.product.DeleteProduct"/>
     <bean id="login" class="com.globallogic.store.web.user.Login"/>
     <bean id="accessDenied" class="com.globallogic.store.web.security.AccessDenied"/>
     <bean id="register" class="com.globallogic.store.web.user.Registration">
         <property name="registerUserService" ref="registerUserService"/>
     </bean>
     <bean id="user" class="com.globallogic.store.web.user.ShowUser"/>
-    <bean id="createUser" class="com.globallogic.store.web.user.CreateUser"/>
-    <bean id="updateUser" class="com.globallogic.store.web.user.UpdateUser"/>
-    <bean id="deleteUser" class="com.globallogic.store.web.user.DeleteUser"/>
     <bean id="order" class="com.globallogic.store.web.order.ShowOrder"/>
 
     <!-- Resource resolver -->

@@ -1,25 +1,15 @@
 package com.globallogic.store.web.product;
 
-import com.globallogic.store.model.Product;
-import com.globallogic.store.web.ShowTemplate;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.AbstractController;
 
-public class ShowProduct extends ShowTemplate<Product> {
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-    @Override
-    public String getRestPath() {
-        return "http://localhost:8080/products/";
-    }
+public class ShowProduct extends AbstractController {
 
     @Override
-    public String getSimpleItemViewName() {
-        return "product/item";
-    }
-
-    @Override
-    public String getListItemViewName() {
-        return "product/list";
+    protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
+        return null;
     }
 }

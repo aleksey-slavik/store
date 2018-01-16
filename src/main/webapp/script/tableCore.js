@@ -84,6 +84,7 @@ $('#itemList').on('click', 'a', function () {
  */
 function search(searchKey) {
     clearForm();
+
     if (searchKey === '') {
         findAllItems();
     } else {
@@ -101,7 +102,15 @@ function findItemByKey(searchKey) {
         type: 'GET',
         url: rootURL + '?' + searchField + '=' + searchKey,
         dataType: "json",
-        success: fillList
+        success: function (data) {
+            if (data.length === 0) {
+                alert('Item with key "' + searchKey + '" not found!');
+                search('');
+                $('#searchKey').val('');
+            } else {
+                fillList(data);
+            }
+        }
     });
 }
 
