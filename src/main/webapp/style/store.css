@@ -15,7 +15,7 @@
 
 .leftArea, .mainArea, .rightArea, .additionalArea {
     display: table-cell;
-    width: 230px;
+    width: 300px;
 }
 
 ul {
@@ -46,20 +46,20 @@ input, textarea, select {
 .mainArea, input, select {
     margin-bottom: 15px;
     margin-top: 5px;
-    width: 200px;
+    width: 280px;
 }
 
 .additionalArea, input, select {
     margin-bottom: 15px;
     margin-top: 5px;
-    width: 200px;
+    width: 280px;
 }
 
 textarea {
     margin-bottom: 15px;
     margin-top: 5px;
     height: 200px;
-    width: 200px;
+    width: 280px;
 }
 
 label {
@@ -71,7 +71,7 @@ button {
 }
 
 #searchKey {
-    width: 260px;
+    width: 360px;
 }
 
 #top-panel {

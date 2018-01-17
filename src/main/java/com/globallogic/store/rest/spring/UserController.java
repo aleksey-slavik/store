@@ -76,8 +76,11 @@ public class UserController {
      */
     @RequestMapping(value = "/users", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public User createUser(@RequestBody User user) {
-        Role role = getRole(user.getRole().getName());
-        user.setRole(role);
+        if (user.getRole().getId() == null) {
+            Role role = getRole(user.getRole().getName());
+            user.setRole(role);
+        }
+
         return userDao.create(user);
     }
 
@@ -90,9 +93,12 @@ public class UserController {
      */
     @RequestMapping(value = "/users/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public User updateUser(@PathVariable Long id, @RequestBody User user) {
-        Role role = getRole(user.getRole().getName());
+        if (user.getRole().getId() == null) {
+            Role role = getRole(user.getRole().getName());
+            user.setRole(role);
+        }
+
         user.setId(id);
-        user.setRole(role);
         return userDao.update(user);
     }
 

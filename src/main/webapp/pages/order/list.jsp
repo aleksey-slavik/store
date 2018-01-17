@@ -53,7 +53,7 @@
             <label>Id:</label>
             <input id="itemId" name="itemId" type="text" disabled/>
 
-            <label>Name:</label>
+            <label>Product:</label>
             <input id="itemName" name="itemName" type="text"/>
 
             <label>Brand:</label>

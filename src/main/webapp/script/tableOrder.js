@@ -49,7 +49,7 @@ function fillList(data) {
 function fillItem(item) {
     $('#id').val(item.id);
     $('#username').val(item.user.username);
-    $('#status').val(item.status);
+    $('#status').val(item.status.name);
     $('#totalCost').val(item.totalCost);
     fillProductList(item.items);
     user = item.user;
@@ -102,5 +102,7 @@ function fillProductItem(item) {
  */
 $('#productList').on('click', 'a', function () {
     var number = $(this).data('identity');
+    $('#buttonSaveItem').show();
+    $('#buttonDeleteItem').show();
     fillProductItem(productList[number]);
 });
