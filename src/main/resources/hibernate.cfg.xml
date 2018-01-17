@@ -18,9 +18,11 @@
 
         <!-- Entities -->
         <mapping resource="user.hbm.xml"/>
+        <mapping resource="userRole.hbm.xml"/>
         <mapping resource="product.hbm.xml"/>
         <mapping resource="order.hbm.xml"/>
         <mapping resource="orderItem.hbm.xml"/>
+        <mapping resource="orderStatus.hbm.xml"/>
 
     </session-factory>
 
