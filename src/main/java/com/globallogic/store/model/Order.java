@@ -8,7 +8,7 @@ import java.util.Set;
  *
  * @author oleksii.slavik
  */
-public class Order {
+public class Order extends Entity {
 
     private Long id;
     private Double totalCost;

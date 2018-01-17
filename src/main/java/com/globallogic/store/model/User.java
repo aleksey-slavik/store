@@ -5,13 +5,11 @@ package com.globallogic.store.model;
  *
  * @author oleksii.slavik
  */
-public class User {
+public class User extends Entity {
 
-    private Long id;
+    private String firstName;
 
-    private String firstname;
-
-    private String lastname;
+    private String lastName;
 
     private String username;
 
@@ -23,42 +21,34 @@ public class User {
 
     public User() {}
 
-    public User(String firstname, String lastname, String username, String password, String email) {
-        this.firstname = firstname;
-        this.lastname = lastname;
+    public User(String firstName, String lastName, String username, String password, String email) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.username = username;
         this.password = password;
         this.email = email;
-        this.role = Role.CUSTOMER;
+        this.role = new Role();
     }
 
-    public User(String firstname, String lastname, String username, String password, String email, Role role) {
-        this(firstname, lastname, username, password, email);
+    public User(String firstName, String lastName, String username, String password, String email, Role role) {
+        this(firstName, lastName, username, password, email);
         this.role = role;
     }
 
-    public Long getId() {
-        return id;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setFirstName(String firstname) {
+        this.firstName = firstname;
     }
 
-    public String getFirstname() {
-        return firstname;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
+    public void setLastName(String lastname) {
+        this.lastName = lastname;
     }
 
     public String getUsername() {
@@ -96,9 +86,9 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
-                ", firstname='" + firstname + '\'' +
-                ", lastname='" + lastname + '\'' +
+                "id=" + getId() +
+                ", firstname='" + firstName + '\'' +
+                ", lastname='" + lastName + '\'' +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +

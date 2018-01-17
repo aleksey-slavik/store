@@ -8,11 +8,11 @@
             <generator class="identity"/>
         </id>
 
-        <property name="firstname" type="java.lang.String">
+        <property name="firstName" type="java.lang.String">
             <column name="firstname" not-null="true"/>
         </property>
 
-        <property name="lastname" type="java.lang.String">
+        <property name="lastName" type="java.lang.String">
             <column name="lastname" not-null="true"/>
         </property>
 
@@ -28,12 +28,8 @@
             <column name="email"/>
         </property>
 
-        <property name="role">
-            <column name="role" not-null="true"/>
-            <type name="org.hibernate.type.EnumType">
-                <param name="enumClass">com.globallogic.store.model.Role</param>
-                <param name="useNamed">true</param>
-            </type>
-        </property>
+        <many-to-one name="role" class="com.globallogic.store.model.Role" fetch="select" lazy="false">
+            <column name="role_id" not-null="true"/>
+        </many-to-one>
     </class>
 </hibernate-mapping>

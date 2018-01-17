@@ -1,10 +1,7 @@
 package com.globallogic.store.web.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.globallogic.store.model.Role;
 import com.globallogic.store.model.User;
-import com.globallogic.store.security.aspect.Access;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
