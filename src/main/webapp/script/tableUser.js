@@ -38,12 +38,12 @@ function fillList(data) {
  */
 function fillItem(item) {
     $('#id').val(item.id);
-    $('#firstName').val(item.firstname);
-    $('#lastName').val(item.lastname);
+    $('#firstName').val(item.firstName);
+    $('#lastName').val(item.lastName);
     $('#username').val(item.username);
     $('#password').val(item.password);
     $('#email').val(item.email);
-    $('#role').val(item.role);
+    $('#role').val(item.role.name);
 }
 
 /**
@@ -51,13 +51,12 @@ function fillItem(item) {
  *
  * @returns {string}
  */
-
 function itemToJSON() {
     var itemId = $('#id').val();
     return JSON.stringify({
         "id": itemId === '' ? null : itemId,
-        "firstname": $('#firstName').val(),
-        "lastname": $('#lastName').val(),
+        "firstName": $('#firstName').val(),
+        "lastName": $('#lastName').val(),
         "username": $('#username').val(),
         "password": $('#password').val(),
         "email": $('#email').val(),

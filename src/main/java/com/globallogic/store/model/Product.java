@@ -7,9 +7,7 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author oleksii.slavik
  */
-public class Product {
-
-    private Long id;
+public class Product extends Entity {
 
     private String name;
 
@@ -34,14 +32,6 @@ public class Product {
         this.brand = request.getParameter("brand");
         this.description = request.getParameter("description");
         this.price = Double.valueOf(request.getParameter("price"));
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -79,7 +69,7 @@ public class Product {
     @Override
     public String toString() {
         return "Product{" +
-                "id=" + id +
+                "id=" + getId() +
                 ", name='" + name + '\'' +
                 ", brand='" + brand + '\'' +
                 ", description='" + description + '\'' +

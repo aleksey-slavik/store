@@ -179,7 +179,6 @@ function createItem() {
  * Sending PUT request to rest service for update item, which parsed from page form using {@link itemToJSON()} method
  */
 function updateItem() {
-    console.log(itemToJSON());
     $.ajax({
         type: 'PUT',
         contentType: 'application/json',

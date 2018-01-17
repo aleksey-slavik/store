@@ -5,20 +5,11 @@ package com.globallogic.store.model;
  *
  * @author oleksii.slavik
  */
-public class OrderItem {
+public class OrderItem extends Entity {
 
-    private Long id;
     private Product product;
     private Integer quantity;
     private Double price;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public Product getProduct() {
         return product;

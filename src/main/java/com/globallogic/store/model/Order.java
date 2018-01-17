@@ -10,19 +10,10 @@ import java.util.Set;
  */
 public class Order extends Entity {
 
-    private Long id;
     private Double totalCost;
     private User user;
     private Status status;
     private Set<OrderItem> items = new HashSet<OrderItem>(0);
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public Double getTotalCost() {
         return totalCost;
