@@ -148,10 +148,19 @@
     </aop:config>
 
     <aop:config>
-        <aop:pointcut id="userAspectPointCut" expression="bean(userController)"/>
+        <aop:pointcut id="userDeleteAspectPointCut" expression="execution(* com.globallogic.store.rest.spring.UserController.deleteUserById(..))"/>
+        <aop:pointcut id="userUpdateAspectPointCut" expression="execution(* com.globallogic.store.rest.spring.UserController.updateUser(..))"/>
 
-        <aop:aspect id="authorizationAspect" ref="securityAspect">
-            <aop:around method="checkAccess" pointcut-ref="userAspectPointCut"/>
+        <aop:aspect id="adminAccessAspect" ref="securityAspect">
+            <aop:around method="checkAdminAccess" pointcut-ref="userDeleteAspectPointCut"/>
+        </aop:aspect>
+
+        <aop:aspect id="customerBeforeAccessAspect" ref="securityAspect">
+            <aop:before method="getAuthorityBefore" pointcut-ref="userUpdateAspectPointCut"/>
+        </aop:aspect>
+
+        <aop:aspect id="customerAccessAspect" ref="securityAspect">
+            <aop:around method="checkAuthorizedAccess" pointcut-ref="userUpdateAspectPointCut"/>
         </aop:aspect>
     </aop:config>
 

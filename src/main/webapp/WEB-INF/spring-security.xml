@@ -7,25 +7,6 @@
 	http://www.springframework.org/schema/security/spring-security-4.0.xsd">
 
     <http use-expressions="true">
-        <!-- url intercepts -->
-        <!-- customer access -->
-        <!--<intercept-url pattern="/cart**" access="hasAuthority('CUSTOMER')"/>-->
-
-        <!-- anonymous access -->
-        <!--<intercept-url pattern="/register" access="isAnonymous()"/>
-        <intercept-url pattern="/login" access="isAnonymous()"/>-->
-
-        <!-- admin access -->
-        <!--<intercept-url method="POST" pattern="/*" access="hasAuthority('ADMIN')"/>
-        <intercept-url method="PUT" pattern="/*" access="hasAuthority('ADMIN')"/>
-        <intercept-url method="DELETE" pattern="/*" access="hasAuthority('ADMIN')"/>
-
-        <intercept-url method="GET" pattern="/*/create**" access="hasAuthority('ADMIN')"/>
-        <intercept-url method="GET" pattern="/*/update**" access="hasAuthority('ADMIN')"/>
-        <intercept-url method="GET" pattern="/*/delete**" access="hasAuthority('ADMIN')"/>-->
-
-        <!--<intercept-url method="GET" pattern="/order" access="hasAuthority('ADMIN')"/>-->
-        <!--<intercept-url method="GET" pattern="/user" access="hasAuthority('ADMIN')"/>-->
 
         <!-- access denied page -->
         <access-denied-handler
