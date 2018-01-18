@@ -5,7 +5,7 @@
 <head>
     <%@ include file="/parts/meta.jsp" %>
     <title>Order List</title>
-    <%@include file="/parts/header.jsp" %>
+    <%@ include file="/parts/header.jsp" %>
 </head>
 <body>
 <%@include file="/parts/top.jsp" %>
@@ -70,7 +70,7 @@
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/script/tableOrder.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/script/tableCore.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/script/restCore.js"></script>
 
 <%--<table style="width: 100%">
     <tr>

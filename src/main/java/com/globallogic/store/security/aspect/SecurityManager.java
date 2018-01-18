@@ -1,7 +1,6 @@
 package com.globallogic.store.security.aspect;
 
 import com.globallogic.store.exception.AccessDeniedException;
-import com.globallogic.store.security.spring.Authenticateble;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

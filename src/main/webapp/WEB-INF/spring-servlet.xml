@@ -148,17 +148,17 @@
     </aop:config>
 
     <aop:config>
-        <aop:pointcut id="userAspectPointCut" expression="bean(order)"/>
+        <aop:pointcut id="userAspectPointCut" expression="bean(userController)"/>
 
-        <!--<aop:aspect id="authorizationAspect" ref="securityAspect">
+        <aop:aspect id="authorizationAspect" ref="securityAspect">
             <aop:around method="checkAccess" pointcut-ref="userAspectPointCut"/>
-        </aop:aspect>-->
+        </aop:aspect>
     </aop:config>
 
     <!-- Security Aspect -->
-    <!--<bean id="securityAspect" class="com.globallogic.store.security.aspect.SecurityManager">
+    <bean id="securityAspect" class="com.globallogic.store.security.aspect.SecurityManager">
         <property name="authenticationFacade" ref="authenticationFacade"/>
     </bean>
 
-    <bean id="authenticationFacade" class="com.globallogic.store.security.spring.AuthenticateFacade" />-->
+    <bean id="authenticationFacade" class="com.globallogic.store.security.aspect.AuthenticateFacade" />
 </beans>

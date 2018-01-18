@@ -56,7 +56,7 @@
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/script/tableUser.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/script/tableCore.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/script/restCore.js"></script>
 
 <%@include file="/parts/bottom.jsp" %>
 </body>
