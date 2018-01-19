@@ -30,7 +30,7 @@ $('#buttonCreate').click(function () {
 });
 
 /**
- * Register listener for search button
+ * Register listener for searchProduct button
  */
 $('#buttonSearch').click(function () {
     search($('#searchKey').val());
@@ -38,7 +38,7 @@ $('#buttonSearch').click(function () {
 });
 
 /**
- * Trigger search when pressing 'Enter' on search input field
+ * Trigger searchProduct when pressing 'Enter' on searchProduct input field
  */
 $('#searchKey').keypress(function (e) {
     if (e.which === 13) {
@@ -80,7 +80,7 @@ $('#itemList').on('click', 'a', function () {
  * Get list of items by given key.
  * If key is empty return all items
  *
- * @param searchKey search key
+ * @param searchKey searchProduct key
  */
 function search(searchKey) {
     clearForm();
@@ -95,7 +95,7 @@ function search(searchKey) {
 /**
  * Get list of items by given key
  *
- * @param searchKey search key
+ * @param searchKey searchProduct key
  */
 function findItemByKey(searchKey) {
     $.ajax({
@@ -108,7 +108,7 @@ function findItemByKey(searchKey) {
                 search('');
                 $('#searchKey').val('');
             } else {
-                fillList(data);
+                fillProductList(data);
             }
         }
     });
@@ -122,7 +122,7 @@ function findAllItems() {
         type: 'GET',
         url: rootURL + '?all',
         dataType: "json",
-        success: fillList
+        success: fillProductList
     });
 }
 
@@ -139,7 +139,7 @@ function findItemById(id) {
         success: function (data) {
             $('#buttonDelete').show();
             currentItem = data;
-            fillItem(currentItem);
+            fillProduct(currentItem);
         }
     })
 }
@@ -150,11 +150,11 @@ function findItemById(id) {
 function clearForm() {
     $('#buttonDelete').hide();
     currentItem = {};
-    fillItem(currentItem);
+    fillProduct(currentItem);
 }
 
 /**
- * Sending POST request to rest service for create item, which parsed from page form using {@link itemToJSON()} method
+ * Sending POST request to rest service for create item, which parsed from page form using {@link productItemToJSON()} method
  */
 function createItem() {
     $.ajax({
@@ -162,7 +162,7 @@ function createItem() {
         contentType: 'application/json',
         url: rootURL,
         dataType: "json",
-        data: itemToJSON(),
+        data: productItemToJSON(),
         success: function (data, status, param) {
             findAllItems();
             alert('Item successfully created!');
@@ -176,7 +176,7 @@ function createItem() {
 }
 
 /**
- * Sending PUT request to rest service for update item, which parsed from page form using {@link itemToJSON()} method
+ * Sending PUT request to rest service for update item, which parsed from page form using {@link productItemToJSON()} method
  */
 function updateItem() {
     $.ajax({
@@ -184,7 +184,7 @@ function updateItem() {
         contentType: 'application/json',
         url: rootURL + '/' + $('#id').val(),
         dataType: "json",
-        data: itemToJSON(),
+        data: productItemToJSON(),
         success: function (data, status, param) {
             alert('Item successfully updated!');
         },

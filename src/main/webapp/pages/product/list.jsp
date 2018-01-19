@@ -25,7 +25,6 @@
 
         <form id="itemForm">
             <div class="mainArea">
-
                 <label>Id:</label>
                 <input id="id" name="id" type="text" disabled/>
 
@@ -60,6 +59,8 @@
     <div id="modal-form-container">
         <form id="modal-form">
             <div class="mainArea">
+                <input id="id" name="id" type="hidden"/>
+
                 <label>Name:</label>
                 <input id="name" name="name" type="text" disabled/>
 
@@ -69,16 +70,16 @@
                 <label>Price:</label>
                 <input id="price" name="price" type="text" disabled/>
 
+                <label>Quantity:</label>
+                <input id="quantity" name="quantity" type="number" min="1" value="1"/>
+
+                <button id="buttonBuy">Add to cart</button>
+                <button id="buttonCancel">Cancel</button>
+            </div>
+
+            <div class="rightArea">
                 <label>Description:</label>
                 <textarea id="description" name="description" disabled></textarea>
-
-                <label>Quantity:</label>
-                <label>
-                    <input type="number" name="count" min="1" value="1"/>
-                </label>
-
-                <button id="buttonSend">Save</button>
-                <button id="buttonCancel">Cancel</button>
             </div>
         </form>
     </div>

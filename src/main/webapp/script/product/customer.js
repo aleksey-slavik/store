@@ -19,19 +19,19 @@ var rootURL = "http://localhost:8080/products";
 var searchField = "name";
 
 /**
- * Temporary variable for item
+ * Temporary variable for product data
  */
 var currentItem;
 
 //start statement of page when it is loaded
-findAllItems();
+findAllProducts();
 
 /**
  * Fill list of product using given data
  *
  * @param data given data
  */
-function fillList(data) {
+function fillProductList(data) {
     var list = data == null ? [] : (data instanceof Array ? data : [data]);
     $('#wrapper').find('div').remove();
     $.each(list, function (index, item) {
@@ -51,7 +51,7 @@ function fillList(data) {
  *
  * @param item given data
  */
-function fillItem(item) {
+function fillProduct(item) {
     $('#id').val(item.id);
     $('#name').val(item.name);
     $('#brand').val(item.brand);
@@ -64,7 +64,7 @@ function fillItem(item) {
  *
  * @returns {string}
  */
-function itemToJSON() {
+function productItemToJSON() {
     var itemId = $('#id').val();
     return JSON.stringify({
         "id": itemId === '' ? null : itemId,
@@ -76,19 +76,19 @@ function itemToJSON() {
 }
 
 /**
- * Register listener for search button
+ * Register listener for searchProduct button
  */
 $('#buttonSearch').click(function () {
-    search($('#searchKey').val());
+    searchProduct($('#searchKey').val());
     return false;
 });
 
 /**
- * Trigger search when pressing 'Enter' on search input field
+ * Trigger searchProduct when pressing 'Enter' on searchProduct input field
  */
 $('#searchKey').keypress(function (e) {
     if (e.which === 13) {
-        search($('#searchKey').val());
+        searchProduct($('#searchKey').val());
         e.preventDefault();
         return false;
     }
@@ -98,31 +98,31 @@ $('#searchKey').keypress(function (e) {
  * Register listener for list item
  */
 $('#wrapper').on('click', 'a', function () {
-    findItemById($(this).data('identity'));
+    findProductById($(this).data('identity'));
 });
 
 /**
  * Get list of items by given key.
  * If key is empty return all items
  *
- * @param searchKey search key
+ * @param searchKey searchProduct key
  */
-function search(searchKey) {
-    clearForm();
+function searchProduct(searchKey) {
+    clearProductForm();
 
     if (searchKey === '') {
-        findAllItems();
+        findAllProducts();
     } else {
-        findItemByKey(searchKey);
+        findProductByKey(searchKey);
     }
 }
 
 /**
  * Get list of items by given key
  *
- * @param searchKey search key
+ * @param searchKey searchProduct key
  */
-function findItemByKey(searchKey) {
+function findProductByKey(searchKey) {
     $.ajax({
         type: 'GET',
         url: rootURL + '?' + searchField + '=' + searchKey,
@@ -131,11 +131,11 @@ function findItemByKey(searchKey) {
         success: function (data, textStatus, xhr) {
             switch (xhr.status) {
                 case 200:
-                    fillList(data);
+                    fillProductList(data);
                     break;
                 case 204:
-                    alert('Empty response during search item with name=' + searchKey + '!');
-                    search('');
+                    alert('Empty response during searchProduct item with name=' + searchKey + '!');
+                    searchProduct('');
                     $('#searchKey').val('');
                     break;
             }
@@ -148,7 +148,7 @@ function findItemByKey(searchKey) {
                     break;
                 case 404:
                     alert('Item with name=' + searchKey + ' was not found!');
-                    search('');
+                    searchProduct('');
                     $('#searchKey').val('');
                     break;
                 default:
@@ -162,7 +162,7 @@ function findItemByKey(searchKey) {
 /**
  * Sending GET request to rest service for get all items.
  */
-function findAllItems() {
+function findAllProducts() {
     $.ajax({
         type: 'GET',
         url: rootURL + '?all',
@@ -171,7 +171,7 @@ function findAllItems() {
         success: function (data, textStatus, xhr) {
             switch (xhr.status) {
                 case 200:
-                    fillList();
+                    fillProductList(data);
                     break;
                 case 204:
                     alert('Empty response during getting all items!');
@@ -197,7 +197,7 @@ function findAllItems() {
  *
  * @param id given id
  */
-function findItemById(id) {
+function findProductById(id) {
     $.ajax({
         type: 'GET',
         url: rootURL + '/' + id,
@@ -207,7 +207,7 @@ function findItemById(id) {
             switch (xhr.status) {
                 case 200:
                     currentItem = data;
-                    fillItem(currentItem);
+                    fillProduct(currentItem);
                     showModalWindow();
                     break;
                 case 204:
@@ -235,9 +235,9 @@ function findItemById(id) {
 /**
  * Clear form for insert new data
  */
-function clearForm() {
+function clearProductForm() {
     currentItem = {};
-    fillItem(currentItem);
+    fillProduct(currentItem);
 }
 
 /**
@@ -274,7 +274,8 @@ function showModalWindow() {
         return false;
     });
 
-    $('#buttonSend').click(function () {
+    $('#buttonBuy').click(function () {
+        //todo add save item in user cart
         return false;
     });
 

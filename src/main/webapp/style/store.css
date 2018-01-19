@@ -4,7 +4,7 @@
 }
 
 .header {
-    padding: 10px;
+    padding: 0 10px;
 }
 
 .container {
@@ -43,6 +43,13 @@ input, textarea, select {
     outline: none;
 }
 
+input:disabled, textarea:disabled {
+    border: none;
+    background: white;
+    outline: none;
+    color: black;
+}
+
 .mainArea, input, select {
     margin-bottom: 15px;
     margin-top: 5px;
@@ -78,17 +85,26 @@ button {
     margin: 10px;
     height: 50px;
     background-color: #215f93;
-    text-align: right;
-    font-size: 20px;
 }
 
-.account-panel {
-    text-decoration: none;
+#top-panel-search {
+    float: left;
+    padding: 10px 0;
+}
+
+#top-panel-account {
+    float: right;
+    padding: 10px 0;
+}
+
+.top-panel-user {
     color: #ffffff;
-    position: relative;
-    top: 10px;
-    right: 10px;
-    transform: translateY(-10px);
+    margin: 0 0 10px;
+    padding: 0;
+}
+
+.top-panel-icon {
+    margin: 10px 0;
 }
 
 #notification {
@@ -97,7 +113,7 @@ button {
 }
 
 #wrapper {
-    margin-top: 10px;
+    margin: 10px;
     display: grid;
     grid-gap: 10px;
     grid-template-columns: repeat(auto-fill, minmax(250px, 150px));
@@ -105,14 +121,14 @@ button {
 
 .box {
     background-color: #fff;
-    border-radius: 5px;
-    padding: 20px;
+    border-radius: 1px;
+    padding: 10px;
     font-size: 150%;
     text-decoration: none;
 }
 
 .box:hover {
-    background-color: #9e9c9f;
+    background-color: #dddfe2;
 }
 
 a {
@@ -122,7 +138,7 @@ a {
 #modal-form {
     display: inline-block;
     padding: 5px 5px 5px 70px;
-    width: 300px;
+    width: 650px;
     border: 1px solid black;
     background-color: white;
     vertical-align: middle;
@@ -155,4 +171,9 @@ a {
     height: 100%;
     background-color: #202948;
     opacity: 0.3;
+}
+
+.icon {
+    width: 30px;
+    height: 30px;
 }

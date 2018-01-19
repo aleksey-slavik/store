@@ -2,7 +2,7 @@
  * Get list of items by given key.
  * If key is empty return all items
  *
- * @param searchKey search key
+ * @param searchKey searchProduct key
  */
 function search(rootURL, searchField, searchKey, successState, errorState) {
     if (searchKey === '') {
@@ -15,7 +15,7 @@ function search(rootURL, searchField, searchKey, successState, errorState) {
 /**
  * Get list of items by given key
  *
- * @param searchKey search key
+ * @param searchKey searchProduct key
  */
 function findItemByKey(rootURL, searchField, searchKey, successState, errorState) {
     $.ajax({
@@ -26,11 +26,11 @@ function findItemByKey(rootURL, searchField, searchKey, successState, errorState
             if (data.length === 0) {
                 errorState();
                 /*alert('Item with key "' + searchKey + '" not found!');
-                search('');
+                searchProduct('');
                 $('#searchKey').val('');*/
             } else {
                 successState();
-                /*fillList(data);*/
+                /*fillProductList(data);*/
             }
         }
     });

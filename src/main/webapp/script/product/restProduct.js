@@ -12,7 +12,7 @@
 var rootURL = "http://localhost:8080/products";
 
 /**
- * Name of column for search
+ * Name of column for searchProduct
  *
  * @type {string}
  */
