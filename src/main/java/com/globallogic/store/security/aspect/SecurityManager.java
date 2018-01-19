@@ -7,6 +7,8 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.List;
+
 public class SecurityManager {
 
     private Authenticateble authenticationFacade;
@@ -29,7 +31,7 @@ public class SecurityManager {
 
     private User user;
 
-    public void getAuthorityBefore(JoinPoint joinPoint) {
+    public void getUserDataBefore(JoinPoint joinPoint) {
         System.out.println("logBefore() is running!");
         System.out.println("args length : " + joinPoint.getArgs().length);
         System.out.println("id : " + joinPoint.getArgs()[0]);
@@ -43,7 +45,7 @@ public class SecurityManager {
         if (principal instanceof UserDetails) {
             if (((UserDetails) principal).getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"))) {
                 return joinPoint.proceed();
-            } else if (((UserDetails) principal).getAuthorities().contains(new SimpleGrantedAuthority("CUSTOMER"))) {
+            } else if (((UserDetails) principal).getAuthorities().contains(new SimpleGrantedAuthority("CUSTOMER")) && user != null) {
                 if (((UserDetails) principal).getUsername().equals(user.getUsername())) {
                     return joinPoint.proceed();
                 }
@@ -51,5 +53,30 @@ public class SecurityManager {
         }
 
         throw new AccessDeniedException();
+    }
+
+    public void checkAccessAfter(JoinPoint joinPoint, Object result) throws Throwable {
+        Object principal = authenticationFacade.getAuthentication().getPrincipal();
+
+        if (((UserDetails) principal).getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"))) {
+            return;
+        }
+
+        String username = null;
+
+        if (((UserDetails) principal).getAuthorities().contains(new SimpleGrantedAuthority("CUSTOMER"))) {
+            if (result instanceof List) {
+                if (((List) result).size() == 1) {
+                    username = ((User) ((List) result).get(0)).getUsername();
+                }
+            } else {
+                username = ((User) result).getUsername();
+            }
+        }
+
+        if (username == null || !username.equals(((UserDetails) principal).getUsername())) {
+            throw new AccessDeniedException();
+        }
+
     }
 }

@@ -48,17 +48,45 @@
             </div>
         </form>
     </div>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.min.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/script/product/restProduct.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/script/restCore.js"></script>
 </sec:authorize>
 
 <sec:authorize access="!hasAuthority('ADMIN')">
     <div id="wrapper">
     </div>
+
+    <div id="modal-form-container">
+        <form id="modal-form">
+            <div class="mainArea">
+                <label>Name:</label>
+                <input id="name" name="name" type="text" disabled/>
+
+                <label>Brand:</label>
+                <input id="brand" name="brand" type="text" disabled/>
+
+                <label>Price:</label>
+                <input id="price" name="price" type="text" disabled/>
+
+                <label>Description:</label>
+                <textarea id="description" name="description" disabled></textarea>
+
+                <label>Quantity:</label>
+                <label>
+                    <input type="number" name="count" min="1" value="1"/>
+                </label>
+
+                <button id="buttonSend">Save</button>
+                <button id="buttonCancel">Cancel</button>
+            </div>
+        </form>
+    </div>
+
+    <script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.min.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/script/product/customer.js"></script>
 </sec:authorize>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/script/restCore.js"></script>
 <%@include file="/parts/bottom.jsp" %>
 </body>
 </html>
