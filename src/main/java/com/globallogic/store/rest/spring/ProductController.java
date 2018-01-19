@@ -2,6 +2,7 @@ package com.globallogic.store.rest.spring;
 
 import com.globallogic.store.dao.AbstractDAO;
 import com.globallogic.store.exception.EmptyResponseException;
+import com.globallogic.store.exception.NotFoundException;
 import com.globallogic.store.model.Product;
 import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
@@ -34,16 +35,26 @@ public class ProductController {
      *
      * @param id given id
      * @return {@link Product} item
+     * @throws NotFoundException throws when item with given id not found
      */
     @RequestMapping(value = "/products/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Product getProductById(@PathVariable Long id) {
-        return productDao.findById(id);
+        Product product = productDao.findById(id);
+
+        if (product == null) {
+            throw new NotFoundException();
+        } else {
+            return product;
+        }
     }
 
     /**
      * Return list of {@link Product} represented as json.
      *
+     * @param params map of request parameters
      * @return list of {@link Product}
+     * @throws EmptyResponseException throws if request parameters is absent
+     * @throws NotFoundException throws when item with parameters not found
      */
     @RequestMapping(value = "/products", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Product> findProduct(@RequestParam MultiValueMap<String, String> params) {
@@ -55,7 +66,13 @@ public class ProductController {
             return productDao.findAll();
         }
 
-        return productDao.findByCriteria(params.toSingleValueMap());
+        List<Product> products = productDao.findByCriteria(params.toSingleValueMap());
+
+        if (products.isEmpty()) {
+            throw new NotFoundException();
+        } else {
+            return products;
+        }
     }
 
     /**

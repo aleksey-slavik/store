@@ -17,14 +17,12 @@
         <property name="format_sql">true</property>
 
         <!-- Entities -->
-        <mapping resource="user.hbm.xml"/>
-        <mapping resource="userRole.hbm.xml"/>
-        <mapping resource="product.hbm.xml"/>
-        <mapping resource="order.hbm.xml"/>
-        <mapping resource="orderItem.hbm.xml"/>
-        <mapping resource="orderStatus.hbm.xml"/>
+        <mapping resource="hibernate/entity/user.hbm.xml"/>
+        <mapping resource="hibernate/entity/userRole.hbm.xml"/>
+        <mapping resource="hibernate/entity/product.hbm.xml"/>
+        <mapping resource="hibernate/entity/order.hbm.xml"/>
+        <mapping resource="hibernate/entity/orderItem.hbm.xml"/>
+        <mapping resource="hibernate/entity/orderStatus.hbm.xml"/>
 
     </session-factory>
-
-
 </hibernate-configuration>

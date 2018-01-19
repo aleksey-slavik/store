@@ -98,7 +98,7 @@ $('#searchKey').keypress(function (e) {
  * Register listener for list item
  */
 $('#wrapper').on('click', 'a', function () {
-    showModalWindow($(this).data('identity'));
+    findItemById($(this).data('identity'));
 });
 
 /**
@@ -127,13 +127,33 @@ function findItemByKey(searchKey) {
         type: 'GET',
         url: rootURL + '?' + searchField + '=' + searchKey,
         dataType: "json",
-        success: function (data) {
-            if (data.length === 0) {
-                alert('Item with key "' + searchKey + '" not found!');
-                search('');
-                $('#searchKey').val('');
-            } else {
-                fillList(data);
+
+        success: function (data, textStatus, xhr) {
+            switch (xhr.status) {
+                case 200:
+                    fillList(data);
+                    break;
+                case 204:
+                    alert('Empty response during search item with name=' + searchKey + '!');
+                    search('');
+                    $('#searchKey').val('');
+                    break;
+            }
+        },
+
+        error: function (xhr, textStatus, errorThrown) {
+            switch (xhr.status) {
+                case 403:
+                    alert('You don`t have permissions to get item with name=' + searchKey + '!');
+                    break;
+                case 404:
+                    alert('Item with name=' + searchKey + ' was not found!');
+                    search('');
+                    $('#searchKey').val('');
+                    break;
+                default:
+                    alert('Some error thrown! Details : ' + xhr.status + ' ' + errorThrown);
+                    break;
             }
         }
     });
@@ -147,7 +167,28 @@ function findAllItems() {
         type: 'GET',
         url: rootURL + '?all',
         dataType: "json",
-        success: fillList
+
+        success: function (data, textStatus, xhr) {
+            switch (xhr.status) {
+                case 200:
+                    fillList();
+                    break;
+                case 204:
+                    alert('Empty response during getting all items!');
+                    break;
+            }
+        },
+
+        error: function (xhr, textStatus, errorThrown) {
+            switch (xhr.status) {
+                case 403:
+                    alert('You don`t have permissions to access to list of items!');
+                    break;
+                default:
+                    alert('Some error thrown! Details : ' + xhr.status + ' ' + errorThrown);
+                    break;
+            }
+        }
     });
 }
 
@@ -161,9 +202,32 @@ function findItemById(id) {
         type: 'GET',
         url: rootURL + '/' + id,
         dataType: "json",
-        success: function (data) {
-            currentItem = data;
-            fillItem(currentItem);
+
+        success: function (data, textStatus, xhr) {
+            switch (xhr.status) {
+                case 200:
+                    currentItem = data;
+                    fillItem(currentItem);
+                    showModalWindow();
+                    break;
+                case 204:
+                    alert('Empty response during find item with id=' + id + '!');
+                    break;
+            }
+        },
+
+        error: function (xhr, textStatus, errorThrown) {
+            switch (xhr.status) {
+                case 403:
+                    alert('You don`t have permissions to get item with id=' + id + '!');
+                    break;
+                case 404:
+                    alert('Item with id=' + id + ' was not found!');
+                    break;
+                default:
+                    alert('Some error thrown! Details : ' + xhr.status + ' ' + errorThrown);
+                    break;
+            }
         }
     })
 }
@@ -195,11 +259,9 @@ function hideCover() {
 /**
  * Show modal window with item info
  */
-function showModalWindow(id) {
+function showModalWindow() {
     showCover();
-    var form = document.getElementById('modal-form');
     var container = document.getElementById('modal-form-container');
-    findItemById(id);
 
     function closeWindow() {
         hideCover();
