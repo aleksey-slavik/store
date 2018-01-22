@@ -7,8 +7,9 @@
 </head>
 <body>
 <%@include file="/parts/top.jsp" %>
-<sec:authentication var="username" property="principal.username"/>
-<sec:authentication var="password" property="principal.password"/>
+<script>
+    var principal = "${pageContext.request.remoteUser}"
+</script>
 <form id="itemForm">
     <div class="mainArea">
         <input id="id" name="id" type="hidden" disabled/>
@@ -20,10 +21,10 @@
         <input id="lastName" name="lastName" type="text" disabled/>
 
         <label>Username:</label>
-        <input id="username" name="username" type="text" value="${username}" disabled/>
+        <input id="username" name="username" type="text" disabled/>
 
         <label>Password:</label>
-        <input id="password" name="password" type="password" value="${password}" disabled/>
+        <input id="password" name="password" type="password" disabled/>
 
         <label>E-mail:</label>
         <input id="email" name="email" type="text" disabled/>

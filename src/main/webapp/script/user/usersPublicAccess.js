@@ -10,13 +10,6 @@ var rootURL = "http://localhost:8080/users";
  */
 var currentItem;
 
-/**
- * Username of current user.
- *
- * @type {*|jQuery}
- */
-var currentUsername = $('#username').val();
-
 //start statement of page when it is loaded
 findUserData();
 
@@ -76,7 +69,7 @@ function clearUserForm() {
  */
 function findUserData() {
     getItem(
-        rootURL + '/?username=' + currentUsername,
+        rootURL + '/?username=' + principal,
 
         function (data) {
             currentItem = data[0];
@@ -84,7 +77,7 @@ function findUserData() {
         },
 
         function () {
-            alert('User with username "' + currentUsername + '" not found!');
+            alert('User with username "' + principal + '" not found!');
         }
     )
 }
