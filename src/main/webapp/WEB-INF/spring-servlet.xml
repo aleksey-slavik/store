@@ -49,7 +49,7 @@
     </bean>
 
     <!-- Controllers -->
-    <bean id="product" class="com.globallogic.store.web.product.ShowProduct"/>
+    <bean id="product" class="com.globallogic.store.web.product.ProductWebController"/>
     <bean id="login" class="com.globallogic.store.web.user.Login"/>
     <bean id="accessDenied" class="com.globallogic.store.web.security.AccessDenied"/>
     <bean id="register" class="com.globallogic.store.web.user.Registration">

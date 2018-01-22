@@ -6,20 +6,17 @@
 <head>
     <%@ include file="/parts/meta.jsp" %>
     <title>Web Store</title>
-    <%@include file="/parts/header.jsp" %>
+    <%@ include file="/parts/header.jsp" %>
 </head>
 <body>
-<%@include file="/parts/top.jsp" %>
-
-<div class="header" align="center">
-    <input type="text" id="searchKey"/>
-    <button id="buttonSearch">Search</button>
-    <button id="buttonCreate">Create</button>
-</div>
+<%@ include file="/parts/top.jsp" %>
 
 <sec:authorize access="hasAuthority('ADMIN')">
     <div class="container">
         <div class="leftArea">
+            <div class="header" align="center">
+                <%@ include file="/parts/search.jsp" %>
+            </div>
             <ul id="itemList"></ul>
         </div>
 
@@ -48,11 +45,15 @@
         </form>
     </div>
     <script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.min.js"></script>
-    <script type="text/javascript" src="${pageContext.request.contextPath}/script/product/restProduct.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/script/product/admin.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/script/restCore.js"></script>
 </sec:authorize>
 
 <sec:authorize access="!hasAuthority('ADMIN')">
+    <div class="header" align="center">
+        <%@ include file="/parts/search.jsp" %>
+    </div>
+
     <div id="wrapper">
     </div>
 

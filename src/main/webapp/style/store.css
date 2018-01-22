@@ -74,14 +74,24 @@ label {
 }
 
 button {
-    padding: 6px;
+    border-radius: 3px;
+    background-color: #215f93;
+    color: #ffffff;
+    padding: 5px;
+}
+
+input, select {
+    border-radius: 3px;
 }
 
 #searchKey {
+    border-radius: 3px;
     width: 360px;
+    margin: 0;
 }
 
 #top-panel {
+    border-radius: 3px;
     margin: 10px;
     height: 50px;
     background-color: #215f93;
@@ -89,22 +99,39 @@ button {
 
 #top-panel-search {
     float: left;
-    padding: 10px 0;
+    margin-left: 5px;
+    margin-top: 5px;
 }
 
 #top-panel-account {
     float: right;
-    padding: 10px 0;
+    margin-right: 5px;
+    margin-top: 5px;
+}
+
+#bottom-panel {
+    border-spacing: 10px 10px;
+}
+
+#bottom-panel-link {
+    display: flex;
+    justify-content: center;
+}
+
+.bottom-link, .bottom-link:hover, .bottom-link:active, .bottom-link:visited {
+    color: white;
 }
 
 .top-panel-user {
     color: #ffffff;
-    margin: 0 0 10px;
-    padding: 0;
+}
+
+.top-panel-search {
+    margin: 0;
 }
 
 .top-panel-icon {
-    margin: 10px 0;
+    margin: 0;
 }
 
 #notification {
@@ -121,7 +148,7 @@ button {
 
 .box {
     background-color: #fff;
-    border-radius: 1px;
+    border-radius: 3px;
     padding: 10px;
     font-size: 150%;
     text-decoration: none;
@@ -140,6 +167,7 @@ a {
     padding: 5px 5px 5px 70px;
     width: 650px;
     border: 1px solid black;
+    border-radius: 3px;
     background-color: white;
     vertical-align: middle;
 }
