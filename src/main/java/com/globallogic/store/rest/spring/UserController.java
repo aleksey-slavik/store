@@ -2,12 +2,14 @@ package com.globallogic.store.rest.spring;
 
 import com.globallogic.store.dao.AbstractDAO;
 import com.globallogic.store.exception.EmptyResponseException;
+import com.globallogic.store.exception.NotFoundException;
 import com.globallogic.store.model.Role;
 import com.globallogic.store.model.User;
 import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -61,11 +63,22 @@ public class UserController {
             throw new EmptyResponseException();
         }
 
+        List<User> users;
+
         if (params.containsKey("all")) {
-            return userDao.findAll();
+            users = userDao.findAll();
+        } else if (params.containsKey("query")) {
+            String queryKey = params.getFirst("query");
+            users = userDao.fuzzySearch(queryKey, "name", "firstname", "lastname");
+        } else {
+            users = Collections.singletonList(userDao.exactSearch(params.toSingleValueMap()));
         }
 
-        return userDao.findByCriteria(params.toSingleValueMap());
+        if (users == null || users.isEmpty()) {
+            throw new NotFoundException();
+        } else {
+            return users;
+        }
     }
 
     /**
@@ -116,6 +129,6 @@ public class UserController {
     private Role getRole(String roleName) {
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("name", roleName);
-        return roleDao.findByCriteria(params).get(0);
+        return roleDao.exactSearch(params);
     }
 }

@@ -11,7 +11,7 @@
         <td>
             <div class="top-panel-icon">
                 <a id="buttonSearch" href="#">
-                    <img class="icon" src="${pageContext.request.contextPath}/images/search.png" alt="Search">
+                    <img class="icon" src="${pageContext.request.contextPath}/images/search.png" alt="Search" title="Search">
                 </a>
             </div>
         </td>

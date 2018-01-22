@@ -7,24 +7,7 @@
 </head>
 <body>
 <%@include file="/parts/top.jsp" %>
-<table style="width: 80%" align="center">
-    <tr>
-        <td style="width: 10%">User:</td>
-        <td>${order.user.username}</td>
-    </tr>
-    <tr>
-        <td style="width: 10%">Items size:</td>
-        <td>${order.items.size()}</td>
-    </tr>
-    <tr>
-        <td style="width: 10%">Status:</td>
-        <td>${order.status}</td>
-    </tr>
-    <tr>
-        <td style="width: 10%">Total Cost:</td>
-        <td>${order.totalCost}</td>
-    </tr>
-</table>
+<h1>Page at development stage!</h1>
 <%@include file="/parts/bottom.jsp" %>
 </body>
 </html>

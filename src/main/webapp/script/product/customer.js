@@ -1,22 +1,9 @@
 /**
- * Consist methods for correct work of methods for product rest service.
- *
- * @author oleksii.slavik
- */
-
-/**
  * Root url path for products rest service
  *
  * @type {string}
  */
 var rootURL = "http://localhost:8080/products";
-
-/**
- * Name of column for search
- *
- * @type {string}
- */
-var searchField = "name";
 
 /**
  * Temporary variable for product data
@@ -25,55 +12,6 @@ var currentItem;
 
 //start statement of page when it is loaded
 findAllProducts();
-
-/**
- * Fill list of product using given data
- *
- * @param data given data
- */
-function fillProductList(data) {
-    var list = data == null ? [] : (data instanceof Array ? data : [data]);
-    $('#wrapper').find('div').remove();
-    $.each(list, function (index, item) {
-        $('#wrapper').append(
-            '<div class="box">' +
-            '<a href="#" data-identity="' + item.id + '">' +
-            '<p>' + item.name + '</p>' +
-            '<p>' + item.brand + '</p>' +
-            '<p>' + item.price + '</p>' +
-            '</a>' +
-            '</div>');
-    });
-}
-
-/**
- * Fill product form using given item data
- *
- * @param item given data
- */
-function fillProduct(item) {
-    $('#id').val(item.id);
-    $('#name').val(item.name);
-    $('#brand').val(item.brand);
-    $('#description').val(item.description);
-    $('#price').val(item.price);
-}
-
-/**
- * Parse product data from form to json format
- *
- * @returns {string}
- */
-function productItemToJSON() {
-    var itemId = $('#id').val();
-    return JSON.stringify({
-        "id": itemId === '' ? null : itemId,
-        "name": $('#name').val(),
-        "brand": $('#brand').val(),
-        "description": $('#description').val(),
-        "price": $('#price').val()
-    });
-}
 
 /**
  * Register listener for searchProduct button
@@ -102,6 +40,61 @@ $('#wrapper').on('click', 'a', function () {
 });
 
 /**
+ * Fill list of product using given data
+ *
+ * @param data given data
+ */
+function fillProductInfoList(data) {
+    var list = data == null ? [] : (data instanceof Array ? data : [data]);
+    $('#wrapper').find('div').remove();
+    $.each(list, function (index, item) {
+        $('#wrapper').append(
+            '<div class="box">' +
+            '<a href="#" data-identity="' + item.id + '">' +
+            '<p>' + item.name + '</p>' +
+            '<p>' + item.brand + '</p>' +
+            '<p>' + item.price + '</p>' +
+            '</a>' +
+            '</div>');
+    });
+}
+
+/**
+ * Fill product form using given item data
+ *
+ * @param item given data
+ */
+function fillProduct(item) {
+    $('#id').val(item.id);
+    $('#name').val(item.name);
+    $('#brand').val(item.brand);
+    $('#description').val(item.description);
+    $('#price').val(item.price);
+}
+
+/**
+ * Parse order item data from form to json format
+ *
+ * @returns {string}
+ */
+function orderItemToJSON() {
+    var itemId = $('#id').val();
+    return JSON.stringify({
+        "id": itemId === '' ? null : itemId,
+        "price": $('#price').val(),
+        "quantity": $('quantity').val()
+    });
+}
+
+/**
+ * Clear form for insert new data
+ */
+function clearProductForm() {
+    currentItem = {};
+    fillProduct(currentItem);
+}
+
+/**
  * Get list of items by given key.
  * If key is empty return all items
  *
@@ -117,127 +110,61 @@ function searchProduct(searchKey) {
     }
 }
 
+
 /**
- * Get list of items by given key
+ * Get list of items by given key.
+ * Implementation of {@link findItemByKey} method.
  *
- * @param searchKey searchProduct key
+ * @param searchKey search key
  */
 function findProductByKey(searchKey) {
-    $.ajax({
-        type: 'GET',
-        url: rootURL + '?' + searchField + '=' + searchKey,
-        dataType: "json",
-
-        success: function (data, textStatus, xhr) {
-            switch (xhr.status) {
-                case 200:
-                    fillProductList(data);
-                    break;
-                case 204:
-                    alert('Empty response during searchProduct item with name=' + searchKey + '!');
-                    searchProduct('');
-                    $('#searchKey').val('');
-                    break;
-            }
+    findItemByKey(
+        rootURL,
+        searchKey,
+        function (data) {
+            fillProductInfoList(data);
         },
-
-        error: function (xhr, textStatus, errorThrown) {
-            switch (xhr.status) {
-                case 403:
-                    alert('You don`t have permissions to get item with name=' + searchKey + '!');
-                    break;
-                case 404:
-                    alert('Item with name=' + searchKey + ' was not found!');
-                    searchProduct('');
-                    $('#searchKey').val('');
-                    break;
-                default:
-                    alert('Some error thrown! Details : ' + xhr.status + ' ' + errorThrown);
-                    break;
-            }
+        function () {
+            searchProduct('');
+            $('#searchKey').val('');
         }
-    });
+    )
 }
 
 /**
  * Sending GET request to rest service for get all items.
+ * Implementation of {@link getItem} method.
  */
 function findAllProducts() {
-    $.ajax({
-        type: 'GET',
-        url: rootURL + '?all',
-        dataType: "json",
-
-        success: function (data, textStatus, xhr) {
-            switch (xhr.status) {
-                case 200:
-                    fillProductList(data);
-                    break;
-                case 204:
-                    alert('Empty response during getting all items!');
-                    break;
-            }
+    getItem(
+        rootURL + '?all',
+        function (data) {
+            fillProductInfoList(data);
         },
-
-        error: function (xhr, textStatus, errorThrown) {
-            switch (xhr.status) {
-                case 403:
-                    alert('You don`t have permissions to access to list of items!');
-                    break;
-                default:
-                    alert('Some error thrown! Details : ' + xhr.status + ' ' + errorThrown);
-                    break;
-            }
+        function () {
+            //do nothing
         }
-    });
+    )
 }
 
 /**
  * Sending GET request to rest service for get item by given id.
+ * Implementation of {@link getItem} method.
  *
  * @param id given id
  */
 function findProductById(id) {
-    $.ajax({
-        type: 'GET',
-        url: rootURL + '/' + id,
-        dataType: "json",
-
-        success: function (data, textStatus, xhr) {
-            switch (xhr.status) {
-                case 200:
-                    currentItem = data;
-                    fillProduct(currentItem);
-                    showModalWindow();
-                    break;
-                case 204:
-                    alert('Empty response during find item with id=' + id + '!');
-                    break;
-            }
+    getItem(
+        rootURL + '/' + id,
+        function (data) {
+            currentItem = data;
+            fillProduct(currentItem);
+            showModalWindow();
         },
-
-        error: function (xhr, textStatus, errorThrown) {
-            switch (xhr.status) {
-                case 403:
-                    alert('You don`t have permissions to get item with id=' + id + '!');
-                    break;
-                case 404:
-                    alert('Item with id=' + id + ' was not found!');
-                    break;
-                default:
-                    alert('Some error thrown! Details : ' + xhr.status + ' ' + errorThrown);
-                    break;
-            }
+        function () {
+            //do nothing
         }
-    })
-}
-
-/**
- * Clear form for insert new data
- */
-function clearProductForm() {
-    currentItem = {};
-    fillProduct(currentItem);
+    )
 }
 
 /**

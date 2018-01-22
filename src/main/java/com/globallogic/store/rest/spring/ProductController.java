@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -60,15 +61,21 @@ public class ProductController {
     public List<Product> findProduct(@RequestParam MultiValueMap<String, String> params) {
         if (params.isEmpty()) {
             throw new EmptyResponseException();
+
         }
+
+        List<Product> products;
 
         if (params.containsKey("all")) {
-            return productDao.findAll();
+            products = productDao.findAll();
+        } else if (params.containsKey("query")) {
+            String queryKey = params.getFirst("query");
+            products = productDao.fuzzySearch(queryKey, "name", "brand");
+        } else {
+            products = Collections.singletonList(productDao.exactSearch(params.toSingleValueMap()));
         }
 
-        List<Product> products = productDao.findByCriteria(params.toSingleValueMap());
-
-        if (products.isEmpty()) {
+        if (products == null || products.isEmpty()) {
             throw new NotFoundException();
         } else {
             return products;

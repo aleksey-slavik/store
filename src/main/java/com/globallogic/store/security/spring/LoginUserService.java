@@ -3,7 +3,6 @@ package com.globallogic.store.security.spring;
 import com.globallogic.store.dao.AbstractDAO;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -40,7 +39,7 @@ public class LoginUserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("username", s);
-        com.globallogic.store.model.User user = (com.globallogic.store.model.User) userDao.findByCriteria(params).get(0);
+        com.globallogic.store.model.User user = (com.globallogic.store.model.User) userDao.exactSearch(params);
         List<GrantedAuthority> authorities = buildUserAuthority(user);
         System.out.println(authorities);
         return buildUserForAuthentication(user, authorities);

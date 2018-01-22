@@ -10,7 +10,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class Registration extends AbstractController {
+public class RegistrationWebController extends AbstractController {
 
     private RegisterUserService registerUserService;
 

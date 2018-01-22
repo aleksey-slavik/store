@@ -6,18 +6,10 @@ import org.springframework.web.servlet.mvc.AbstractController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class Login extends AbstractController {
+public class UserWebController extends AbstractController {
 
     @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        String error = httpServletRequest.getParameter("error");
-        ModelAndView mav = new ModelAndView();
-
-        if (error != null) {
-            mav.addObject("message", "Error during login process! Check input data!");
-        }
-
-        mav.setViewName("user/login");
-        return mav;
+        return new ModelAndView("user/users");
     }
 }

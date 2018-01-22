@@ -44,19 +44,23 @@
                 <prop key="/register">register</prop>
                 <prop key="/user">user</prop>
                 <prop key="/order">order</prop>
+                <prop key="/cart">cart</prop>
+                <prop key="/account">account</prop>
             </props>
         </property>
     </bean>
 
     <!-- Controllers -->
     <bean id="product" class="com.globallogic.store.web.product.ProductWebController"/>
-    <bean id="login" class="com.globallogic.store.web.user.Login"/>
-    <bean id="accessDenied" class="com.globallogic.store.web.security.AccessDenied"/>
-    <bean id="register" class="com.globallogic.store.web.user.Registration">
+    <bean id="login" class="com.globallogic.store.web.user.LoginWebController"/>
+    <bean id="accessDenied" class="com.globallogic.store.web.security.AccessDeniedWebController"/>
+    <bean id="register" class="com.globallogic.store.web.user.RegistrationWebController">
         <property name="registerUserService" ref="registerUserService"/>
     </bean>
-    <bean id="user" class="com.globallogic.store.web.user.ShowUser"/>
-    <bean id="order" class="com.globallogic.store.web.order.ShowOrder"/>
+    <bean id="user" class="com.globallogic.store.web.user.UserWebController"/>
+    <bean id="order" class="com.globallogic.store.web.order.OrderWebController"/>
+    <bean id="cart" class="com.globallogic.store.web.order.CartWebController"/>
+    <bean id="account" class="com.globallogic.store.web.user.AccountWebController"/>
 
     <!-- Resource resolver -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">

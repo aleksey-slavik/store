@@ -55,8 +55,9 @@
 </div>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/script/tableUser.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/script/restCore.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/script/rest.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/script/search.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/script/user/admin.js"></script>
 
 <%@include file="/parts/bottom.jsp" %>
 </body>

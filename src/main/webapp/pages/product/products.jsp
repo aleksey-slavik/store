@@ -34,6 +34,7 @@
                 <label>Price:</label>
                 <input id="price" name="price" type="text"/>
 
+                <button id="buttonCreate">Clear</button>
                 <button id="buttonSave">Save</button>
                 <button id="buttonDelete">Delete</button>
             </div>
@@ -45,8 +46,10 @@
         </form>
     </div>
     <script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.min.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/script/search.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/script/rest.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/script/product/customer.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/script/product/admin.js"></script>
-    <script type="text/javascript" src="${pageContext.request.contextPath}/script/restCore.js"></script>
 </sec:authorize>
 
 <sec:authorize access="!hasAuthority('ADMIN')">
@@ -86,6 +89,8 @@
     </div>
 
     <script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.min.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/script/search.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/script/rest.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/script/product/customer.js"></script>
 </sec:authorize>
 

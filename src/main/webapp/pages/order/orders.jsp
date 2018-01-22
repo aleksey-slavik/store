@@ -9,6 +9,8 @@
 </head>
 <body>
 <%@include file="/parts/top.jsp" %>
+<h1>Page at development stage!</h1>
+<%--
 
 <div class="header" align="center">
     <input type="text" id="searchKey"/>
@@ -71,6 +73,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/script/tableOrder.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/script/restCore.js"></script>
+--%>
 
 <%--<table style="width: 100%">
     <tr>

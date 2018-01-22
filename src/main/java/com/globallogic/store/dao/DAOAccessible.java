@@ -33,7 +33,16 @@ public interface DAOAccessible<T> {
      * @param params given parameters
      * @return list of items with given parameters
      */
-    List<T> findByCriteria(Map<String, String> params);
+    T exactSearch(Map<String, String> params);
+
+    /**
+     * Find all items which have similar to key values in given columns.
+     *
+     * @param key     search key
+     * @param columns column names
+     * @return list of items with similar values
+     */
+    List<T> fuzzySearch(String key, String... columns);
 
     /**
      * Create given item
