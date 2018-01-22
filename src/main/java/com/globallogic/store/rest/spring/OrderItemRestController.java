@@ -13,7 +13,7 @@ import java.util.List;
  * @author oleksii.slavik
  */
 @RestController
-public class OrderItemController {
+public class OrderItemRestController {
 
     /**
      * {@link OrderItem} DAO object for access to database.

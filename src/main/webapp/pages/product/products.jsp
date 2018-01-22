@@ -48,8 +48,8 @@
     <script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.min.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/script/search.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/script/rest.js"></script>
-    <script type="text/javascript" src="${pageContext.request.contextPath}/script/product/customer.js"></script>
-    <script type="text/javascript" src="${pageContext.request.contextPath}/script/product/admin.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/script/product/productsPublicAccess.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/script/product/productsSecuredAccess.js"></script>
 </sec:authorize>
 
 <sec:authorize access="!hasAuthority('ADMIN')">
@@ -91,7 +91,7 @@
     <script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.min.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/script/search.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/script/rest.js"></script>
-    <script type="text/javascript" src="${pageContext.request.contextPath}/script/product/customer.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/script/product/productsPublicAccess.js"></script>
 </sec:authorize>
 
 <%@include file="/parts/bottom.jsp" %>

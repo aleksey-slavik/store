@@ -32,10 +32,6 @@ public class SecurityManager {
     private User user;
 
     public void getUserDataBefore(JoinPoint joinPoint) {
-        System.out.println("logBefore() is running!");
-        System.out.println("args length : " + joinPoint.getArgs().length);
-        System.out.println("id : " + joinPoint.getArgs()[0]);
-        System.out.println("user : " + joinPoint.getArgs()[1]);
         user = (User) joinPoint.getArgs()[1];
     }
 
@@ -57,6 +53,7 @@ public class SecurityManager {
 
     public void checkAccessAfter(JoinPoint joinPoint, Object result) throws Throwable {
         Object principal = authenticationFacade.getAuthentication().getPrincipal();
+        System.out.println(((UserDetails) principal).getUsername());
 
         if (((UserDetails) principal).getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"))) {
             return;

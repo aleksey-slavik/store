@@ -83,7 +83,7 @@
     <bean name="roleDao" class="com.globallogic.store.dao.AbstractDAO">
         <constructor-arg value="com.globallogic.store.model.Role"/>
     </bean>
-    <bean name="userController" class="com.globallogic.store.rest.spring.UserController">
+    <bean name="userRestController" class="com.globallogic.store.rest.spring.UserRestController">
         <property name="userDao" ref="userDao"/>
         <property name="roleDao" ref="roleDao"/>
     </bean>
@@ -91,21 +91,21 @@
     <bean name="productDao" class="com.globallogic.store.dao.AbstractDAO">
         <constructor-arg value="com.globallogic.store.model.Product"/>
     </bean>
-    <bean name="productController" class="com.globallogic.store.rest.spring.ProductController">
+    <bean name="productRestController" class="com.globallogic.store.rest.spring.ProductRestController">
         <property name="productDao" ref="productDao"/>
     </bean>
 
     <bean name="orderDao" class="com.globallogic.store.dao.AbstractDAO">
         <constructor-arg value="com.globallogic.store.model.Order"/>
     </bean>
-    <bean name="orderController" class="com.globallogic.store.rest.spring.OrderController">
+    <bean name="orderRestController" class="com.globallogic.store.rest.spring.OrderRestController">
         <property name="orderDao" ref="orderDao"/>
     </bean>
 
     <bean name="orderItemDao" class="com.globallogic.store.dao.AbstractDAO">
         <constructor-arg value="com.globallogic.store.model.OrderItem"/>
     </bean>
-    <bean name="orderItemController" class="com.globallogic.store.rest.spring.OrderItemController">
+    <bean name="orderItemRestController" class="com.globallogic.store.rest.spring.OrderItemRestController">
         <property name="orderItemDao" ref="orderItemDao"/>
     </bean>
 
@@ -152,10 +152,10 @@
     </aop:config>
 
     <aop:config>
-        <aop:pointcut id="userDeleteAspectPointCut" expression="execution(* com.globallogic.store.rest.spring.UserController.deleteUserById(..))"/>
-        <aop:pointcut id="userUpdateAspectPointCut" expression="execution(* com.globallogic.store.rest.spring.UserController.updateUser(..))"/>
-        <aop:pointcut id="userSelectAllAspectPointCut" expression="execution(* com.globallogic.store.rest.spring.UserController.findUser(..))"/>
-        <aop:pointcut id="userSelectAspectPointCut" expression="execution(* com.globallogic.store.rest.spring.UserController.getUserById(..))"/>
+        <aop:pointcut id="userDeleteAspectPointCut" expression="execution(* com.globallogic.store.rest.spring.UserRestController.deleteUserById(..))"/>
+        <aop:pointcut id="userUpdateAspectPointCut" expression="execution(* com.globallogic.store.rest.spring.UserRestController.updateUser(..))"/>
+        <aop:pointcut id="userSelectAllAspectPointCut" expression="execution(* com.globallogic.store.rest.spring.UserRestController.findUser(..))"/>
+        <aop:pointcut id="userSelectAspectPointCut" expression="execution(* com.globallogic.store.rest.spring.UserRestController.getUserById(..))"/>
 
         <aop:aspect id="adminAccessAspect" ref="securityAspect">
             <aop:around method="checkAdminAccess" pointcut-ref="userDeleteAspectPointCut"/>
