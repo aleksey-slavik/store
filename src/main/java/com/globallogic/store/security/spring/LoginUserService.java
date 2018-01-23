@@ -64,7 +64,7 @@ public class LoginUserService implements UserDetailsService {
      */
     private List<GrantedAuthority> buildUserAuthority(com.globallogic.store.model.User user) {
         Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
-        authorities.add(new SimpleGrantedAuthority(user.getRole().getName()));
+        authorities.add(new SimpleGrantedAuthority(user.getRole().name()));
         return new ArrayList<GrantedAuthority>(authorities);
     }
 }

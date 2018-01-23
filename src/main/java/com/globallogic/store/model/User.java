@@ -27,7 +27,7 @@ public class User extends Entity {
         this.username = username;
         this.password = password;
         this.email = email;
-        this.role = new Role();
+        this.role = Role.CUSTOMER;
     }
 
     public User(String firstName, String lastName, String username, String password, String email, Role role) {
@@ -92,8 +92,7 @@ public class User extends Entity {
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
-                ", roleId=" + role.getId() +
-                ", role=" + role.getName() +
+                ", role=" + role +
                 '}';
     }
 }

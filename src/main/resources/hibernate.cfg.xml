@@ -18,11 +18,9 @@
 
         <!-- Entities -->
         <mapping resource="hibernate/entity/user.hbm.xml"/>
-        <mapping resource="hibernate/entity/userRole.hbm.xml"/>
         <mapping resource="hibernate/entity/product.hbm.xml"/>
         <mapping resource="hibernate/entity/order.hbm.xml"/>
         <mapping resource="hibernate/entity/orderItem.hbm.xml"/>
-        <mapping resource="hibernate/entity/orderStatus.hbm.xml"/>
 
     </session-factory>
 </hibernate-configuration>

@@ -28,8 +28,12 @@
             <column name="email"/>
         </property>
 
-        <many-to-one name="role" class="com.globallogic.store.model.Role" fetch="select" lazy="false">
-            <column name="role_id" not-null="true"/>
-        </many-to-one>
+        <property name="role">
+            <column name="role" not-null="true"/>
+            <type name="org.hibernate.type.EnumType">
+                <param name="enumClass">com.globallogic.store.model.Role</param>
+                <param name="useNamed">true</param>
+            </type>
+        </property>
     </class>
 </hibernate-mapping>

@@ -3,14 +3,12 @@ package com.globallogic.store.rest.spring;
 import com.globallogic.store.dao.AbstractDAO;
 import com.globallogic.store.exception.EmptyResponseException;
 import com.globallogic.store.exception.NotFoundException;
-import com.globallogic.store.model.Role;
 import com.globallogic.store.model.User;
 import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -26,17 +24,11 @@ public class UserRestController {
      */
     private AbstractDAO<User> userDao;
 
-    private AbstractDAO<Role> roleDao;
-
     /**
      * Injection {@link User} DAO object for access to database.
      */
     public void setUserDao(AbstractDAO<User> userDao) {
         this.userDao = userDao;
-    }
-
-    public void setRoleDao(AbstractDAO<Role> roleDao) {
-        this.roleDao = roleDao;
     }
 
     /**
@@ -89,11 +81,6 @@ public class UserRestController {
      */
     @RequestMapping(value = "/users", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public User createUser(@RequestBody User user) {
-        if (user.getRole().getId() == null) {
-            Role role = getRole(user.getRole().getName());
-            user.setRole(role);
-        }
-
         return userDao.create(user);
     }
 
@@ -106,11 +93,6 @@ public class UserRestController {
      */
     @RequestMapping(value = "/users/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public User updateUser(@PathVariable Long id, @RequestBody User user) {
-        if (user.getRole().getId() == null) {
-            Role role = getRole(user.getRole().getName());
-            user.setRole(role);
-        }
-
         user.setId(id);
         return userDao.update(user);
     }
@@ -124,11 +106,5 @@ public class UserRestController {
     @RequestMapping(value = "/users/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public User deleteUserById(@PathVariable Long id) {
         return userDao.delete(id);
-    }
-
-    private Role getRole(String roleName) {
-        HashMap<String, String> params = new HashMap<String, String>();
-        params.put("name", roleName);
-        return roleDao.exactSearch(params);
     }
 }

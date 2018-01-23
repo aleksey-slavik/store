@@ -17,9 +17,13 @@
             <column name="user_id" not-null="true"/>
         </many-to-one>
 
-        <many-to-one name="status" class="com.globallogic.store.model.Status" fetch="select" lazy="false">
-            <column name="status_id" not-null="true"/>
-        </many-to-one>
+        <property name="status">
+            <column name="status" not-null="true"/>
+            <type name="org.hibernate.type.EnumType">
+                <param name="enumClass">com.globallogic.store.model.Status</param>
+                <param name="useNamed">true</param>
+            </type>
+        </property>
 
         <set name="items" table="order_details" catalog="public" lazy="false" fetch="select" cascade="all">
             <key>

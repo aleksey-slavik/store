@@ -7,7 +7,7 @@
 </head>
 <body>
 <%@include file="/parts/top.jsp" %>
-<h1>Page at development stage!</h1>
+<h2 align="center">Page at development stage!</h2>
 <%@include file="/parts/bottom.jsp" %>
 </body>
 </html>
