@@ -178,6 +178,10 @@ a {
     vertical-align: middle;
 }
 
+#modal-form input:disabled, #modal-form textarea:disabled {
+    background: white;
+}
+
 #modal-form-container {
     position: fixed;
     top: 0;

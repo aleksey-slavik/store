@@ -13,6 +13,7 @@ var currentItem;
 //start statement of page when it is loaded
 findUserData();
 $('#buttonSave').hide();
+$('#buttonCancel').hide();
 
 /**
  * Register listener for change disable/enable statement button
@@ -23,6 +24,7 @@ $('#buttonChange').click(function () {
     changeStatement('password');
     $('#buttonChange').hide();
     $('#buttonSave').show();
+    $('#buttonCancel').show();
     return false;
 });
 
@@ -32,6 +34,20 @@ $('#buttonChange').click(function () {
 $('#buttonSave').click(function () {
    updateUserData();
    return false;
+});
+
+/**
+ * Register listener for cancel button
+ */
+$('#buttonCancel').click(function () {
+    fillUserData(currentItem);
+    changeStatement('firstName');
+    changeStatement('lastName');
+    changeStatement('password');
+    $('#buttonChange').show();
+    $('#buttonSave').hide();
+    $('#buttonCancel').hide();
+    return false;
 });
 
 /**
@@ -111,10 +127,12 @@ function updateUserData() {
         rootURL,
         $('#id').val(),
         userDataToJSON(),
-        function () {
+        function (data) {
+            currentItem = data;
             alert('User data successfully updated!');
             $('#buttonChange').show();
             $('#buttonSave').hide();
+            $('#buttonCancel').hide();
             changeStatement('firstName');
             changeStatement('lastName');
             changeStatement('password');
