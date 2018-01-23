@@ -9,7 +9,7 @@
                     <sec:authentication var="principal" property="principal.username"/>
                     <td>
                         <div class="top-panel-user">
-                            <a href="${pageContext.request.contextPath}/account">${principal}</a>
+                            <a class="bottom-link" href="${pageContext.request.contextPath}/account">${principal}</a>
                         </div>
                     </td>
                     <td>

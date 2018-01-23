@@ -13,14 +13,14 @@ var currentItem;
 //start statement of page when it is loaded
 findUserData();
 
+/**
+ * Register listener for change disable/enable statement button
+ */
 $('#buttonChange').click(function () {
-    if($('#firstName').attr('disabled')) {
-        $('#firstName').removeAttr('disabled');
-    } else {
-        $('#firstName').attr({
-            'disabled': 'disabled'
-        });
-    }
+    changeStatement('firstName');
+    changeStatement('lastName');
+    changeStatement('password');
+    return false;
 });
 
 /**
@@ -80,4 +80,21 @@ function findUserData() {
             alert('User with username "' + principal + '" not found!');
         }
     )
+}
+
+/**
+ * Change disabled/enabled statement of <input> with given id
+ *
+ * @param divId given id
+ */
+function changeStatement(divId) {
+    var div = $('#' + divId);
+
+    if (div.attr('disabled')) {
+        div.removeAttr('disabled');
+    } else {
+        div.attr({
+            'disabled': 'disabled'
+        });
+    }
 }
