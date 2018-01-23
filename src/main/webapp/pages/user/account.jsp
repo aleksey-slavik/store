@@ -43,7 +43,7 @@
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/script/rest.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/script/user/usersPublicAccess.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/script/user/public.js"></script>
 
 <%@include file="/parts/bottom.jsp" %>
 </body>

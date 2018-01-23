@@ -12,6 +12,7 @@ var currentItem;
 
 //start statement of page when it is loaded
 findUserData();
+$('#buttonSave').hide();
 
 /**
  * Register listener for change disable/enable statement button
@@ -20,7 +21,17 @@ $('#buttonChange').click(function () {
     changeStatement('firstName');
     changeStatement('lastName');
     changeStatement('password');
+    $('#buttonChange').hide();
+    $('#buttonSave').show();
     return false;
+});
+
+/**
+ * Register listener for update user data button
+ */
+$('#buttonSave').click(function () {
+   updateUserData();
+   return false;
 });
 
 /**
@@ -56,15 +67,7 @@ function userDataToJSON() {
 }
 
 /**
- * Clear form for insert new data
- */
-function clearUserForm() {
-    currentItem = {};
-    fillUserData(currentItem);
-}
-
-/**
- * Sending GET request to rest service for get item by given id.
+ * Sending GET request to rest service for get item.
  * Implementation of {@link getItem} method.
  */
 function findUserData() {
@@ -97,4 +100,24 @@ function changeStatement(divId) {
             'disabled': 'disabled'
         });
     }
+}
+
+/**
+ * Sending PUT request to rest service for update item.
+ * Implementation of {@link updateItem} method.
+ */
+function updateUserData() {
+    updateItem(
+        rootURL,
+        $('#id').val(),
+        userDataToJSON(),
+        function () {
+            alert('User data successfully updated!');
+            $('#buttonChange').show();
+            $('#buttonSave').hide();
+            changeStatement('firstName');
+            changeStatement('lastName');
+            changeStatement('password');
+        }
+    )
 }

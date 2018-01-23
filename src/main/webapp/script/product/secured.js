@@ -39,6 +39,62 @@ $('#itemList').on('click', 'a', function () {
 });
 
 /**
+ * Register listener for searchProduct button
+ */
+$('#buttonSearch').click(function () {
+    searchProduct($('#searchKey').val());
+    return false;
+});
+
+/**
+ * Trigger searchProduct when pressing 'Enter' on searchProduct input field
+ */
+$('#searchKey').keypress(function (e) {
+    if (e.which === 13) {
+        searchProduct($('#searchKey').val());
+        e.preventDefault();
+        return false;
+    }
+});
+
+/**
+ * Get list of items by given key.
+ * If key is empty return all items
+ *
+ * @param searchKey searchProduct key
+ */
+function searchProduct(searchKey) {
+    clearProductForm();
+
+    if (searchKey === '') {
+        findAllProducts();
+    } else {
+        findProductByKey(searchKey);
+    }
+}
+
+
+/**
+ * Get list of items by given key.
+ * Implementation of {@link findItemByKey} method.
+ *
+ * @param searchKey search key
+ */
+function findProductByKey(searchKey) {
+    findItemByKey(
+        rootURL,
+        searchKey,
+        function (data) {
+            fillProductList(data);
+        },
+        function () {
+            searchProduct('');
+            $('#searchKey').val('');
+        }
+    )
+}
+
+/**
  * Fill list of product using given data
  *
  * @param data given data
@@ -108,6 +164,7 @@ function findProductById(id) {
         function (data) {
             currentItem = data;
             fillProduct(currentItem);
+            $('#buttonDelete').show();
         },
         function () {
             //do nothing

@@ -4,18 +4,24 @@
 }
 
 .header {
-    padding: 0 10px;
+    padding: 0;
 }
 
 .container {
     display: table;
     margin: 0 auto;
     border-spacing: 10px 10px;
+    background-color: #ccced1;
+    border-radius: 3px;
 }
 
 .leftArea, .mainArea, .rightArea, .additionalArea {
     display: table-cell;
     width: 300px;
+}
+
+.leftArea-list {
+    overflow-y: auto;
 }
 
 ul {
@@ -28,7 +34,7 @@ li a {
     text-decoration: none;
     display: block;
     color: #000000;
-    border-bottom: solid 1px #CCCCCC;
+    border-bottom: solid 1px #7a7a7a;
     padding: 8px;
 }
 
@@ -45,7 +51,7 @@ input, textarea, select {
 
 input:disabled, textarea:disabled {
     border: none;
-    background: white;
+    background: #ccced1;
     outline: none;
     color: black;
 }
