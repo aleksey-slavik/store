@@ -7,7 +7,32 @@
 </head>
 <body>
 <%@include file="/parts/top.jsp" %>
-<h2 align="center">Page at development stage!</h2>
+
+<script>
+    var principal = "${pageContext.request.remoteUser}"
+</script>
+
+<div class="container">
+    <table id="orderTable"></table>
+
+    <table>
+        <tr>
+            <td>
+                <label>Total cost:</label>
+            </td>
+            <td>
+                <input id="totalCost" name="totalCost" type="text" disabled/>
+            </td>
+        </tr>
+    </table>
+
+    <button id="buttonBuy">Buy items</button>
+</div>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.min.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/script/rest.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/script/order/cart.js"></script>
+
 <%@include file="/parts/bottom.jsp" %>
 </body>
 </html>
