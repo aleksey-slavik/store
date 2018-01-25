@@ -58,12 +58,9 @@ public class UserRestController {
         List<User> users;
 
         if (params.containsKey("all")) {
-            users = userDao.findAll();
-        } else if (params.containsKey("query")) {
-            String queryKey = params.getFirst("query");
-            users = userDao.fuzzySearch(queryKey, "name", "firstname", "lastname");
+            users = userDao.findByParams(Collections.<String, String>emptyMap());
         } else {
-            users = Collections.singletonList(userDao.exactSearch(params.toSingleValueMap()));
+            users = userDao.findByParams(params.toSingleValueMap());
         }
 
         if (users == null || users.isEmpty()) {

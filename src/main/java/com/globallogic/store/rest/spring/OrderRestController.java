@@ -56,12 +56,12 @@ public class OrderRestController {
         List<Order> orders;
 
         if (params.containsKey("all")) {
-            orders = orderDao.findAll();
+            orders = orderDao.findByParams(Collections.<String, String>emptyMap());
         } else {
-            orders = Collections.singletonList(orderDao.exactSearch(params.toSingleValueMap()));
+            orders = orderDao.findByParams(params.toSingleValueMap());
         }
 
-        if (orders == null) {
+        if (orders == null || orders.isEmpty()) {
             throw new NotFoundException();
         } else {
             return orders;

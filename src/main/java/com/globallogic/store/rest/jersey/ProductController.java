@@ -5,6 +5,7 @@ import com.globallogic.store.model.Product;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -29,7 +30,7 @@ public class ProductController {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Product> getProductList() {
-        return productDao.findAll();
+        return productDao.findByParams(Collections.<String, String>emptyMap());
     }
 
     /**

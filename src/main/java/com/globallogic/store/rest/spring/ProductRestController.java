@@ -61,18 +61,14 @@ public class ProductRestController {
     public List<Product> findProduct(@RequestParam MultiValueMap<String, String> params) {
         if (params.isEmpty()) {
             throw new EmptyResponseException();
-
         }
 
         List<Product> products;
 
         if (params.containsKey("all")) {
-            products = productDao.findAll();
-        } else if (params.containsKey("query")) {
-            String queryKey = params.getFirst("query");
-            products = productDao.fuzzySearch(queryKey, "name", "brand");
+            products = productDao.findByParams(Collections.<String, String>emptyMap());
         } else {
-            products = Collections.singletonList(productDao.exactSearch(params.toSingleValueMap()));
+            products = productDao.findByParams(params.toSingleValueMap());
         }
 
         if (products == null || products.isEmpty()) {

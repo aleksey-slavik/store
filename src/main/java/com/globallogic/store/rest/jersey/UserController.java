@@ -5,6 +5,7 @@ import com.globallogic.store.model.User;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -29,7 +30,7 @@ public class UserController {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public List<User> getUserList() {
-        return userDao.findAll();
+        return userDao.findByParams(Collections.<String, String>emptyMap());
     }
 
     /**

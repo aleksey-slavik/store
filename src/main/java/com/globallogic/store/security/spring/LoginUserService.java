@@ -36,10 +36,11 @@ public class LoginUserService implements UserDetailsService {
      * @return {@link UserDetails} object
      * @throws UsernameNotFoundException throws when {@link com.globallogic.store.model.User} with given username is not found
      */
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        HashMap<String, String> params = new HashMap<String, String>();
-        params.put("username", s);
-        com.globallogic.store.model.User user = (com.globallogic.store.model.User) userDao.exactSearch(params);
+    public UserDetails loadUserByUsername(final String s) throws UsernameNotFoundException {
+        com.globallogic.store.model.User user = (com.globallogic.store.model.User) userDao.findByParams(
+                new HashMap<String, String>() {{
+                    put("username", s);
+                }});
         List<GrantedAuthority> authorities = buildUserAuthority(user);
         System.out.println(authorities);
         return buildUserForAuthentication(user, authorities);

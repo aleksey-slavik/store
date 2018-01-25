@@ -5,6 +5,7 @@ import com.globallogic.store.model.Order;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -29,7 +30,7 @@ public class OrderController {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Order> getOrderList() {
-        return orderDao.findAll();
+        return orderDao.findByParams(Collections.<String, String>emptyMap());
     }
 
     /**
