@@ -1,10 +1,14 @@
 package com.globallogic.store.rest.spring;
 
 import com.globallogic.store.dao.AbstractDAO;
+import com.globallogic.store.exception.EmptyResponseException;
+import com.globallogic.store.exception.NotFoundException;
 import com.globallogic.store.model.Order;
 import org.springframework.http.MediaType;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -44,8 +48,24 @@ public class OrderRestController {
      * @return list of {@link Order}
      */
     @RequestMapping(value = "/orders", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Order> getOrderList() {
-        return orderDao.findAll();
+    public List<Order> findOrder(@RequestParam MultiValueMap<String, String> params) {
+        if (params.isEmpty()) {
+            throw new EmptyResponseException();
+        }
+
+        List<Order> orders;
+
+        if (params.containsKey("all")) {
+            orders = orderDao.findAll();
+        } else {
+            orders = Collections.singletonList(orderDao.exactSearch(params.toSingleValueMap()));
+        }
+
+        if (orders == null) {
+            throw new NotFoundException();
+        } else {
+            return orders;
+        }
     }
 
     /**

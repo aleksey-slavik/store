@@ -12,13 +12,6 @@ import java.util.Map;
 public interface DAOAccessible<T> {
 
     /**
-     * Find all items in table.
-     *
-     * @return list of items
-     */
-    List<T> findAll();
-
-    /**
      * Find item by given item id.
      *
      * @param id given id
@@ -33,16 +26,7 @@ public interface DAOAccessible<T> {
      * @param params given parameters
      * @return list of items with given parameters
      */
-    T exactSearch(Map<String, String> params);
-
-    /**
-     * Find all items which have similar to key values in given columns.
-     *
-     * @param key     search key
-     * @param columns column names
-     * @return list of items with similar values
-     */
-    List<T> fuzzySearch(String key, String... columns);
+    List<T> findByParams(Map<String, String> params);
 
     /**
      * Create given item

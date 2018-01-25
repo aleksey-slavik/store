@@ -153,7 +153,7 @@
         <aop:pointcut id="userSelectAllAspectPointCut" expression="execution(* com.globallogic.store.rest.spring.UserRestController.findUser(..))"/>
         <aop:pointcut id="userSelectAspectPointCut" expression="execution(* com.globallogic.store.rest.spring.UserRestController.getUserById(..))"/>
 
-        <aop:aspect id="adminAccessAspect" ref="securityAspect">
+       <!-- <aop:aspect id="adminAccessAspect" ref="securityAspect">
             <aop:around method="checkAdminAccess" pointcut-ref="userDeleteAspectPointCut"/>
         </aop:aspect>
 
@@ -168,13 +168,13 @@
         <aop:aspect id="customerAfterAccessAspect" ref="securityAspect">
             <aop:after-returning method="checkAccessAfter" pointcut-ref="userSelectAllAspectPointCut" returning="result"/>
             <aop:after-returning method="checkAccessAfter" pointcut-ref="userSelectAspectPointCut" returning="result"/>
-        </aop:aspect>
+        </aop:aspect>-->
     </aop:config>
-
-    <!-- Security Aspect -->
+<!--
+    &lt;!&ndash; Security Aspect &ndash;&gt;
     <bean id="securityAspect" class="com.globallogic.store.security.aspect.SecurityManager">
         <property name="authenticationFacade" ref="authenticationFacade"/>
     </bean>
 
-    <bean id="authenticationFacade" class="com.globallogic.store.security.aspect.AuthenticateFacade" />
+    <bean id="authenticationFacade" class="com.globallogic.store.security.aspect.AuthenticateFacade" />-->
 </beans>

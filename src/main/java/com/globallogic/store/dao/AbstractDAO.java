@@ -1,7 +1,6 @@
 package com.globallogic.store.dao;
 
 import org.hibernate.Session;
-import org.hibernate.query.Query;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -27,24 +26,6 @@ public class AbstractDAO<T> implements DAOAccessible<T> {
     }
 
     /**
-     * Find all items in table.
-     *
-     * @return list of items
-     */
-    public List<T> findAll() {
-        return new TemplateGenericDAO<List<T>>().processQuery(new Queryable<List<T>>() {
-            public List<T> query(Session session) {
-                CriteriaBuilder builder = session.getCriteriaBuilder();
-                CriteriaQuery<T> query = builder.createQuery(type);
-                Root<T> root = query.from(type);
-                query.select(root);
-                Query<T> q = session.createQuery(query);
-                return q.getResultList();
-            }
-        });
-    }
-
-    /**
      * Find item by given item id.
      *
      * @param id given id
@@ -61,53 +42,31 @@ public class AbstractDAO<T> implements DAOAccessible<T> {
     /**
      * Find all items which have given parameters.
      * Parameters map consist column name as key and search parameter as value.
+     * Return list of all items if parameters is absent.
      *
      * @param params given parameters
      * @return list of items with given parameters
      */
-    public T exactSearch(final Map<String, String> params) {
-        return new TemplateGenericDAO<T>().processQuery(new Queryable<T>() {
-            public T query(Session session) {
-                CriteriaBuilder builder = session.getCriteriaBuilder();
-                CriteriaQuery<T> query = builder.createQuery(type);
-                Root<T> root = query.from(type);
-                query.select(root);
-                ArrayList<Predicate> predicates = new ArrayList<Predicate>();
-
-                for (Map.Entry<String, String> entry : params.entrySet()) {
-                    predicates.add(builder.equal(root.get(entry.getKey()), entry.getValue()));
-                }
-
-                query.where(builder.and(predicates.toArray(new Predicate[]{})));
-                Query<T> q = session.createQuery(query);
-                return q.getSingleResult();
-            }
-        });
-    }
-
-    /**
-     * Find all items which have similar to key values in given columns.
-     *
-     * @param key     search key
-     * @param columns column names
-     * @return list of items with similar values
-     */
-    public List<T> fuzzySearch(final String key, final String... columns) {
+    public List<T> findByParams(final Map<String, String> params) {
         return new TemplateGenericDAO<List<T>>().processQuery(new Queryable<List<T>>() {
             public List<T> query(Session session) {
                 CriteriaBuilder builder = session.getCriteriaBuilder();
                 CriteriaQuery<T> query = builder.createQuery(type);
                 Root<T> root = query.from(type);
                 query.select(root);
-                ArrayList<Predicate> predicates = new ArrayList<Predicate>();
 
-                for (String column : columns) {
-                    predicates.add(builder.like(root.<String>get(column), "%" + key + "%"));
+                if (params.isEmpty()) {
+                    return session.createQuery(query).getResultList();
+                } else {
+                    ArrayList<Predicate> predicates = new ArrayList<Predicate>();
+
+                    for (Map.Entry<String, String> entry : params.entrySet()) {
+                        predicates.add(builder.equal(root.get(entry.getKey()), entry.getValue()));
+                    }
+
+                    query.where(builder.and(predicates.toArray(new Predicate[]{})));
+                    return  session.createQuery(query).getResultList();
                 }
-
-                query.where(builder.or(predicates.toArray(new Predicate[]{})));
-                Query<T> q = session.createQuery(query);
-                return q.getResultList();
             }
         });
     }

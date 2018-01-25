@@ -46,4 +46,14 @@ public class Order extends Entity {
     public void setItems(Set<OrderItem> items) {
         this.items = items;
     }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "totalCost=" + totalCost +
+                ", user=" + user +
+                ", status=" + status +
+                ", items=" + items +
+                '}';
+    }
 }
