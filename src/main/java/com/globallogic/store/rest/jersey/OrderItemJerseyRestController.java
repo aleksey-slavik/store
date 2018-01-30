@@ -14,12 +14,19 @@ import java.util.List;
  * @author oleksii.slavik
  */
 @Path("/orderItems")
-public class OrderItemController {
+public class OrderItemJerseyRestController {
 
     /**
      * {@link OrderItem} DAO object for access to database.
      */
-    private AbstractDAO<OrderItem> orderItemDao = new AbstractDAO<OrderItem>(OrderItem.class);
+    private AbstractDAO<OrderItem> orderItemDao;
+
+    /**
+     * Injection of {@link OrderItem} DAO object for access to database.
+     */
+    public void setOrderItemDao(AbstractDAO<OrderItem> orderItemDao) {
+        this.orderItemDao = orderItemDao;
+    }
 
     /**
      * Return list of {@link OrderItem} represented as json.

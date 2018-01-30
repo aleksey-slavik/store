@@ -17,7 +17,7 @@ import java.util.List;
  * @author oleksii.slavik
  */
 @RestController
-public class UserRestController {
+public class UserSpringRestController {
 
     /**
      * {@link User} DAO object for access to database.

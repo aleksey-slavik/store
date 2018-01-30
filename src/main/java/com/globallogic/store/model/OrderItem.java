@@ -38,7 +38,8 @@ public class OrderItem extends Entity {
     @Override
     public String toString() {
         return "OrderItem{" +
-                "product=" + product +
+                "id=" + getId() +
+                ", product=" + product +
                 ", quantity=" + quantity +
                 ", price=" + price +
                 '}';

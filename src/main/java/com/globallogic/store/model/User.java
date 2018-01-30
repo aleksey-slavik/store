@@ -8,15 +8,10 @@ package com.globallogic.store.model;
 public class User extends Entity {
 
     private String firstName;
-
     private String lastName;
-
     private String username;
-
     private String password;
-
     private String email;
-
     private Role role;
 
     public User() {}

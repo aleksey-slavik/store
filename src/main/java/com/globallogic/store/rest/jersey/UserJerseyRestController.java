@@ -14,12 +14,19 @@ import java.util.List;
  * @author oleksii.slavik
  */
 @Path("/users")
-public class UserController {
+public class UserJerseyRestController {
 
     /**
      * {@link User} DAO object for access to database.
      */
-    private AbstractDAO<User> userDao = new AbstractDAO<User>(User.class);
+    private AbstractDAO<User> userDao;
+
+    /**
+     * Injection {@link User} DAO object for access to database.
+     */
+    public void setUserDao(AbstractDAO<User> userDao) {
+        this.userDao = userDao;
+    }
 
     /**
      * Return list of {@link User} represented as json.

@@ -15,6 +15,14 @@ public class Order extends Entity {
     private Status status;
     private Set<OrderItem> items = new HashSet<OrderItem>(0);
 
+    public Order() {}
+
+    public Order(User user) {
+        this.user = user;
+        this.totalCost = 0D;
+        this.status = Status.OPENED;
+    }
+
     public Double getTotalCost() {
         return totalCost;
     }
@@ -47,10 +55,19 @@ public class Order extends Entity {
         this.items = items;
     }
 
+    public void checkTotalCost() {
+        totalCost = 0D;
+
+        for (OrderItem orderItem : items) {
+            totalCost += orderItem.getPrice() * orderItem.getQuantity();
+        }
+    }
+
     @Override
     public String toString() {
         return "Order{" +
-                "totalCost=" + totalCost +
+                "id=" + getId() +
+                ", totalCost=" + totalCost +
                 ", user=" + user +
                 ", status=" + status +
                 ", items=" + items +

@@ -14,12 +14,19 @@ import java.util.List;
  * @author oleksii.slavik
  */
 @Path("/products")
-public class ProductController {
+public class ProductJerseyRestController {
 
     /**
      * {@link Product} DAO object for access to database.
      */
-    private AbstractDAO<Product> productDao = new AbstractDAO<Product>(Product.class);
+    private AbstractDAO<Product> productDao;
+
+    /**
+     * Injection {@link Product} DAO object for access to database.
+     */
+    public void setProductDao(AbstractDAO<Product> productDao) {
+        this.productDao = productDao;
+    }
 
     /**
      * Return list of {@link Product} represented as json.

@@ -1,7 +1,5 @@
 package com.globallogic.store.model;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * Simple JavaBean domain object that represents a Product
  *
@@ -10,29 +8,9 @@ import javax.servlet.http.HttpServletRequest;
 public class Product extends Entity {
 
     private String name;
-
     private String brand;
-
     private String description;
-
     private Double price;
-
-    public Product() {
-    }
-
-    public Product(String name, String brand, String description, Double price) {
-        this.name = name;
-        this.brand = brand;
-        this.description = description;
-        this.price = price;
-    }
-
-    public Product(HttpServletRequest request) {
-        this.name = request.getParameter("name");
-        this.brand = request.getParameter("brand");
-        this.description = request.getParameter("description");
-        this.price = Double.valueOf(request.getParameter("price"));
-    }
 
     public String getName() {
         return name;

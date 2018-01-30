@@ -1,9 +1,8 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class name="com.globallogic.store.model.Order" table="orders" catalog="public">
-
         <id name="id" type="java.lang.Long">
             <column name="id"/>
             <generator class="identity"/>
@@ -13,7 +12,7 @@
             <column name="total_cost" not-null="true"/>
         </property>
 
-        <many-to-one name="user" class="com.globallogic.store.model.User" fetch="select" lazy="false">
+        <many-to-one name="user" class="com.globallogic.store.model.User" fetch="select" lazy="false" cascade="all">
             <column name="user_id" not-null="true"/>
         </many-to-one>
 
@@ -25,12 +24,14 @@
             </type>
         </property>
 
-        <set name="items" table="order_item" catalog="public" lazy="false" fetch="select" cascade="all">
+        <set name="items" table="order_details" catalog="public" lazy="false" fetch="select" cascade="all">
             <key>
                 <column name="order_id" not-null="true"/>
             </key>
 
-            <one-to-many class="com.globallogic.store.model.OrderItem"/>
+            <many-to-many entity-name="com.globallogic.store.model.OrderItem">
+                <column name="order_item_id" not-null="true"/>
+            </many-to-many>
         </set>
 
     </class>

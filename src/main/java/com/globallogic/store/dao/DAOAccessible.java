@@ -1,5 +1,7 @@
 package com.globallogic.store.dao;
 
+import com.globallogic.store.filter.SearchFilter;
+
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +29,14 @@ public interface DAOAccessible<T> {
      * @return list of items with given parameters
      */
     List<T> findByParams(Map<String, String> params);
+
+    /**
+     * Find all items which have filtered parameters.
+     *
+     * @param filter filtered parameters
+     * @return list of items with given parameters
+     */
+    List<T> findByFilter(SearchFilter<T> filter);
 
     /**
      * Create given item
