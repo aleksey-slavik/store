@@ -30,7 +30,7 @@ User rest service:
             <td>users/</td>
             <td>Create new user</td>
             <td>200 — user data return in response body,<br>
-                406 — error in input data, explanations in response body</td>
+                406 — error in input data</td>
         </tr>
         <tr>
             <td>PUT</td>
@@ -38,7 +38,7 @@ User rest service:
             <td>Update user data with given id</td>
             <td>200 — user data return in response body,<br>
                 404 — user with given id not found,<br>
-                406 — error in input data, explanations in response body</td>
+                406 — error in input data</td>
         </tr>
         <tr>
             <td>DELETE</td>
@@ -78,7 +78,7 @@ Product rest service:
             <td>products/</td>
             <td>Create new product</td>
             <td>200 — product data return in response body,<br>
-                406 — error in input data, explanations in response body</td>
+                406 — error in input data</td>
         </tr>
         <tr>
             <td>PUT</td>
@@ -86,7 +86,7 @@ Product rest service:
             <td>Update product data with given id</td>
             <td>200 — product data return in response body,<br>
                 404 — product with given id not found,<br>
-                406 — error in input data, explanations in response body</td>
+                406 — error in input data</td>
         </tr>
         <tr>
             <td>DELETE</td>
@@ -140,7 +140,7 @@ Order rest service:
             <td>orders/</td>
             <td>Create new order</td>
             <td>200 — order data return in response body,<br>
-                406 — error in input data, explanations in response body</td>
+                406 — error in input data</td>
         </tr>
         <tr>
             <td>POST</td>
@@ -148,7 +148,7 @@ Order rest service:
             <td>Create new order item for order with given id</td>
             <td>200 — order data return in response body,<br>
                 404 — order with given id not found,<br>
-                406 — error in input data, explanations in response body</td>
+                406 — error in input data</td>
         </tr>
         <tr>
             <td>PUT</td>
@@ -156,7 +156,7 @@ Order rest service:
             <td>Update order data with given id</td>
             <td>200 — order data return in response body,<br>
                 404 — order with given id not found,<br>
-                406 — error in input data, explanations in response body</td>
+                406 — error in input data</td>
         </tr>
         <tr>
             <td>PUT</td>
@@ -164,7 +164,7 @@ Order rest service:
             <td>Update order item data with given itemId of order with given id</td>
             <td>200 — order data return in response body,<br>
                 404 — order with given id or order item with with given itemId not found,<br>
-                406 — error in input data, explanations in response body</td>
+                406 — error in input data</td>
         </tr>
         <tr>
             <td>DELETE</td>
