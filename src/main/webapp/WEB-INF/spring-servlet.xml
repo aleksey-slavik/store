@@ -107,10 +107,6 @@
         <property name="orderItemDao" ref="orderItemDao"/>
     </bean>
 
-    <bean name="orderItemSpringRestController" class="com.globallogic.store.rest.spring.OrderItemSpringRestController">
-        <property name="orderItemDao" ref="orderItemDao"/>
-    </bean>
-
     <!-- Jersey Rest beans -->
     <bean name="userJerseyRestController" class="com.globallogic.store.rest.jersey.UserJerseyRestController">
         <property name="userDao" ref="userDao"/>
@@ -122,10 +118,6 @@
 
     <bean name="orderJerseyRestController" class="com.globallogic.store.rest.jersey.OrderJerseyRestController">
         <property name="orderDao" ref="orderDao"/>
-    </bean>
-
-    <bean name="orderItemJerseyRestController" class="com.globallogic.store.rest.jersey.OrderItemJerseyRestController">
-        <property name="orderItemDao" ref="orderItemDao"/>
     </bean>
 
     <!-- Spring Security -->
