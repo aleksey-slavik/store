@@ -2,9 +2,13 @@ package com.globallogic.store.rest.spring;
 
 import com.globallogic.store.dao.AbstractDAO;
 import com.globallogic.store.exception.NotFoundException;
+import com.globallogic.store.filter.OrderSearchFilter;
 import com.globallogic.store.model.Order;
 import com.globallogic.store.model.OrderItem;
+import com.globallogic.store.model.Status;
+import com.globallogic.store.model.User;
 import org.springframework.http.MediaType;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,14 +25,16 @@ import java.util.Set;
 public class OrderSpringRestController {
 
     /**
-     * Injection of {@link Order} DAO object for access to database.
+     * {@link Order} DAO object for access to database.
      */
     private AbstractDAO<Order> orderDao;
 
     /**
-     * Injection of {@link OrderItem} DAO object for access to database.
+     * {@link OrderItem} DAO object for access to database.
      */
     private AbstractDAO<OrderItem> orderItemDao;
+
+    private UserSpringRestController userRest;
 
     /**
      * Injection of {@link Order} DAO object for access to database.
@@ -44,21 +50,34 @@ public class OrderSpringRestController {
         this.orderItemDao = orderItemDao;
     }
 
+    public void setUserRest(UserSpringRestController userRest) {
+        this.userRest = userRest;
+    }
+
     /**
      * Return list of {@link Order} represented as json.
      *
      * @return list of {@link Order}
      */
     @RequestMapping(value = "/orders", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Order> findOrder(@RequestParam MultiValueMap<String, String> params) {
+    public List<Order> findOrder(@RequestParam final MultiValueMap<String, String> params) {
         if (params.isEmpty()) {
             return orderDao.findByParams(Collections.<String, String>emptyMap());
         }
 
         List<Order> orders;
 
-        if (params.containsKey("all")) {
-            orders = orderDao.findByParams(Collections.<String, String>emptyMap());
+        if (params.containsKey("username") && params.containsKey("status")) {
+            OrderSearchFilter orderSearchFilter = new OrderSearchFilter();
+
+            User user = userRest.findUser(new LinkedMultiValueMap<String, String>() {{
+                put("username", Collections.singletonList(params.getFirst("username")));
+            }}).get(0);
+
+            orderSearchFilter.setUser(user);
+            orderSearchFilter.setStatus(Status.valueOf(params.getFirst("status")));
+
+            orders = orderDao.findByFilter(orderSearchFilter);
         } else {
             orders = orderDao.findByParams(params.toSingleValueMap());
         }

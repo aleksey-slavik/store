@@ -105,6 +105,7 @@
     <bean name="orderSpringRestController" class="com.globallogic.store.rest.spring.OrderSpringRestController">
         <property name="orderDao" ref="orderDao"/>
         <property name="orderItemDao" ref="orderItemDao"/>
+        <property name="userRest" ref="userSpringRestController"/>
     </bean>
 
     <!-- Jersey Rest beans -->
