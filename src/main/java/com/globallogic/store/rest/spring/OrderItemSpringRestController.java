@@ -98,42 +98,14 @@ public class OrderItemSpringRestController {
     }
 
     /**
-     * Create given {@link OrderItem}
+     * Update {@link OrderItem} item with given id
      *
-     * @param orderItem given {@link OrderItem}
-     * @return created {@link OrderItem}
+     * @param orderItem updated {@link OrderItem} data
+     * @return updated {@link OrderItem}
      */
-    @RequestMapping(value = "/orderItems/{username}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public OrderItem createOrderItem(@PathVariable final String username, @RequestBody OrderItem orderItem) {
-        OrderItem item = orderItemDao.create(orderItem);
-        Order order = null;
-
-        try {
-            System.out.println("START TRY");
-
-            order = orderRest.findOrderByUsername(username, new LinkedMultiValueMap<String, String>() {{
-                put("status", Collections.singletonList(Status.OPENED.name()));
-            }}).get(0);
-
-            System.out.println("ORDER EXIST: " + order);
-        } catch (NotFoundException e) {
-            System.out.println("START CATCH");
-
-            User user = userRest.findUser(new LinkedMultiValueMap<String, String>() {{
-                put("username", Collections.singletonList(username));
-            }}).get(0);
-
-            order = new Order(user);
-            System.out.println("ORDER NEW: " + order);
-        } finally {
-            assert order != null;
-            Set<OrderItem> items = order.getItems();
-            items.add(item);
-            order.setItems(items);
-            orderRest.updateOrder(order.getId(), order);
-        }
-
-        return item;
+    @RequestMapping(value = "/orderItems", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public OrderItem createOrderItem(@RequestBody OrderItem orderItem) {
+        return orderItemDao.create(orderItem);
     }
 
     /**

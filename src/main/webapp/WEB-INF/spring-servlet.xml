@@ -104,7 +104,7 @@
 
     <bean name="orderSpringRestController" class="com.globallogic.store.rest.spring.OrderSpringRestController">
         <property name="orderDao" ref="orderDao"/>
-        <property name="userRest" ref="userSpringRestController"/>
+        <property name="orderItemDao" ref="orderItemDao"/>
     </bean>
 
     <bean name="orderItemSpringRestController" class="com.globallogic.store.rest.spring.OrderItemSpringRestController">

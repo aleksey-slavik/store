@@ -5,12 +5,21 @@ package com.globallogic.store.model;
  *
  * @author oleksii.slavik
  */
-public class Product extends Entity {
+public class Product {
 
+    private Long id;
     private String name;
     private String brand;
     private String description;
     private Double price;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -47,7 +56,7 @@ public class Product extends Entity {
     @Override
     public String toString() {
         return "Product{" +
-                "id=" + getId() +
+                "id=" + id +
                 ", name='" + name + '\'' +
                 ", brand='" + brand + '\'' +
                 ", description='" + description + '\'' +

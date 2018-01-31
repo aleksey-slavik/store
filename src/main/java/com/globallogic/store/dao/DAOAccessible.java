@@ -31,6 +31,15 @@ public interface DAOAccessible<T> {
     List<T> findByParams(Map<String, String> params);
 
     /**
+     * Find all items which have given parameters.
+     * Parameters map consist column name as key and search parameter as value.
+     *
+     * @param params given parameters
+     * @return list of items with given parameters
+     */
+    T findFirstByParams(Map<String, String> params);
+
+    /**
      * Find all items which have filtered parameters.
      *
      * @param filter filtered parameters

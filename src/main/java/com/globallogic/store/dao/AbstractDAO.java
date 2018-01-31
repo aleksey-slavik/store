@@ -58,6 +58,10 @@ public class AbstractDAO<T> implements DAOAccessible<T> {
         });
     }
 
+    public T findFirstByParams(final Map<String, String> params) {
+        return findByParams(params).get(0);
+    }
+
     public List<T> findByFilter(final SearchFilter<T> filter) {
         return new TemplateGenericDAO<List<T>>().processQuery(new Queryable<List<T>>() {
             public List<T> query(Session session) {

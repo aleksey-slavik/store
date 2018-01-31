@@ -1,14 +1,10 @@
 package com.globallogic.store.rest.spring;
 
 import com.globallogic.store.dao.AbstractDAO;
-import com.globallogic.store.filter.OrderSearchFilter;
 import com.globallogic.store.exception.NotFoundException;
 import com.globallogic.store.model.Order;
 import com.globallogic.store.model.OrderItem;
-import com.globallogic.store.model.Status;
-import com.globallogic.store.model.User;
 import org.springframework.http.MediaType;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,9 +26,9 @@ public class OrderSpringRestController {
     private AbstractDAO<Order> orderDao;
 
     /**
-     * Injection of {@link UserSpringRestController} DAO object for access to database.
+     * Injection of {@link OrderItem} DAO object for access to database.
      */
-    private UserSpringRestController userRest;
+    private AbstractDAO<OrderItem> orderItemDao;
 
     /**
      * Injection of {@link Order} DAO object for access to database.
@@ -42,10 +38,10 @@ public class OrderSpringRestController {
     }
 
     /**
-     * Injection of {@link UserSpringRestController} DAO object for access to database.
+     * Injection of {@link OrderItem} DAO object for access to database.
      */
-    public void setUserRest(UserSpringRestController userRest) {
-        this.userRest = userRest;
+    public void setOrderItemDao(AbstractDAO<OrderItem> orderItemDao) {
+        this.orderItemDao = orderItemDao;
     }
 
     /**
@@ -80,7 +76,7 @@ public class OrderSpringRestController {
     }
 
     @RequestMapping(value = "/orders/{id}/items", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Set<OrderItem> getItemsOfOrderByOrderId(@PathVariable Long id) {
+    public Set<OrderItem> getItemsOfOrderByOrderId(final @PathVariable Long id) {
         return orderDao.findById(id).getItems();
     }
 
@@ -97,33 +93,26 @@ public class OrderSpringRestController {
         throw  new NotFoundException();
     }
 
-    /**
-     * Return list of {@link Order} of given user.
-     *
-     * @return list of {@link Order}
-     */
-    //@RequestMapping(value = "/orders/{username}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Order> findOrderByUsername(@PathVariable final String username, @RequestParam MultiValueMap<String, String> params) {
-        List<Order> orders;
+    @RequestMapping(value = "/orders/{id}/items", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public OrderItem addOrderItem(@PathVariable Long id, @RequestBody OrderItem orderItem) {
+        Order order = new Order();
+        order.setId(id);
+        orderItem.setOrder(order);
+        return orderItemDao.create(orderItem);
+    }
 
-        User user = userRest.findUser(new LinkedMultiValueMap<String, String>() {{
-            put("username", Collections.singletonList(username));
-        }}).get(0);
+    @RequestMapping(value = "/orders/{id}/items/{itemId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public OrderItem updateOrderItem(@PathVariable Long id, @PathVariable Long itemId, @RequestBody OrderItem orderItem) {
+        Order order = new Order();
+        order.setId(id);
+        orderItem.setOrder(order);
+        orderItem.setId(itemId);
+        return orderItemDao.update(orderItem);
+    }
 
-        OrderSearchFilter orderSearchFilter = new OrderSearchFilter();
-        orderSearchFilter.setUser(user);
-
-        if (params.containsKey("status")) {
-            orderSearchFilter.setStatus(Status.valueOf(params.getFirst("status")));
-        }
-
-        orders = orderDao.findByFilter(orderSearchFilter);
-
-        if (orders == null || orders.isEmpty()) {
-            throw new NotFoundException();
-        } else {
-            return orders;
-        }
+    @RequestMapping(value = "/orders/{id}/items/{itemId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public OrderItem deleteOrderItem(@PathVariable Long id, @PathVariable Long itemId) {
+        return orderItemDao.delete(itemId);
     }
 
     /**
