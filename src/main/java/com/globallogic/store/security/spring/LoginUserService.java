@@ -1,6 +1,6 @@
 package com.globallogic.store.security.spring;
 
-import com.globallogic.store.dao.AbstractDAO;
+import com.globallogic.store.dao.GenericDao;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -18,14 +18,14 @@ import java.util.*;
 public class LoginUserService implements UserDetailsService {
 
     /**
-     * {@link AbstractDAO} object to access {@link com.globallogic.store.model.User} DAO methods.
+     * {@link GenericDao} object to access {@link com.globallogic.store.model.User} DAO methods.
      */
-    private AbstractDAO userDao;
+    private GenericDao userDao;
 
     /**
-     * Injection {@link AbstractDAO} object to access {@link com.globallogic.store.model.User} DAO methods.
+     * Injection {@link GenericDao} object to access {@link com.globallogic.store.model.User} DAO methods.
      */
-    public void setUserDao(AbstractDAO userDao) {
+    public void setUserDao(GenericDao userDao) {
         this.userDao = userDao;
     }
 
@@ -37,10 +37,11 @@ public class LoginUserService implements UserDetailsService {
      * @throws UsernameNotFoundException throws when {@link com.globallogic.store.model.User} with given username is not found
      */
     public UserDetails loadUserByUsername(final String s) throws UsernameNotFoundException {
-        com.globallogic.store.model.User user = (com.globallogic.store.model.User) userDao.findByParams(
+        com.globallogic.store.model.User user = new com.globallogic.store.model.User();
+        /*(com.globallogic.store.model.User) userDao.findByParams(
                 new HashMap<String, String>() {{
                     put("username", s);
-                }});
+                }});*/
         List<GrantedAuthority> authorities = buildUserAuthority(user);
         System.out.println(authorities);
         return buildUserForAuthentication(user, authorities);

@@ -22,6 +22,10 @@ public class JpaDaoSupport {
      */
     private EntityManager entityManager;
 
+    JpaDaoSupport(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+
     /**
      * Find object of given {@link Class} of entity, which have given unique key (for example, id)
      *
@@ -68,10 +72,10 @@ public class JpaDaoSupport {
      * @param <E>         type of entity
      * @return list of entities
      */
-    public <E> List<E> list(Class<E> entityClass, Expression<Boolean> filter, Integer limit, Integer offset) {
+    public <E> List<E> entityList(Class<E> entityClass, Expression<Boolean> filter, Integer limit, Integer offset) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<E> criteriaQuery = criteriaBuilder.createQuery(entityClass);
-        //rootCriteriaQuery(criteriaQuery, entityClass);
+        rootCriteriaQuery(criteriaQuery, entityClass);
 
         if (filter != null) {
             filterCriteriaQuery(criteriaQuery, filter);
@@ -89,8 +93,8 @@ public class JpaDaoSupport {
      * @param <E>         type of entity
      * @return list of entities
      */
-    public <E> List<E> list(Class<E> entityClass, Expression<Boolean> filter) {
-        return list(entityClass, filter, null, null);
+    public <E> List<E> entityList(Class<E> entityClass, Expression<Boolean> filter) {
+        return entityList(entityClass, filter, null, null);
     }
 
     /**
@@ -100,8 +104,8 @@ public class JpaDaoSupport {
      * @param <E>         type of entity
      * @return list of entities
      */
-    public <E> List<E> list(Class<E> entityClass) {
-        return list(entityClass, null, null, null);
+    public <E> List<E> entityList(Class<E> entityClass) {
+        return entityList(entityClass, null, null, null);
     }
 
     /**
@@ -114,7 +118,7 @@ public class JpaDaoSupport {
      * @param <V>         type of attribute
      * @return list of entities with given value
      */
-    public <E, V> List<E> listByValue(Class<E> entityClass, SingularAttribute<? super E, V> attribute, V value) {
+    public <E, V> List<E> entityListByValue(Class<E> entityClass, SingularAttribute<? super E, V> attribute, V value) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<E> criteriaQuery = criteriaBuilder.createQuery(entityClass);
         Root<E> root = rootCriteriaQuery(criteriaQuery, entityClass);
@@ -128,7 +132,7 @@ public class JpaDaoSupport {
      * @param entity given entity data
      * @param <E>    type of entity
      */
-    public <E> void save(E entity) {
+    public <E> void create(E entity) {
         entityManager.persist(entity);
     }
 

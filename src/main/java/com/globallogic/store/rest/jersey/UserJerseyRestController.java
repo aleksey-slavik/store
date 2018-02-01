@@ -1,6 +1,6 @@
 package com.globallogic.store.rest.jersey;
 
-import com.globallogic.store.dao.AbstractDAO;
+import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.model.User;
 
 import javax.ws.rs.*;
@@ -19,12 +19,12 @@ public class UserJerseyRestController {
     /**
      * {@link User} DAO object for access to database.
      */
-    private AbstractDAO<User> userDao;
+    private GenericDao<User> userDao;
 
     /**
      * Injection {@link User} DAO object for access to database.
      */
-    public void setUserDao(AbstractDAO<User> userDao) {
+    public void setUserDao(GenericDao<User> userDao) {
         this.userDao = userDao;
     }
 
@@ -33,19 +33,19 @@ public class UserJerseyRestController {
      *
      * @return list of {@link User}
      */
-    @GET
+    /*@GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public List<User> getUserList() {
         return userDao.findByParams(Collections.<String, String>emptyMap());
     }
 
-    /**
+    *//**
      * Return {@link User} item with given id
      *
      * @param id given id
      * @return {@link User} item
-     */
+     *//*
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -53,12 +53,12 @@ public class UserJerseyRestController {
         return userDao.findById(id);
     }
 
-    /**
+    *//**
      * Create given {@link User}
      *
      * @param user given {@link User}
      * @return created {@link User}
-     */
+     *//*
     @POST
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
@@ -67,13 +67,13 @@ public class UserJerseyRestController {
         return userDao.create(user);
     }
 
-    /**
+    *//**
      * Update {@link User} item with given id
      *
      * @param id      given id of {@link User}
      * @param user updated {@link User} data
      * @return updated {@link User}
-     */
+     *//*
     @PUT
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -83,17 +83,17 @@ public class UserJerseyRestController {
         return userDao.update(user);
     }
 
-    /**
+    *//**
      * Delete {@link User} item with given id
      *
      * @param id given id of {@link User}
      * @return deleted {@link User}
-     */
+     *//*
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public User deleteUser(@PathParam("id") Long id) {
         return userDao.delete(id);
-    }
+    }*/
 }

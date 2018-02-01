@@ -77,19 +77,19 @@
     <mvc:resources mapping="/parts/**" location="/parts/"/>
 
     <!-- DAO beans -->
-    <bean name="userDao" class="com.globallogic.store.dao.AbstractDAO">
+    <bean name="userDao" class="com.globallogic.store.dao.GenericDao">
         <constructor-arg value="com.globallogic.store.model.User"/>
     </bean>
 
-    <bean name="productDao" class="com.globallogic.store.dao.AbstractDAO">
+    <bean name="productDao" class="com.globallogic.store.dao.GenericDao">
         <constructor-arg value="com.globallogic.store.model.Product"/>
     </bean>
 
-    <bean name="orderDao" class="com.globallogic.store.dao.AbstractDAO">
+    <bean name="orderDao" class="com.globallogic.store.dao.GenericDao">
         <constructor-arg value="com.globallogic.store.model.Order"/>
     </bean>
 
-    <bean name="orderItemDao" class="com.globallogic.store.dao.AbstractDAO">
+    <bean name="orderItemDao" class="com.globallogic.store.dao.GenericDao">
         <constructor-arg value="com.globallogic.store.model.OrderItem"/>
     </bean>
 
