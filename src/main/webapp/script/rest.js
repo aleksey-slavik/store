@@ -98,6 +98,7 @@ function updateItem(restURL, itemId, itemData, successStatement) {
         success: function (data, textStatus, xhr) {
             switch (xhr.status) {
                 case 200:
+                    alert('Item with id=' + itemId + ' successfully updated!');
                     successStatement(data);
                     break;
                 default:

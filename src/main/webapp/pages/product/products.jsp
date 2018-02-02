@@ -81,7 +81,9 @@
                 <label>Quantity:</label>
                 <input id="quantity" name="quantity" type="number" min="1" value="1"/>
 
-                <button id="buttonBuy">Add to cart</button>
+                <sec:authorize access="isAuthenticated()">
+                    <button id="buttonBuy">Add to cart</button>
+                </sec:authorize>
                 <button id="buttonCancel">Cancel</button>
             </div>
 

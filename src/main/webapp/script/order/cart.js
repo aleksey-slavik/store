@@ -87,7 +87,7 @@ function clearUserOrderItemForm() {
  */
 function findUserOrders() {
     getItem(
-        rootURL + '?all',//todo search by username
+        rootURL + '/customer/' ,//todo search by username
         function (data) {
             fillUserOrderList(data);
         },

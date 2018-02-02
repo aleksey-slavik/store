@@ -54,7 +54,7 @@ $('#itemList').on('click', 'a', function () {
  * Register listener for search button
  */
 $('#buttonSearch').click(function () {
-    searchUser($('#searchKey').val());
+    //searchUser($('#searchKey').val());
     return false;
 });
 
@@ -62,11 +62,11 @@ $('#buttonSearch').click(function () {
  * Trigger search when pressing 'Enter' on search input field
  */
 $('#searchKey').keypress(function (e) {
-    if (e.which === 13) {
+    /*if (e.which === 13) {
         searchUser($('#searchKey').val());
         e.preventDefault();
         return false;
-    }
+    }*/
 });
 
 /**
@@ -160,7 +160,7 @@ function findUserByKey(searchKey) {
  */
 function findAllUsers() {
     getItem(
-        rootURL + '?all',
+        rootURL,
 
         function (data) {
             fillUserList(data)
