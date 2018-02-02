@@ -215,3 +215,20 @@ a {
     width: 30px;
     height: 30px;
 }
+
+#orderTable th, #orderTable td {
+    border: solid 1px black;
+    text-decoration: none;
+    color: #000000;
+}
+
+#orderTable td a, #orderTable td a:hover {
+    text-decoration: none;
+    color: #000000;
+    display: block;
+    padding: 3px;
+}
+
+.orderTableRow:hover {
+    background-color: #8f8f8f;
+}

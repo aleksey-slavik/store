@@ -35,12 +35,18 @@ $('#orderTable').on('click', 'a', function () {
 function fillUserOrderList(data) {
     var list = data == null ? [] : (data instanceof Array ? data : [data]);
     $('#orderTable').find('tr').remove();
-    $.each(list, function (index, item) {
+    $('#orderTable').append(
+        '<tr>' +
+        '<th width="80%">Product:</th>' +
+        '<th>Quantity:</th>' +
+        '<th>Price:</th>' +
+        '</tr>');
+    $.each(list[0].items, function (index, item) {
         $('#orderTable').append(
-            '<tr>' +
+            '<tr class="orderTableRow">' +
             '<td><a href="#" data-identity="\' + item.id + \'">' + item.product.name + '(' + item.product.brand + ')</a></td>' +
-            '<td><a href="#" data-identity="\' + item.id + \'">' + item.quantity + '</a></td>' +
-            '<td><a href="#" data-identity="\' + item.id + \'">' + item.price + '</a></td>' +
+            '<td align="center"><a href="#" data-identity="\' + item.id + \'">' + item.quantity + '</a></td>' +
+            '<td align="center"><a href="#" data-identity="\' + item.id + \'">' + item.price + '</a></td>' +
             '</tr>');
     });
 }
@@ -87,7 +93,7 @@ function clearUserOrderItemForm() {
  */
 function findUserOrders() {
     getItem(
-        rootURL + '/customer/' ,//todo search by username
+        rootURL + '/customers/' + principal,
         function (data) {
             fillUserOrderList(data);
         },

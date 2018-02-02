@@ -12,8 +12,8 @@
     var principal = "${pageContext.request.remoteUser}"
 </script>
 
-<div class="container">
-    <table id="orderTable"></table>
+<div style="width: 90%" class="container">
+    <table width="100%" id="orderTable"></table>
 
     <table>
         <tr>

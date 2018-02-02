@@ -32,6 +32,11 @@ public class OrderSpringRestController {
     private GenericDao<OrderItem> orderItemDao;
 
     /**
+     * {@link User} DAO object for access to database.
+     */
+    private GenericDao<User> userDao;
+
+    /**
      * Injection of {@link Order} DAO object for access to database.
      */
     public void setOrderDao(GenericDao<Order> orderDao) {
@@ -46,6 +51,13 @@ public class OrderSpringRestController {
     }
 
     /**
+     * Injection of {@link User} DAO object for access to database.
+     */
+    public void setUserDao(GenericDao<User> userDao) {
+        this.userDao = userDao;
+    }
+
+    /**
      * Return list of {@link Order} represented as json.
      *
      * @return list of {@link Order}
@@ -55,10 +67,14 @@ public class OrderSpringRestController {
         return orderDao.entityList();
     }
 
-    @RequestMapping(value = "/orders/customer/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Order findOrderByUsername(final @PathVariable Long id) {
+    @RequestMapping(value = "/orders/customers/{username}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Order findOrderByUsername(final @PathVariable String username) {
+        final User user = userDao.entityByValue(new HashMap<String, Object>() {{
+            put("username", username);
+        }});
+
         return orderDao.entityByValue(new HashMap<String, Object>() {{
-            put("user", new User(id));
+            put("user", user);
             put("status", Status.OPENED);
         }});
     }
