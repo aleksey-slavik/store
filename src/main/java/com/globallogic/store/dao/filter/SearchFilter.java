@@ -1,4 +1,4 @@
-package com.globallogic.store.filter;
+package com.globallogic.store.dao.filter;
 
 import org.hibernate.Session;
 

@@ -60,21 +60,17 @@ public class UserSpringRestController {
      */
     @RequestMapping(value = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public List<User> findUser(@RequestParam MultiValueMap<String, String> params) {
-        List<User> users = null;
+    public List<User> findUser(@RequestParam MultiValueMap<String, Object> params) {
+        List<User> users;
 
         if (params.isEmpty()) {
             users = userDao.entityList();
         } else {
-
+            users = userDao.entityListByValue(params.toSingleValueMap());
         }
 
-        if (users == null) {
+        if (users == null || users.isEmpty()) {
             throw new NotFoundException();
-        }
-
-        if (users.isEmpty()) {
-            throw new EmptyResponseException();
         }
 
         return users;

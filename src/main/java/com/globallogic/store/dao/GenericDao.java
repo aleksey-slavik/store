@@ -38,7 +38,7 @@ public class GenericDao<E> implements DaoAccessible<E, Long> {
         });
     }
 
-    public E entityByValue(final Map<String, String> params) {
+    public E entityByValue(final Map<String, Object> params) {
         return new TemplateGenericDao<E>().processQuery(new Queryable<E>() {
             public E query(Session session) {
                 CriteriaBuilder builder = session.getCriteriaBuilder();
@@ -47,7 +47,7 @@ public class GenericDao<E> implements DaoAccessible<E, Long> {
                 query.select(root);
                 ArrayList<Predicate> predicates = new ArrayList<Predicate>();
 
-                for (Map.Entry<String, String> entry : params.entrySet()) {
+                for (Map.Entry<String, Object> entry : params.entrySet()) {
                     predicates.add(builder.equal(root.get(entry.getKey()), entry.getValue()));
                 }
 
@@ -70,7 +70,7 @@ public class GenericDao<E> implements DaoAccessible<E, Long> {
         });
     }
 
-    public List<E> entityListByValue(final Map<String, String> params) {
+    public List<E> entityListByValue(final Map<String, Object> params) {
         return new TemplateGenericDao<List<E>>().processQuery(new Queryable<List<E>>() {
             public List<E> query(Session session) {
                 CriteriaBuilder builder = session.getCriteriaBuilder();
@@ -79,7 +79,7 @@ public class GenericDao<E> implements DaoAccessible<E, Long> {
                 query.select(root);
                 ArrayList<Predicate> predicates = new ArrayList<Predicate>();
 
-                for (Map.Entry<String, String> entry : params.entrySet()) {
+                for (Map.Entry<String, Object> entry : params.entrySet()) {
                     predicates.add(builder.equal(root.get(entry.getKey()), entry.getValue()));
                 }
 

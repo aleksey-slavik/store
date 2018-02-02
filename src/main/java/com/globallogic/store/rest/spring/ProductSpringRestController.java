@@ -58,14 +58,10 @@ public class ProductSpringRestController {
      * @throws NotFoundException      throws when item with parameters not found
      */
     @RequestMapping(value = "/products", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Product> findProduct(@RequestParam MultiValueMap<String, String> params) {
-        if (params.isEmpty()) {
-            throw new EmptyResponseException();
-        }
-
+    public List<Product> findProduct(@RequestParam MultiValueMap<String, Object> params) {
         List<Product> products;
 
-        if (params.containsKey("all")) {
+        if (params.isEmpty()) {
             products = productDao.entityList();
         } else {
             products = productDao.entityListByValue(params.toSingleValueMap());

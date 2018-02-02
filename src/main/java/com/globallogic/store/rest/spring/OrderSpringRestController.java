@@ -2,17 +2,14 @@ package com.globallogic.store.rest.spring;
 
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.exception.NotFoundException;
-import com.globallogic.store.filter.OrderSearchFilter;
 import com.globallogic.store.model.Order;
 import com.globallogic.store.model.OrderItem;
 import com.globallogic.store.model.Status;
 import com.globallogic.store.model.User;
 import org.springframework.http.MediaType;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -34,8 +31,6 @@ public class OrderSpringRestController {
      */
     private GenericDao<OrderItem> orderItemDao;
 
-    private UserSpringRestController userRest;
-
     /**
      * Injection of {@link Order} DAO object for access to database.
      */
@@ -50,43 +45,22 @@ public class OrderSpringRestController {
         this.orderItemDao = orderItemDao;
     }
 
-    public void setUserRest(UserSpringRestController userRest) {
-        this.userRest = userRest;
-    }
-
     /**
      * Return list of {@link Order} represented as json.
      *
      * @return list of {@link Order}
      */
     @RequestMapping(value = "/orders", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Order> findOrder(@RequestParam final MultiValueMap<String, String> params) {
-        //if (params.isEmpty()) {
-            return orderDao.entityList();
-       // }
+    public List<Order> findOrder() {
+        return orderDao.entityList();
+    }
 
-        /*List<Order> orders;
-
-       if (params.containsKey("username") && params.containsKey("status")) {
-            OrderSearchFilter orderSearchFilter = new OrderSearchFilter();
-
-            User user = userRest.findUser(new LinkedMultiValueMap<String, String>() {{
-                put("username", Collections.singletonList(params.getFirst("username")));
-            }}).get(0);
-
-            orderSearchFilter.setUser(user);
-            orderSearchFilter.setStatus(Status.valueOf(params.getFirst("status")));
-
-            orders = orderDao.findByFilter(orderSearchFilter);
-        } else {
-            orders = orderDao.findByParams(params.toSingleValueMap());
-        }
-
-        if (orders == null || orders.isEmpty()) {
-            throw new NotFoundException();
-        } else {
-            return orders;
-        }*/
+    @RequestMapping(value = "/orders/customer/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Order findOrderByUsername(final @PathVariable Long id) {
+        return orderDao.entityByValue(new HashMap<String, Object>() {{
+            put("user", new User(id));
+            put("status", Status.OPENED);
+        }});
     }
 
     @RequestMapping(value = "/orders/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -114,17 +88,13 @@ public class OrderSpringRestController {
 
     @RequestMapping(value = "/orders/{id}/items", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public OrderItem addOrderItem(@PathVariable Long id, @RequestBody OrderItem orderItem) {
-        Order order = new Order();
-        order.setId(id);
-        orderItem.setOrder(order);
+        orderItem.setOrder(new Order(id));
         return orderItemDao.createEntity(orderItem);
     }
 
     @RequestMapping(value = "/orders/{id}/items/{itemId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public OrderItem updateOrderItem(@PathVariable Long id, @PathVariable Long itemId, @RequestBody OrderItem orderItem) {
-        Order order = new Order();
-        order.setId(id);
-        orderItem.setOrder(order);
+        orderItem.setOrder(new Order(id));
         orderItem.setId(itemId);
         return orderItemDao.updateEntity(orderItem);
     }

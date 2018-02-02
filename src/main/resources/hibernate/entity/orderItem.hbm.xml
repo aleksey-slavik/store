@@ -8,7 +8,7 @@
             <generator class="identity"/>
         </id>
 
-        <many-to-one name="order" class="com.globallogic.store.model.Order" >
+        <many-to-one name="order" class="com.globallogic.store.model.Order">
             <column name="order_id" not-null="true"/>
         </many-to-one>
 

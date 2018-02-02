@@ -17,6 +17,12 @@ public class Order implements Serializable {
     private Status status;
     private Set<OrderItem> items = new HashSet<OrderItem>(0);
 
+    public Order(){}
+
+    public Order(Long id) {
+        this.id = id;
+    }
+
     public Long getId() {
         return id;
     }

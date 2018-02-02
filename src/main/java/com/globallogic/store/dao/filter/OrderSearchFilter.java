@@ -1,12 +1,10 @@
-package com.globallogic.store.filter;
+package com.globallogic.store.dao.filter;
 
 import com.globallogic.store.model.Order;
 import com.globallogic.store.model.Status;
 import com.globallogic.store.model.User;
-import org.hibernate.SessionFactory;
 
 import javax.persistence.criteria.Root;
-import java.util.Map;
 
 public class OrderSearchFilter extends SearchFilter<Order> {
 

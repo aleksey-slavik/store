@@ -20,11 +20,17 @@ public interface DaoAccessible<E, K> {
      */
     E entityByKey(K key);
 
-    E entityByValue(Map<String, String> params);
+    /**
+     * Find entity by given parameters.
+     *
+     * @param params given parameters
+     * @return entity with given parameters
+     */
+    E entityByValue(Map<String, Object> params);
 
     List<E> entityList();
 
-    List<E> entityListByValue(Map<String, String> params);
+    List<E> entityListByValue(Map<String, Object> params);
 
     E createEntity(E entity);
 
