@@ -23,6 +23,13 @@ public class Order implements Serializable {
         this.id = id;
     }
 
+    public Order(User user) {
+        this.user = user;
+        totalCost = 0D;
+        status = Status.OPENED;
+        items = new HashSet<OrderItem>(0);
+    }
+
     public Long getId() {
         return id;
     }

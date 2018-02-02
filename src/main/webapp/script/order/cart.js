@@ -6,11 +6,9 @@
 var rootURL = "http://localhost:8080/orders";
 
 /**
- * Root url path for order items rest service
- *
- * @type {string}
+ * Id of order for current user
  */
-var orderItemRootURL = "http://localhost:8080/orderItems";
+var sessionOrderId = $.session.get("orderId");
 
 /**
  * Temporary variable for product data
@@ -18,7 +16,8 @@ var orderItemRootURL = "http://localhost:8080/orderItems";
 var currentItem;
 
 //start statement of page when it is loaded
-findUserOrders();
+findUserOrderByUsername();
+$('#buttonBuy').hide();
 
 /**
  * Register listener for list item
@@ -38,17 +37,25 @@ function fillUserOrderList(data) {
     $('#orderTable').append(
         '<tr>' +
         '<th width="80%">Product:</th>' +
-        '<th>Quantity:</th>' +
-        '<th>Price:</th>' +
+        '<th width="10%">Quantity:</th>' +
+        '<th width="10%">Price:</th>' +
         '</tr>');
     $.each(list[0].items, function (index, item) {
         $('#orderTable').append(
             '<tr class="orderTableRow">' +
-            '<td><a href="#" data-identity="\' + item.id + \'">' + item.product.name + '(' + item.product.brand + ')</a></td>' +
-            '<td align="center"><a href="#" data-identity="\' + item.id + \'">' + item.quantity + '</a></td>' +
-            '<td align="center"><a href="#" data-identity="\' + item.id + \'">' + item.price + '</a></td>' +
+            '<td><a href="#" data-identity="' + item.id + '">' + item.product.name + '(' + item.product.brand + ')</a></td>' +
+            '<td align="center"><a href="#" data-identity="' + item.id + '">' + item.quantity + '</a></td>' +
+            '<td align="center"><a href="#" data-identity="' + item.id + '">' + item.price + '</a></td>' +
             '</tr>');
     });
+
+    if (list[0].items.length === 0) {
+        alert("Your cart is empty now!");
+        $('#buttonBuy').hide();
+    }
+
+    $('#buttonBuy').show();
+    $('#totalCost').val(data.totalCost);
 }
 
 /**
@@ -72,10 +79,10 @@ function fillUserOrderItem(item) {
  */
 function userOrderItemToJSON() {
     return JSON.stringify({
-        "id": $('#id').val(),
-        "product.id": $('#productId').val(),
-        "price": $('#price').val(),
-        "quantity": $('quantity').val()
+        "id": currentItem.id,
+        "product": currentItem.product,
+        "price": currentItem.price,
+        "quantity": $('#quantity').val()
     });
 }
 
@@ -87,18 +94,66 @@ function clearUserOrderItemForm() {
     fillUserOrderItem(currentItem);
 }
 
+function deleteOrderItem(id) {
+    deleteItem(
+        rootURL + '/' + sessionOrderId + '/items/',
+        id,
+        function () {
+            findUserOrderBySessionId();
+        }
+    )
+}
+
+function updateOrderItem(id) {
+    updateItem(
+        rootURL + '/' + sessionOrderId + '/items/',
+        id,
+        userOrderItemToJSON(),
+        function () {
+            findUserOrderBySessionId();
+        }
+    )
+}
+
 /**
- * Sending GET request to rest service for get all items.
+ * Sending GET request to rest service for get order by saved in session id of order.
  * Implementation of {@link getItem} method.
  */
-function findUserOrders() {
+function findUserOrderBySessionId() {
+    if (sessionOrderId === undefined) {
+        findUserOrderByUsername();
+    } else {
+        getItem(
+            rootURL + '/' + sessionOrderId,
+
+            function (data) {
+                fillUserOrderList(data);
+            },
+
+            function () {
+                alert("Order with id=" + sessionOrderId + " was not found!");
+            }
+        )
+    }
+}
+
+/**
+ * Sending GET request to rest service for get opened order for current user if it exist.
+ * Implementation of {@link getItem} method.
+ */
+function findUserOrderByUsername() {
     getItem(
         rootURL + '/customers/' + principal,
+
         function (data) {
+            $.session.set("orderId", data.id);
+            sessionOrderId = data.id;
             fillUserOrderList(data);
         },
+
         function () {
-            //do nothing
+            createNewUserOrder();
+            findUserOrderBySessionId();
         }
     )
 }
@@ -111,7 +166,7 @@ function findUserOrders() {
  */
 function findUserOrderItemById(id) {
     getItem(
-        orderItemRootURL + '/' + id,
+        rootURL + '/' + sessionOrderId + '/items/' + id,
         function (data) {
             currentItem = data;
             fillUserOrderItem(currentItem);
@@ -122,26 +177,40 @@ function findUserOrderItemById(id) {
         }
     )
 }
-/*
-/!**
+
+function createNewUserOrder() {
+    createItem(
+        rootURL + '/customers/' + principal,
+        {},
+
+        function (data) {
+            $.session.set("orderId", data.id);
+            sessionOrderId = data.id;
+            console.log(sessionOrderId);
+            fillUserOrderList(data);
+        }
+    )
+}
+
+/**
  * Show semi-transparent DIV, which shading whole page
- *!/
+ */
 function showCover() {
     var coverDiv = document.createElement('div');
     coverDiv.id = 'cover-div';
     document.body.appendChild(coverDiv);
 }
 
-/!**
+/**
  * Remove semi-transparent DIV, which shading whole page
- *!/
+ */
 function hideCover() {
     document.body.removeChild(document.getElementById('cover-div'));
 }
 
-/!**
+/**
  * Show modal window with item info
- *!/
+ */
 function showOrderItemModalWindow() {
     showCover();
     var container = document.getElementById('modal-form-container');
@@ -153,13 +222,22 @@ function showOrderItemModalWindow() {
     }
 
     $('#buttonCancel').click(function () {
+        clearUserOrderItemForm();
         closeWindow();
         return false;
     });
 
-    $('#buttonBuy').click(function () {
+    $('#buttonChange').click(function () {
+        updateOrderItem(currentItem.id);
+        closeWindow();
+        return false;
+    });
+
+    $('#buttonDelete').click(function () {
+        deleteOrderItem(currentItem.id);
+        closeWindow();
         return false;
     });
 
     container.style.display = 'block';
-}*/
+}

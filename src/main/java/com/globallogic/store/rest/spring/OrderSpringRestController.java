@@ -9,6 +9,7 @@ import com.globallogic.store.model.User;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.NoResultException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -73,10 +74,23 @@ public class OrderSpringRestController {
             put("username", username);
         }});
 
-        return orderDao.entityByValue(new HashMap<String, Object>() {{
-            put("user", user);
-            put("status", Status.OPENED);
+        try {
+            return orderDao.entityByValue(new HashMap<String, Object>() {{
+                put("user", user);
+                put("status", Status.OPENED);
+            }});
+        } catch (NoResultException e) {
+            throw new NotFoundException();
+        }
+    }
+
+    @RequestMapping(value = "/orders/customers/{username}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Order createNewOrderForUsername(final @PathVariable String username) {
+        final User user = userDao.entityByValue(new HashMap<String, Object>() {{
+            put("username", username);
         }});
+
+        return orderDao.createEntity(new Order(user));
     }
 
     @RequestMapping(value = "/orders/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -105,19 +119,25 @@ public class OrderSpringRestController {
     @RequestMapping(value = "/orders/{id}/items", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public OrderItem addOrderItem(@PathVariable Long id, @RequestBody OrderItem orderItem) {
         orderItem.setOrder(new Order(id));
-        return orderItemDao.createEntity(orderItem);
+        OrderItem createdOrderItem = orderItemDao.createEntity(orderItem);
+        checkOrderTotalCount(id);
+        return createdOrderItem;
     }
 
     @RequestMapping(value = "/orders/{id}/items/{itemId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public OrderItem updateOrderItem(@PathVariable Long id, @PathVariable Long itemId, @RequestBody OrderItem orderItem) {
         orderItem.setOrder(new Order(id));
         orderItem.setId(itemId);
-        return orderItemDao.updateEntity(orderItem);
+        OrderItem updatedOrderItem = orderItemDao.updateEntity(orderItem);
+        checkOrderTotalCount(id);
+        return updatedOrderItem;
     }
 
     @RequestMapping(value = "/orders/{id}/items/{itemId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public OrderItem deleteOrderItem(@PathVariable Long id, @PathVariable Long itemId) {
-        return orderItemDao.deleteEntity(itemId);
+        OrderItem deletedOrderItem = orderItemDao.deleteEntity(itemId);
+        checkOrderTotalCount(id);
+        return deletedOrderItem;
     }
 
     /**
@@ -153,5 +173,11 @@ public class OrderSpringRestController {
     @RequestMapping(value = "/orders/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Order deleteOrderById(@PathVariable Long id) {
         return orderDao.deleteEntity(id);
+    }
+
+    private void checkOrderTotalCount(Long id) {
+        Order order = orderDao.entityByKey(id);
+        order.checkTotalCost();
+        orderDao.updateEntity(order);
     }
 }

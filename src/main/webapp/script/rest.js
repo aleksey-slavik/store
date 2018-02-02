@@ -130,7 +130,7 @@ function updateItem(restURL, itemId, itemData, successStatement) {
 function deleteItem(restURL, itemId, successStatement) {
     $.ajax({
         type: 'DELETE',
-        url: rootURL + '/' + itemId,
+        url: restURL + '/' + itemId,
 
         success: function (data, textStatus, xhr) {
             switch (xhr.status) {
