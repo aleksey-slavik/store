@@ -105,6 +105,7 @@ public class ProductSpringRestController {
      */
     @RequestMapping(value = "/products/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Product deleteProductById(@PathVariable Long id) {
+        getProductById(id);
         return productDao.deleteEntity(id);
     }
 }

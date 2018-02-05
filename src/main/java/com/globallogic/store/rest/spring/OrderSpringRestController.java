@@ -1,6 +1,8 @@
 package com.globallogic.store.rest.spring;
 
 import com.globallogic.store.dao.GenericDao;
+import com.globallogic.store.exception.EmptyResponseException;
+import com.globallogic.store.exception.NotAcceptableException;
 import com.globallogic.store.exception.NotFoundException;
 import com.globallogic.store.model.Order;
 import com.globallogic.store.model.OrderItem;
@@ -12,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.NoResultException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Spring rest controller for {@link Order}.
@@ -80,45 +81,60 @@ public class OrderSpringRestController {
                 put("status", Status.OPENED);
             }});
         } catch (NoResultException e) {
-            throw new NotFoundException();
+            return orderDao.createEntity(new Order(user));
         }
-    }
-
-    @RequestMapping(value = "/orders/customers/{username}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Order createNewOrderForUsername(final @PathVariable String username) {
-        final User user = userDao.entityByValue(new HashMap<String, Object>() {{
-            put("username", username);
-        }});
-
-        return orderDao.createEntity(new Order(user));
     }
 
     @RequestMapping(value = "/orders/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Order getOrderById(@PathVariable Long id) {
-        return orderDao.entityByKey(id);
+        Order order = orderDao.entityByKey(id);
+
+        if (order != null) {
+            return order;
+        } else {
+            throw new NotFoundException();
+        }
     }
 
     @RequestMapping(value = "/orders/{id}/items", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Set<OrderItem> getItemsOfOrderByOrderId(final @PathVariable Long id) {
-        return orderDao.entityByKey(id).getItems();
+    public List<OrderItem> getItemsOfOrderByOrderId(final @PathVariable Long id) {
+        final Order order = getOrderById(id);
+        List<OrderItem> items = orderItemDao.entityListByValue(new HashMap<String, Object>() {{
+            put("order", order);
+        }});
+
+        if (items == null || items.isEmpty()) {
+            throw new EmptyResponseException();
+        }
+
+        return items;
     }
 
     @RequestMapping(value = "/orders/{id}/items/{itemId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public OrderItem getItemOfOrderByItemId(@PathVariable Long id, @PathVariable Long itemId) {
-        Set<OrderItem> items = orderDao.entityByKey(id).getItems();
+        Order order = getOrderById(id);
+        OrderItem orderItem = orderItemDao.entityByKey(itemId);
 
-        for (OrderItem item : items) {
-            if (item.getId().equals(itemId)) {
-                return item;
-            }
+        if (orderItem == null) {
+            throw new NotFoundException();
         }
 
-        throw new NotFoundException();
+        if (orderItem.getOrder().getId().equals(order.getId())) {
+            return orderItem;
+        } else {
+            throw new NotAcceptableException();
+        }
     }
 
     @RequestMapping(value = "/orders/{id}/items", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public OrderItem addOrderItem(@PathVariable Long id, @RequestBody OrderItem orderItem) {
-        orderItem.setOrder(new Order(id));
+        Order order = getOrderById(id);
+
+        if (order == null) {
+            throw new NotFoundException();
+        }
+
+        orderItem.setOrder(order);
         OrderItem createdOrderItem = orderItemDao.createEntity(orderItem);
         checkOrderTotalCount(id);
         return createdOrderItem;
@@ -126,7 +142,13 @@ public class OrderSpringRestController {
 
     @RequestMapping(value = "/orders/{id}/items/{itemId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public OrderItem updateOrderItem(@PathVariable Long id, @PathVariable Long itemId, @RequestBody OrderItem orderItem) {
-        orderItem.setOrder(new Order(id));
+        Order order = getOrderById(id);
+
+        if (order == null) {
+            throw new NotFoundException();
+        }
+
+        orderItem.setOrder(order);
         orderItem.setId(itemId);
         OrderItem updatedOrderItem = orderItemDao.updateEntity(orderItem);
         checkOrderTotalCount(id);
@@ -135,6 +157,7 @@ public class OrderSpringRestController {
 
     @RequestMapping(value = "/orders/{id}/items/{itemId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public OrderItem deleteOrderItem(@PathVariable Long id, @PathVariable Long itemId) {
+        getItemOfOrderByItemId(id, itemId);
         OrderItem deletedOrderItem = orderItemDao.deleteEntity(itemId);
         checkOrderTotalCount(id);
         return deletedOrderItem;
@@ -148,6 +171,7 @@ public class OrderSpringRestController {
      */
     @RequestMapping(value = "/orders", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public Order createOrder(@RequestBody Order order) {
+        order.checkTotalCost();
         return orderDao.createEntity(order);
     }
 
@@ -161,6 +185,12 @@ public class OrderSpringRestController {
     @RequestMapping(value = "/orders/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public Order updateOrder(@PathVariable Long id, @RequestBody Order order) {
         order.setId(id);
+        order.checkTotalCost();
+
+        for (OrderItem item : order.getItems()) {
+            item.setOrder(order);
+        }
+
         return orderDao.updateEntity(order);
     }
 
@@ -172,6 +202,7 @@ public class OrderSpringRestController {
      */
     @RequestMapping(value = "/orders/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Order deleteOrderById(@PathVariable Long id) {
+        getOrderById(id);
         return orderDao.deleteEntity(id);
     }
 

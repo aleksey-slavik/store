@@ -10,6 +10,10 @@
 </head>
 <body>
 <%@ include file="/parts/top.jsp" %>
+<script>
+    var principal = "${pageContext.request.remoteUser}"
+</script>
+
 
 <sec:authorize access="hasAuthority('ADMIN')">
     <div class="container">

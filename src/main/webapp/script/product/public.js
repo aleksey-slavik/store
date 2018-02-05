@@ -20,29 +20,10 @@ var currentItem;
 /**
  * Id of order for current user
  */
-var sessionOrderId = $.session.get("orderId");
+var sessionOrderId = 0;
 
 //start statement of page when it is loaded
 findAllProducts();
-
-/**
- * Register listener for searchProduct button
- */
-$('#buttonSearch').click(function () {
-    //searchProduct($('#searchKey').val());
-    return false;
-});
-
-/**
- * Trigger searchProduct when pressing 'Enter' on searchProduct input field
- */
-$('#searchKey').keypress(function (e) {
-    /*if (e.which === 13) {
-        searchProduct($('#searchKey').val());
-        e.preventDefault();
-        return false;
-    }*/
-});
 
 /**
  * Register listener for list item
@@ -104,43 +85,6 @@ function orderItemToJSON() {
 function clearProductForm() {
     currentItem = {};
     fillProduct(currentItem);
-}
-
-/**
- * Get list of items by given key.
- * If key is empty return all items
- *
- * @param searchKey searchProduct key
- */
-function searchProduct(searchKey) {
-    clearProductForm();
-
-    if (searchKey === '') {
-        findAllProducts();
-    } else {
-        findProductByKey(searchKey);
-    }
-}
-
-
-/**
- * Get list of items by given key.
- * Implementation of {@link findItemByKey} method.
- *
- * @param searchKey search key
- */
-function findProductByKey(searchKey) {
-    findItemByKey(
-        rootURL,
-        searchKey,
-        function (data) {
-            fillProductInfoList(data);
-        },
-        function () {
-            searchProduct('');
-            $('#searchKey').val('');
-        }
-    )
 }
 
 /**
@@ -223,48 +167,32 @@ function showModalWindow() {
     container.style.display = 'block';
 }
 
-function checkUserOrderBySessionId() {
-    if (sessionOrderId === undefined) {
-        checkUserOrderByUsername();
-    }
-}
-
+/**
+ * Check opened order of given user.
+ */
 function checkUserOrderByUsername() {
     getItem(
         orderURL + '/customers/' + principal,
-
         function (data) {
-            $.session.set("orderId", data.id);
             sessionOrderId = data.id;
         },
-
         function () {
-            createNewUserOrder();
+            alert('Can not create cart for user: ' + principal);
         }
-    )
+    );
 }
 
-function createNewUserOrder() {
-    createItem(
-        orderURL + '/customers/' + principal,
-        {},
-
-        function (data) {
-            $.session.set("orderId", data.id);
-            sessionOrderId = data.id;
-        }
-    )
-}
-
+/**
+ * Add order item to opened order
+ */
 function addOrderItem() {
-    checkUserOrderBySessionId();
+    checkUserOrderByUsername();
 
     createItem(
         orderURL + '/' + sessionOrderId + '/items',
         orderItemToJSON(),
-
         function (data) {
-            //do nothing
+            alert(data.product.name + ' successfully added to cart!');
         }
     )
 }

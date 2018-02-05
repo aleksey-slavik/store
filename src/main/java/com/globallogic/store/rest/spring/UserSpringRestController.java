@@ -2,6 +2,7 @@ package com.globallogic.store.rest.spring;
 
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.exception.EmptyResponseException;
+import com.globallogic.store.exception.NotAcceptableException;
 import com.globallogic.store.exception.NotFoundException;
 import com.globallogic.store.model.User;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -40,7 +42,7 @@ public class UserSpringRestController {
      */
     @RequestMapping(value = "/users/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public User findUserById(@PathVariable Long id) {
+    public User getUserById(@PathVariable Long id) {
         User user = userDao.entityByKey(id);
 
         if (user != null) {
@@ -60,7 +62,7 @@ public class UserSpringRestController {
      */
     @RequestMapping(value = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public List<User> findUser(@RequestParam MultiValueMap<String, Object> params) {
+    public List<User> getUser(@RequestParam MultiValueMap<String, Object> params) {
         List<User> users;
 
         if (params.isEmpty()) {
@@ -84,6 +86,7 @@ public class UserSpringRestController {
      */
     @RequestMapping(value = "/users", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public User createUser(@RequestBody User user) {
+        checkUser(user);
         return userDao.createEntity(user);
     }
 
@@ -95,7 +98,8 @@ public class UserSpringRestController {
      * @return updated {@link User}
      */
     @RequestMapping(value = "/users/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public User updateUser(@PathVariable Long id, @RequestBody User user) {
+    public User updateUser(@PathVariable Long id, final @RequestBody User user) {
+        checkUser(user);
         user.setId(id);
         return userDao.updateEntity(user);
     }
@@ -108,6 +112,17 @@ public class UserSpringRestController {
      */
     @RequestMapping(value = "/users/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public User deleteUserById(@PathVariable Long id) {
+        getUserById(id);
         return userDao.deleteEntity(id);
+    }
+
+    private void checkUser(final User user) {
+        User checkUser = userDao.entityByValue(new HashMap<String, Object>() {{
+            put("username", user.getUsername());
+        }});
+
+        if (checkUser != null) {
+            throw new NotAcceptableException();
+        }
     }
 }

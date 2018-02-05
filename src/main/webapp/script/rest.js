@@ -9,6 +9,7 @@ function getItem(restURL, successStatement, notFoundStatement) {
     $.ajax({
         type: 'GET',
         url: restURL,
+        async: false,
         dataType: "json",
 
         success: function (data, textStatus, xhr) {
@@ -57,7 +58,6 @@ function createItem(restURL, itemData, successStatement) {
         success: function (data, textStatus, xhr) {
             switch (xhr.status) {
                 case 200:
-                    alert('Item successfully created!');
                     successStatement(data);
                     break;
                 default:
@@ -98,7 +98,6 @@ function updateItem(restURL, itemId, itemData, successStatement) {
         success: function (data, textStatus, xhr) {
             switch (xhr.status) {
                 case 200:
-                    alert('Item with id=' + itemId + ' successfully updated!');
                     successStatement(data);
                     break;
                 default:
@@ -135,7 +134,6 @@ function deleteItem(restURL, itemId, successStatement) {
         success: function (data, textStatus, xhr) {
             switch (xhr.status) {
                 case 200:
-                    alert('Item with id=' + itemId + ' successfully deleted!');
                     successStatement(data);
                     break;
                 default:
