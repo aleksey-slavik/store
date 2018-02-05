@@ -94,6 +94,12 @@ function clearUserOrderItemForm() {
     fillUserOrderItem(currentItem);
 }
 
+/**
+ * Sending DELETE request to rest service for delete order item by given item id.
+ * Implementation of {@link deleteItem} method.
+ *
+ * @param id given item id
+ */
 function deleteOrderItem(id) {
     deleteItem(
         rootURL + '/' + sessionOrderId + '/items/',
@@ -104,6 +110,12 @@ function deleteOrderItem(id) {
     )
 }
 
+/**
+ * Sending PUT request to rest service for update order item by given item id.
+ * Implementation of {@link updateItem} method.
+ *
+ * @param id given item id
+ */
 function updateOrderItem(id) {
     updateItem(
         rootURL + '/' + sessionOrderId + '/items/',
@@ -178,6 +190,10 @@ function findUserOrderItemById(id) {
     )
 }
 
+/**
+ * Sending POST request to rest service for create new order for current user.
+ * Implementation of {@link createItem} method.
+ */
 function createNewUserOrder() {
     createItem(
         rootURL + '/customers/' + principal,
@@ -186,7 +202,6 @@ function createNewUserOrder() {
         function (data) {
             $.session.set("orderId", data.id);
             sessionOrderId = data.id;
-            console.log(sessionOrderId);
             fillUserOrderList(data);
         }
     )

@@ -78,10 +78,10 @@
                 <label>Price:</label>
                 <input id="price" name="price" type="text" disabled/>
 
-                <label>Quantity:</label>
-                <input id="quantity" name="quantity" type="number" min="1" value="1"/>
-
                 <sec:authorize access="isAuthenticated()">
+                    <label>Quantity:</label>
+                    <input id="quantity" name="quantity" type="number" min="1" value="1"/>
+
                     <button id="buttonBuy">Add to cart</button>
                 </sec:authorize>
                 <button id="buttonCancel">Cancel</button>
@@ -95,6 +95,7 @@
     </div>
 
     <script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.min.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.session.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/script/search.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/script/rest.js"></script>
     <script type="text/javascript"

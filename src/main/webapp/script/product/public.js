@@ -6,9 +6,21 @@
 var rootURL = "http://localhost:8080/products";
 
 /**
+ * Root url path for orders rest service
+ *
+ * @type {string}
+ */
+var orderURL = "http://localhost:8080/orders";
+
+/**
  * Temporary variable for product data
  */
 var currentItem;
+
+/**
+ * Id of order for current user
+ */
+var sessionOrderId = $.session.get("orderId");
 
 //start statement of page when it is loaded
 findAllProducts();
@@ -78,11 +90,11 @@ function fillProduct(item) {
  * @returns {string}
  */
 function orderItemToJSON() {
-    var itemId = $('#id').val();
     return JSON.stringify({
-        "id": itemId === '' ? null : itemId,
-        "price": $('#price').val(),
-        "quantity": $('quantity').val()
+        "id": $('#id').val(),
+        "product": currentItem,
+        "price": currentItem.price,
+        "quantity": $('#quantity').val()
     });
 }
 
@@ -191,6 +203,7 @@ function showModalWindow() {
     var container = document.getElementById('modal-form-container');
 
     function closeWindow() {
+        clearProductForm();
         hideCover();
         container.style.display = 'none';
         document.onkeydown = null;
@@ -202,9 +215,56 @@ function showModalWindow() {
     });
 
     $('#buttonBuy').click(function () {
-        //todo add save item in user cart
+        addOrderItem();
+        closeWindow();
         return false;
     });
 
     container.style.display = 'block';
+}
+
+function checkUserOrderBySessionId() {
+    if (sessionOrderId === undefined) {
+        checkUserOrderByUsername();
+    }
+}
+
+function checkUserOrderByUsername() {
+    getItem(
+        orderURL + '/customers/' + principal,
+
+        function (data) {
+            $.session.set("orderId", data.id);
+            sessionOrderId = data.id;
+        },
+
+        function () {
+            createNewUserOrder();
+        }
+    )
+}
+
+function createNewUserOrder() {
+    createItem(
+        orderURL + '/customers/' + principal,
+        {},
+
+        function (data) {
+            $.session.set("orderId", data.id);
+            sessionOrderId = data.id;
+        }
+    )
+}
+
+function addOrderItem() {
+    checkUserOrderBySessionId();
+
+    createItem(
+        orderURL + '/' + sessionOrderId + '/items',
+        orderItemToJSON(),
+
+        function (data) {
+            //do nothing
+        }
+    )
 }
