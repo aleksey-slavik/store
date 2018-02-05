@@ -20,7 +20,7 @@ var currentItem;
 /**
  * Id of order for current user
  */
-var sessionOrderId = 0;
+var sessionOrderId;
 
 //start statement of page when it is loaded
 findAllProducts();

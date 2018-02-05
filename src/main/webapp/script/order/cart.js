@@ -8,7 +8,7 @@ var rootURL = "http://localhost:8080/orders";
 /**
  * Id of order for current user
  */
-var sessionOrderId = $.session.get("orderId");
+var sessionOrderId;
 
 /**
  * Temporary variable for product data
@@ -17,7 +17,6 @@ var currentItem;
 
 //start statement of page when it is loaded
 findUserOrderByUsername();
-$('#buttonBuy').hide();
 
 /**
  * Register listener for list item
@@ -32,7 +31,6 @@ $('#orderTable').on('click', 'a', function () {
  * @param data given data
  */
 function fillUserOrderList(data) {
-    var list = data == null ? [] : (data instanceof Array ? data : [data]);
     $('#orderTable').find('tr').remove();
     $('#orderTable').append(
         '<tr>' +
@@ -40,7 +38,7 @@ function fillUserOrderList(data) {
         '<th width="10%">Quantity:</th>' +
         '<th width="10%">Price:</th>' +
         '</tr>');
-    $.each(list[0].items, function (index, item) {
+    $.each(data.items, function (index, item) {
         $('#orderTable').append(
             '<tr class="orderTableRow">' +
             '<td><a href="#" data-identity="' + item.id + '">' + item.product.name + '(' + item.product.brand + ')</a></td>' +
@@ -49,7 +47,7 @@ function fillUserOrderList(data) {
             '</tr>');
     });
 
-    if (list[0].items.length === 0) {
+    if (data.items.length === 0) {
         alert("Your cart is empty now!");
         $('#buttonBuy').hide();
     }
@@ -105,7 +103,7 @@ function deleteOrderItem(id) {
         rootURL + '/' + sessionOrderId + '/items/',
         id,
         function () {
-            findUserOrderBySessionId();
+            findUserOrderByUsername();
         }
     )
 }
@@ -122,31 +120,9 @@ function updateOrderItem(id) {
         id,
         userOrderItemToJSON(),
         function () {
-            findUserOrderBySessionId();
+            findUserOrderByUsername();
         }
     )
-}
-
-/**
- * Sending GET request to rest service for get order by saved in session id of order.
- * Implementation of {@link getItem} method.
- */
-function findUserOrderBySessionId() {
-    if (sessionOrderId === undefined) {
-        findUserOrderByUsername();
-    } else {
-        getItem(
-            rootURL + '/' + sessionOrderId,
-
-            function (data) {
-                fillUserOrderList(data);
-            },
-
-            function () {
-                alert("Order with id=" + sessionOrderId + " was not found!");
-            }
-        )
-    }
 }
 
 /**
@@ -156,16 +132,12 @@ function findUserOrderBySessionId() {
 function findUserOrderByUsername() {
     getItem(
         rootURL + '/customers/' + principal,
-
         function (data) {
-            $.session.set("orderId", data.id);
             sessionOrderId = data.id;
             fillUserOrderList(data);
         },
-
         function () {
-            createNewUserOrder();
-            findUserOrderBySessionId();
+            alert('Can not create cart for user: ' + principal);
         }
     )
 }
@@ -186,23 +158,6 @@ function findUserOrderItemById(id) {
         },
         function () {
             //do nothing
-        }
-    )
-}
-
-/**
- * Sending POST request to rest service for create new order for current user.
- * Implementation of {@link createItem} method.
- */
-function createNewUserOrder() {
-    createItem(
-        rootURL + '/customers/' + principal,
-        {},
-
-        function (data) {
-            $.session.set("orderId", data.id);
-            sessionOrderId = data.id;
-            fillUserOrderList(data);
         }
     )
 }

@@ -55,7 +55,6 @@
 </div>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.session.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/script/rest.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/script/order/cart.js"></script>
 
