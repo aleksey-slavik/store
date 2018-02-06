@@ -103,7 +103,7 @@ function fillOrderItem(item) {
 }
 
 /**
- * Parse order item data from form to json format
+ * Parse order data from form to json format
  *
  * @returns {string}
  */
@@ -114,6 +114,20 @@ function orderToJSON() {
         "totalCost":  $('#totalCost').val(),
         "status": $('#status').val(),
         "items": currentOrder.items
+    });
+}
+
+/**
+ * Parse order item data from form to json format
+ *
+ * @returns {string}
+ */
+function orderItemToJSON() {
+    return JSON.stringify({
+        "id": currentOrderItem.id,
+        "product": currentOrderItem.product,
+        "price":  $('#price').val(),
+        "quantity": $('#quantity').val()
     });
 }
 
@@ -201,7 +215,41 @@ function deleteOrder() {
         function (data) {
             clearOrderForm();
             findAllOrders();
+            fillOrderItemList({});
             alert('Order with id=' + data.id + ' deleted!');
+        }
+    )
+}
+
+/**
+* Sending DELETE request to rest service for delete order item by given item id.
+* Implementation of {@link deleteItem} method.
+*
+* @param id given item id
+*/
+function deleteOrderItem(id) {
+    deleteItem(
+        rootURL + '/' + currentOrder.id + '/items/',
+        id,
+        function () {
+            findOrderById(currentOrder.id);
+        }
+    )
+}
+
+/**
+* Sending PUT request to rest service for update order item by given item id.
+* Implementation of {@link updateItem} method.
+*
+* @param id given item id
+*/
+function updateOrderItem(id) {
+    updateItem(
+        rootURL + '/' + currentOrder.id + '/items/',
+        id,
+        orderItemToJSON(),
+        function () {
+            findOrderById(currentOrder.id);
         }
     )
 }
@@ -211,7 +259,10 @@ function deleteOrder() {
 */
 function clearOrderForm() {
     currentOrder = {};
-    fillOrder(currentOrder);
+    $('#id').val('');
+    $('#user').val('');
+    $('#status').val('');
+    $('#totalCost').val('');
 }
 
 /**
@@ -219,7 +270,10 @@ function clearOrderForm() {
  */
 function clearOrderItemForm() {
     currentOrderItem = {};
-    fillOrderItem(currentOrderItem);
+    $('#name').val('');
+    $('#brand').val('');
+    $('#price').val('');
+    $('#quantity').val('');
 }
 
 /**
@@ -246,6 +300,7 @@ function showOrderItemModalWindow() {
     var container = document.getElementById('modal-form-container');
 
     function closeWindow() {
+        clearOrderItemForm();
         hideCover();
         container.style.display = 'none';
         document.onkeydown = null;
@@ -257,201 +312,18 @@ function showOrderItemModalWindow() {
     });
 
     $('#buttonSaveItem').click(function () {
-        //todo update
-        findOrderById(currentOrder.id);
+        console.log(currentOrderItem);
+        updateOrderItem(currentOrderItem.id);
         closeWindow();
         return false;
     });
 
     $('#buttonDeleteItem').click(function () {
-        //todo delete
-        findOrderById(currentOrder.id);
+        console.log(currentOrderItem);
+        deleteOrderItem(currentOrderItem.id);
         closeWindow();
         return false;
     });
 
     container.style.display = 'block';
 }
-
-/*
-/!**
- * Parse order item data from form to json format
- *
- * @returns {string}
- *!/
-function orderToJSON() {
-    return JSON.stringify({
-        "id": currentOrder.id,
-        "user": currentOrder.user,
-        "status": $('#status').val(),
-        "items": currentOrder.items
-    });
-}
-
-function clearOrderItemForm() {
-    currentItem = {};
-    fillOrder(currentItem);
-}
-
-/!**
- * Sending DELETE request to rest service for delete order item by given item id.
- * Implementation of {@link deleteItem} method.
- *
- * @param id given item id
- *!/
-function deleteOrderItem(id) {
-    deleteItem(
-        rootURL + '/' + currentOrder.id + '/items/',
-        id,
-        function () {
-            findOrderById(currentOrder.id);
-        }
-    )
-}
-
-/!**
- * Sending PUT request to rest service for update order item by given item id.
- * Implementation of {@link updateItem} method.
- *
- * @param id given item id
- *!/
-function updateOrderItem(id) {
-    updateItem(
-        rootURL + '/' + currentOrder.id + '/items/',
-        id,
-        orderItemToJSON(),
-        function () {
-            findOrderById(currentOrder.id);
-        }
-    )
-}
-
-/!**
- * Sending GET request to rest service for get order by saved in session id of order.
- * Implementation of {@link getItem} method.
- *!/
-function findOrderById() {
-    if (sessionOrderId === undefined) {
-        findUserOrderByUsername();
-    } else {
-        getItem(
-            rootURL + '/' + sessionOrderId,
-
-            function (data) {
-                fillUserOrderList(data);
-            },
-
-            function () {
-                alert("Order with id=" + sessionOrderId + " was not found!");
-            }
-        )
-    }
-}
-
-/!**
- * Sending GET request to rest service for get opened order for current user if it exist.
- * Implementation of {@link getItem} method.
- *!/
-function findUserOrderByUsername() {
-    getItem(
-        rootURL + '/customers/' + principal,
-
-        function (data) {
-            $.session.set("orderId", data.id);
-            sessionOrderId = data.id;
-            fillUserOrderList(data);
-        },
-
-        function () {
-            createNewUserOrder();
-            findUserOrderBySessionId();
-        }
-    )
-}
-
-/!**
- * Sending GET request to rest service for get item by given id.
- * Implementation of {@link getItem} method.
- *
- * @param id given id
- *!/
-function findUserOrderItemById(id) {
-    getItem(
-        rootURL + '/' + sessionOrderId + '/items/' + id,
-        function (data) {
-            currentItem = data;
-            fillUserOrderItem(currentItem);
-            showOrderItemModalWindow();
-        },
-        function () {
-            //do nothing
-        }
-    )
-}
-
-/!**
- * Sending POST request to rest service for create new order for current user.
- * Implementation of {@link createItem} method.
- *!/
-function createNewUserOrder() {
-    createItem(
-        rootURL + '/customers/' + principal,
-        {},
-
-        function (data) {
-            $.session.set("orderId", data.id);
-            sessionOrderId = data.id;
-            fillUserOrderList(data);
-        }
-    )
-}
-
-/!**
- * Show semi-transparent DIV, which shading whole page
- *!/
-function showCover() {
-    var coverDiv = document.createElement('div');
-    coverDiv.id = 'cover-div';
-    document.body.appendChild(coverDiv);
-}
-
-/!**
- * Remove semi-transparent DIV, which shading whole page
- *!/
-function hideCover() {
-    document.body.removeChild(document.getElementById('cover-div'));
-}
-
-/!**
- * Show modal window with item info
- *!/
-function showOrderItemModalWindow() {
-    showCover();
-    var container = document.getElementById('modal-form-container');
-
-    function closeWindow() {
-        hideCover();
-        container.style.display = 'none';
-        document.onkeydown = null;
-    }
-
-    $('#buttonCancel').click(function () {
-        clearUserOrderItemForm();
-        closeWindow();
-        return false;
-    });
-
-    $('#buttonChange').click(function () {
-        updateOrderItem(currentItem.id);
-        closeWindow();
-        return false;
-    });
-
-    $('#buttonDelete').click(function () {
-        deleteOrderItem(currentItem.id);
-        closeWindow();
-        return false;
-    });
-
-    container.style.display = 'block';
-}*/

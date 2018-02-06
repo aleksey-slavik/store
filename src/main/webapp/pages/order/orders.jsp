@@ -12,7 +12,7 @@
 <div class="container">
     <div class="leftArea">
         <div class="header" align="center">
-            <%@ include file="/parts/search.jsp" %>
+            <h1>Orders List:</h1>
         </div>
 
         <div class="leftArea-list">
@@ -22,6 +22,9 @@
 
     <form id="itemForm">
         <div class="mainArea">
+            <div class="header" align="center">
+                <h1>Order Info:</h1>
+            </div>
 
             <label for="id">Id:</label>
             <input id="id" name="id" type="text" disabled/>
@@ -44,6 +47,10 @@
         </div>
 
         <div class="rightArea">
+            <div class="header" align="center">
+                <h1>Order Items:</h1>
+            </div>
+
             <div class="leftArea-list">
                 <ul id="orderItemList"></ul>
             </div>
@@ -52,7 +59,7 @@
 </div>
 
 <div id="modal-form-container">
-    <form id="modal-form">
+    <form id="modal-form" style="width: 330px;">
         <div class="mainArea">
             <label for="name">Name:</label>
             <input id="name" name="name" type="text" disabled/>
@@ -75,8 +82,6 @@
 </div>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.session.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/script/search.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/script/rest.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/script/order/secured.js"></script>
 <%@include file="/parts/bottom.jsp" %>
