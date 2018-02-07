@@ -9,6 +9,32 @@
     <http pattern="/login" security="none"/>
     <http pattern="/signup" security="none"/>
 
+    <http use-expressions="true">
+        <!-- interceptors -->
+        <intercept-url method="DELETE" pattern="/users" access="hasAuthority('ADMIN')"/>
+        <intercept-url pattern="/user" access="hasAuthority('ADMIN')"/>
+        <intercept-url pattern="/order" access="hasAuthority('ADMIN')"/>
+        <intercept-url pattern="/cart" access="hasAuthority('CUSTOMER')"/>
+        <intercept-url pattern="/account" access="isAuthenticated()"/>
+
+        <!-- access denied page -->
+        <access-denied-handler
+                error-page="/403"/>
+
+        <form-login
+                login-page="/login"
+                login-processing-url="/j_spring_security_check"
+                username-parameter="username"
+                password-parameter="password"
+                default-target-url="/home"
+                authentication-failure-url="/login?error"/>
+
+        <logout
+                logout-url="/j_spring_security_logout"
+                logout-success-url="/home"
+                invalidate-session="true"
+                delete-cookies="true"/>
+
     <http pattern="/**" entry-point-ref="jwtAuthenticationEntryPoint" create-session="stateless">
         <csrf disabled="true"/>
         <custom-filter before="FORM_LOGIN_FILTER" ref="jwtAuthenticationFilter"/>

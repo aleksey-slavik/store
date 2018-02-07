@@ -169,6 +169,9 @@
         <aop:advisor advice-ref="txAdvice" pointcut-ref="userServicePointCut"/>
     </aop:config>
 
+    <!-- Security Aspects -->
+    <bean id="userSecurityManager" class="com.globallogic.store.security.aop.UserSecurityManager"/>
+
     <aop:config>
         <aop:pointcut id="userDeleteAspectPointCut"
                       expression="execution(* com.globallogic.store.rest.spring.UserSpringRestController.deleteUserById(..))"/>
