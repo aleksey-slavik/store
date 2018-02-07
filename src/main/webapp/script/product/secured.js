@@ -1,6 +1,6 @@
 //start statement of page when it is loaded
 findAllProducts();
-$('#buttonDelete').hide();
+$("#buttonDelete").hide();
 
 /**
  * Register listener for create button
@@ -42,7 +42,7 @@ $('#itemList').on('click', 'a', function () {
  * Register listener for searchProduct button
  */
 $('#buttonSearch').click(function () {
-    searchProduct($('#searchKey').val());
+    //searchProduct($('#searchKey').val());
     return false;
 });
 
@@ -50,11 +50,11 @@ $('#buttonSearch').click(function () {
  * Trigger searchProduct when pressing 'Enter' on searchProduct input field
  */
 $('#searchKey').keypress(function (e) {
-    if (e.which === 13) {
+    /*if (e.which === 13) {
         searchProduct($('#searchKey').val());
         e.preventDefault();
         return false;
-    }
+    }*/
 });
 
 /**
@@ -142,7 +142,7 @@ function productItemToJSON() {
  */
 function findAllProducts() {
     getItem(
-        rootURL + '?all',
+        rootURL,
         function (data) {
             fillProductList(data);
         },
@@ -214,7 +214,7 @@ function deleteProduct() {
     deleteItem(
         rootURL,
         itemId,
-        function (data) {
+        function () {
             findAllProducts();
             clearProductForm();
         }

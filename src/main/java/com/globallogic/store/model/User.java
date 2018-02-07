@@ -5,21 +5,21 @@ package com.globallogic.store.model;
  *
  * @author oleksii.slavik
  */
-public class User extends Entity {
+public class User {
 
+    private Long id;
     private String firstName;
-
     private String lastName;
-
     private String username;
-
     private String password;
-
     private String email;
-
     private Role role;
 
     public User() {}
+
+    public User(Long id) {
+        this.id = id;
+    }
 
     public User(String firstName, String lastName, String username, String password, String email) {
         this.firstName = firstName;
@@ -30,25 +30,28 @@ public class User extends Entity {
         this.role = Role.CUSTOMER;
     }
 
-    public User(String firstName, String lastName, String username, String password, String email, Role role) {
-        this(firstName, lastName, username, password, email);
-        this.role = role;
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getFirstName() {
         return firstName;
     }
 
-    public void setFirstName(String firstname) {
-        this.firstName = firstname;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public String getLastName() {
         return lastName;
     }
 
-    public void setLastName(String lastname) {
-        this.lastName = lastname;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getUsername() {
@@ -86,9 +89,9 @@ public class User extends Entity {
     @Override
     public String toString() {
         return "User{" +
-                "id=" + getId() +
-                ", firstname='" + firstName + '\'' +
-                ", lastname='" + lastName + '\'' +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +

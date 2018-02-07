@@ -9,6 +9,7 @@ function getItem(restURL, successStatement, notFoundStatement) {
     $.ajax({
         type: 'GET',
         url: restURL,
+        async: false,
         dataType: "json",
 
         success: function (data, textStatus, xhr) {
@@ -17,7 +18,7 @@ function getItem(restURL, successStatement, notFoundStatement) {
                     successStatement(data);
                     break;
                 default:
-                    alert('Response status: ' + xhr.status + '!');
+                    console.log('Response status: ' + xhr.status + '!');
                     break;
             }
         },
@@ -28,7 +29,6 @@ function getItem(restURL, successStatement, notFoundStatement) {
                     alert('You don`t have permissions!');
                     break;
                 case 404:
-                    alert('Items not found!');
                     notFoundStatement();
                     break;
                 default:
@@ -53,15 +53,15 @@ function createItem(restURL, itemData, successStatement) {
         url: restURL,
         dataType: "json",
         data: itemData,
+        async: false,
 
         success: function (data, textStatus, xhr) {
             switch (xhr.status) {
                 case 200:
-                    alert('Item successfully created!');
                     successStatement(data);
                     break;
                 default:
-                    alert('Response status: ' + xhr.status + '!');
+                    console.log('Response status: ' + xhr.status + '!');
                     break;
             }
         },
@@ -94,6 +94,7 @@ function updateItem(restURL, itemId, itemData, successStatement) {
         url: restURL + '/' + itemId,
         dataType: "json",
         data: itemData,
+        async: false,
 
         success: function (data, textStatus, xhr) {
             switch (xhr.status) {
@@ -101,7 +102,7 @@ function updateItem(restURL, itemId, itemData, successStatement) {
                     successStatement(data);
                     break;
                 default:
-                    alert('Response status: ' + xhr.status + '!');
+                    console.log('Response status: ' + xhr.status + '!');
                     break;
             }
         },
@@ -129,16 +130,16 @@ function updateItem(restURL, itemId, itemData, successStatement) {
 function deleteItem(restURL, itemId, successStatement) {
     $.ajax({
         type: 'DELETE',
-        url: rootURL + '/' + itemId,
+        url: restURL + '/' + itemId,
+        async: false,
 
         success: function (data, textStatus, xhr) {
             switch (xhr.status) {
                 case 200:
-                    alert('Item with id=' + itemId + ' successfully deleted!');
                     successStatement(data);
                     break;
                 default:
-                    alert('Response status: ' + xhr.status + '!');
+                    console.log('Response status: ' + xhr.status + '!');
                     break;
             }
         },

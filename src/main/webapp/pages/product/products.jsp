@@ -10,6 +10,10 @@
 </head>
 <body>
 <%@ include file="/parts/top.jsp" %>
+<script>
+    var principal = "${pageContext.request.remoteUser}"
+</script>
+
 
 <sec:authorize access="hasAuthority('ADMIN')">
     <div class="container">
@@ -78,10 +82,12 @@
                 <label>Price:</label>
                 <input id="price" name="price" type="text" disabled/>
 
-                <label>Quantity:</label>
-                <input id="quantity" name="quantity" type="number" min="1" value="1"/>
+                <sec:authorize access="isAuthenticated()">
+                    <label>Quantity:</label>
+                    <input id="quantity" name="quantity" type="number" min="1" value="1"/>
 
-                <button id="buttonBuy">Add to cart</button>
+                    <button id="buttonBuy">Add to cart</button>
+                </sec:authorize>
                 <button id="buttonCancel">Cancel</button>
             </div>
 

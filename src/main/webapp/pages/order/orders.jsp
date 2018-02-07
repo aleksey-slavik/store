@@ -9,108 +9,81 @@
 </head>
 <body>
 <%@include file="/parts/top.jsp" %>
-<h2 align="center">Page at development stage!</h2>
-<%--
-
-<div class="header" align="center">
-    <input type="text" id="searchKey"/>
-    <button id="buttonSearch">Search</button>
-    <button id="buttonCreate">Create</button>
-</div>
-
 <div class="container">
     <div class="leftArea">
-        <ul id="itemList"></ul>
+        <div class="header" align="center">
+            <h1>Orders List:</h1>
+        </div>
+
+        <div class="leftArea-list">
+            <ul id="itemList"></ul>
+        </div>
     </div>
 
     <form id="itemForm">
         <div class="mainArea">
+            <div class="header" align="center">
+                <h1>Order Info:</h1>
+            </div>
 
-            <label>Id:</label>
+            <label for="id">Id:</label>
             <input id="id" name="id" type="text" disabled/>
 
-            <label>User:</label>
-            <input id="username" name="username" type="text"/>
+            <label for="user">User:</label>
+            <input id="user" name="user" type="text" disabled/>
 
-            <label>Total Cost:</label>
-            <input id="totalCost" name="totalCost" type="text"/>
+            <label for="totalCost">Total Cost:</label>
+            <input id="totalCost" name="totalCost" type="text" disabled/>
 
-            <label>Status:</label>
+            <label for="status">Status:</label>
             <select id="status" name="status">
                 <option>PAID</option>
                 <option selected>OPENED</option>
             </select>
 
-            <button id="buttonSave">Save</button>
+            <button id="buttonCreate">Clear</button>
+            <button id="buttonSave">Update</button>
             <button id="buttonDelete">Delete</button>
         </div>
 
         <div class="rightArea">
-            <label>Items:</label>
-            <ul id="productList"></ul>
+            <div class="header" align="center">
+                <h1>Order Items:</h1>
+            </div>
+
+            <div class="leftArea-list">
+                <ul id="orderItemList"></ul>
+            </div>
         </div>
+    </form>
+</div>
 
-        <div class="additionalArea">
+<div id="modal-form-container">
+    <form id="modal-form" style="width: 330px;">
+        <div class="mainArea">
+            <label for="name">Name:</label>
+            <input id="name" name="name" type="text" disabled/>
 
-            <label>Id:</label>
-            <input id="itemId" name="itemId" type="text" disabled/>
+            <label for="brand">Brand:</label>
+            <input id="brand" name="brand" type="text" disabled/>
 
-            <label>Product:</label>
-            <input id="itemName" name="itemName" type="text"/>
+            <label for="price">Price:</label>
+            <input id="price" name="price" type="text" disabled/>
 
-            <label>Brand:</label>
-            <input id="itemBrand" name="itemBrand" type="text"/>
 
-            <label>Price:</label>
-            <input id="itemPrice" name="itemPrice" type="text"/>
+            <label for="quantity">Quantity:</label>
+            <input id="quantity" name="quantity" type="number" min="1" value="1"/>
 
-            <label>Quantity:</label>
-            <input id="itemQuantity" name="itemQuantity" type="text"/>
+            <button id="buttonSaveItem">Update</button>
+            <button id="buttonDeleteItem">Delete</button>
+            <button id="buttonCancel">Cancel</button>
         </div>
     </form>
 </div>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/script/tableOrder.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/script/restCore.js"></script>
---%>
-
-<%--<table style="width: 100%">
-    <tr>
-        <th>User</th>
-        <th>Products</th>
-        <th>Total Cost</th>
-        <th>Status</th>
-        <th>Edit</th>
-        <th>Delete</th>
-    </tr>
-    <c:forEach items="${orders}" var="order">
-        <tr onclick="window.location='order?id=${order.id}'">
-            <td><a href="${pageContext.request.contextPath}/user?id=${order.user.id}">${order.user.username}</a></td>
-            <td>
-                <table width="100%">
-                    <th>Name</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                    <c:forEach items="${order.items}" var="item">
-                        <tr>
-                            <td>${item.product.name}</td>
-                            <td>${item.quantity}</td>
-                            <td>${item.price}</td>
-                        </tr>
-                    </c:forEach>
-                </table>
-            </td>
-            <td>${order.totalCost}</td>
-            <td>${order.status}</td>
-            <td><a href="${pageContext.request.contextPath}/order/update?id=${order.id}">Edit</a></td>
-            <td><a href="${pageContext.request.contextPath}/order/delete?id=${order.id}">Delete</a></td>
-        </tr>
-    </c:forEach>
-</table>
-<div style="text-align: center;">
-    <a href="${pageContext.request.contextPath}/order/create">Create order</a>
-</div>--%>
+<script type="text/javascript" src="${pageContext.request.contextPath}/script/rest.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/script/order/secured.js"></script>
 <%@include file="/parts/bottom.jsp" %>
 </body>
 </html>
