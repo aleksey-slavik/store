@@ -16,7 +16,8 @@ User rest service:
             <td>GET</td>
             <td>users/</td>
             <td>Return list of all users</td>
-            <td>200 — user data list return in response body</td>
+            <td>200 — user data as list return in response body,<br>
+                204 — empty user list</td>
         </tr>
         <tr>
             <td>GET</td>
@@ -64,7 +65,8 @@ Product rest service:
             <td>GET</td>
             <td>products/</td>
             <td>Return list of all products</td>
-            <td>200 — product data list return in response body</td>
+            <td>200 — product data list return in response body,<br>
+                204 — empty product list</td>
         </tr>
         <tr>
             <td>GET</td>
@@ -112,7 +114,8 @@ Order rest service:
             <td>GET</td>
             <td>orders/</td>
             <td>Return list of all orders</td>
-            <td>200 — order data list return in response body</td>
+            <td>200 — order data list return in response body,<br>
+                204 — empty order list</td>
         </tr>
         <tr>
             <td>GET</td>
@@ -126,6 +129,7 @@ Order rest service:
             <td>orders/{id}/items/</td>
             <td>Return list of all order items of order with given id</td>
             <td>200 — order item data list return in response body,<br>
+                204 — empty order item list,<br>
                 404 — order with given id not found</td>
         </tr>
         <tr>
@@ -133,7 +137,7 @@ Order rest service:
             <td>orders/{id}/items/{itemId}/</td>
             <td>Return order item with given itemId of order with given id</td>
             <td>200 — order item data return in response body,<br>
-                404 — order with given id or order item with with given itemId not found</td>
+                404 — order with given id or order item with given itemId not found</td>
         </tr>
         <tr>
             <td>POST</td>
@@ -163,7 +167,7 @@ Order rest service:
             <td>orders/{id}/items/{itemId}/</td>
             <td>Update order item data with given itemId of order with given id</td>
             <td>200 — order data return in response body,<br>
-                404 — order with given id or order item with with given itemId not found,<br>
+                404 — order with given id or order item with given itemId not found,<br>
                 406 — error in input data</td>
         </tr>
         <tr>
@@ -178,7 +182,7 @@ Order rest service:
             <td>orders/{id}/tems/{itemId}/</td>
             <td>Delete order item with given itemId of order with given id</td>
             <td>200 — deleted order data return in response body,<br>
-                404 — order with given id or order item with with given itemId not found</td>
+                404 — order with given id or order item with given itemId not found</td>
         </tr>
     </tbody>
 </table>
