@@ -11,7 +11,7 @@
     <http pattern="/login" security="none"/>
     <http pattern="/signup" security="none"/>
 
-    <http pattern="/**" entry-point-ref="restAuthenticationEntryPoint" create-session="stateless">
+    <http pattern="/**" entry-point-ref="jwtAuthenticationEntryPoint" create-session="stateless">
         <csrf disabled="true"/>
         <custom-filter before="FORM_LOGIN_FILTER" ref="jwtAuthenticationFilter"/>
     </http>
@@ -21,11 +21,15 @@
         <beans:property name="authenticationSuccessHandler" ref="jwtAuthenticationSuccessHandler"/>
     </beans:bean>
 
-    <beans:bean id="restAuthenticationEntryPoint" class="com.globallogic.store.security.jwt.RestAuthenticationEntryPoint"/>
+    <beans:bean id="jwtAuthenticationEntryPoint" class="com.globallogic.store.security.jwt.JwtAuthenticationEntryPoint"/>
 
     <beans:bean id="jwtAuthenticationSuccessHandler" class="com.globallogic.store.security.jwt.JwtAuthenticationSuccessHandler"/>
 
-    <beans:bean id="jwtAuthenticationProvider" class="com.globallogic.store.security.jwt.JwtAuthenticationProvider"/>
+    <beans:bean id="jwtAuthenticationProvider" class="com.globallogic.store.security.jwt.JwtAuthenticationProvider">
+        <beans:constructor-arg ref="jwtTokenUtil"/>
+    </beans:bean>
+
+    <beans:bean id="jwtTokenUtil" class="com.globallogic.store.security.jwt.JwtTokenUtil"/>
 
     <authentication-manager alias="authenticationManager">
         <authentication-provider ref="jwtAuthenticationProvider"/>

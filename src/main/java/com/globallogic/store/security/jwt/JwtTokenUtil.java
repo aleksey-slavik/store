@@ -8,19 +8,23 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 
-public class JwtUtil {
+public class JwtTokenUtil {
 
     @Value("${jwt.secret}")
     private String secret;
 
+    @Value("${jwt.expiration}")
+    private Long expiration;
+
     public User parseToken(String token) {
         try {
             Claims body = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
-            Long id = Long.parseLong((String) body.get("userId"));
-            String username = body.getSubject();
-            Role role = Role.valueOf((String) body.get("userRole"));
-            return new User(id, username, role);
-        } catch (JwtException | ClassCastException e) {
+            User user = new User();
+            user.setId(Long.parseLong((String) body.get("userId")));
+            user.setUsername(body.getSubject());
+            user.setRole(Role.valueOf((String) body.get("userRole")));
+            return user;
+        } catch (JwtException e) {
             return null;
         }
     }
