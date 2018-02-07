@@ -10,15 +10,15 @@
 <body>
 <%@include file="/parts/top.jsp" %>
 
-<div class="header" align="center">
-    <input type="text" id="searchKey"/>
-    <button id="buttonSearch">Search</button>
-    <button id="buttonCreate">Create</button>
-</div>
-
 <div class="container">
     <div class="leftArea">
-        <ul id="itemList"></ul>
+        <div class="header" align="center">
+            <%@ include file="/parts/search.jsp" %>
+        </div>
+
+        <div class="leftArea-list">
+            <ul id="itemList"></ul>
+        </div>
     </div>
 
     <form id="itemForm">
@@ -26,12 +26,6 @@
 
             <label>Id:</label>
             <input id="id" name="id" type="text" disabled/>
-
-            <label>First Name:</label>
-            <input id="firstName" name="firstName" type="text"/>
-
-            <label>Last Name:</label>
-            <input id="lastName" name="lastName" type="text"/>
 
             <label>Username:</label>
             <input id="username" name="username" type="text"/>
@@ -42,14 +36,23 @@
             <label>E-mail:</label>
             <input id="email" name="email" type="text"/>
 
+            <button id="buttonCreate">Clear</button>
+            <button id="buttonSave">Save</button>
+            <button id="buttonDelete">Delete</button>
+        </div>
+
+        <div class="rightArea">
+            <label>First Name:</label>
+            <input id="firstName" name="firstName" type="text"/>
+
+            <label>Last Name:</label>
+            <input id="lastName" name="lastName" type="text"/>
+
             <label>Role:</label>
             <select name="role" id="role">
                 <option>ADMIN</option>
                 <option selected>CUSTOMER</option>
             </select>
-
-            <button id="buttonSave">Save</button>
-            <button id="buttonDelete">Delete</button>
         </div>
     </form>
 </div>
@@ -57,7 +60,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/script/rest.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/script/search.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/script/user/admin.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/script/user/secured.js"></script>
 
 <%@include file="/parts/bottom.jsp" %>
 </body>

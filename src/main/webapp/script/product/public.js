@@ -6,31 +6,24 @@
 var rootURL = "http://localhost:8080/products";
 
 /**
+ * Root url path for orders rest service
+ *
+ * @type {string}
+ */
+var orderURL = "http://localhost:8080/orders";
+
+/**
  * Temporary variable for product data
  */
 var currentItem;
 
+/**
+ * Id of order for current user
+ */
+var sessionOrderId;
+
 //start statement of page when it is loaded
 findAllProducts();
-
-/**
- * Register listener for searchProduct button
- */
-$('#buttonSearch').click(function () {
-    searchProduct($('#searchKey').val());
-    return false;
-});
-
-/**
- * Trigger searchProduct when pressing 'Enter' on searchProduct input field
- */
-$('#searchKey').keypress(function (e) {
-    if (e.which === 13) {
-        searchProduct($('#searchKey').val());
-        e.preventDefault();
-        return false;
-    }
-});
 
 /**
  * Register listener for list item
@@ -78,11 +71,11 @@ function fillProduct(item) {
  * @returns {string}
  */
 function orderItemToJSON() {
-    var itemId = $('#id').val();
     return JSON.stringify({
-        "id": itemId === '' ? null : itemId,
-        "price": $('#price').val(),
-        "quantity": $('quantity').val()
+        "id": $('#id').val(),
+        "product": currentItem,
+        "price": currentItem.price,
+        "quantity": $('#quantity').val()
     });
 }
 
@@ -95,49 +88,12 @@ function clearProductForm() {
 }
 
 /**
- * Get list of items by given key.
- * If key is empty return all items
- *
- * @param searchKey searchProduct key
- */
-function searchProduct(searchKey) {
-    clearProductForm();
-
-    if (searchKey === '') {
-        findAllProducts();
-    } else {
-        findProductByKey(searchKey);
-    }
-}
-
-
-/**
- * Get list of items by given key.
- * Implementation of {@link findItemByKey} method.
- *
- * @param searchKey search key
- */
-function findProductByKey(searchKey) {
-    findItemByKey(
-        rootURL,
-        searchKey,
-        function (data) {
-            fillProductInfoList(data);
-        },
-        function () {
-            searchProduct('');
-            $('#searchKey').val('');
-        }
-    )
-}
-
-/**
  * Sending GET request to rest service for get all items.
  * Implementation of {@link getItem} method.
  */
 function findAllProducts() {
     getItem(
-        rootURL + '?all',
+        rootURL,
         function (data) {
             fillProductInfoList(data);
         },
@@ -191,6 +147,7 @@ function showModalWindow() {
     var container = document.getElementById('modal-form-container');
 
     function closeWindow() {
+        clearProductForm();
         hideCover();
         container.style.display = 'none';
         document.onkeydown = null;
@@ -202,9 +159,40 @@ function showModalWindow() {
     });
 
     $('#buttonBuy').click(function () {
-        //todo add save item in user cart
+        addOrderItem();
+        closeWindow();
         return false;
     });
 
     container.style.display = 'block';
+}
+
+/**
+ * Check opened order of given user.
+ */
+function checkUserOrderByUsername() {
+    getItem(
+        orderURL + '/customers/' + principal,
+        function (data) {
+            sessionOrderId = data.id;
+        },
+        function () {
+            alert('Can not create cart for user: ' + principal);
+        }
+    );
+}
+
+/**
+ * Add order item to opened order
+ */
+function addOrderItem() {
+    checkUserOrderByUsername();
+
+    createItem(
+        orderURL + '/' + sessionOrderId + '/items',
+        orderItemToJSON(),
+        function (data) {
+            alert(data.product.name + ' successfully added to cart!');
+        }
+    )
 }

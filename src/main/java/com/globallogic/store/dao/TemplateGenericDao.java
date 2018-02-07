@@ -13,7 +13,7 @@ import org.hibernate.cfg.Configuration;
  * @param <T> type of data
  * @author oleksii.slavik
  */
-public class TemplateGenericDAO<T> {
+public class TemplateGenericDao<T> {
 
     /**
      * Process of given query.

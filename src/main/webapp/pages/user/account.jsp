@@ -37,6 +37,7 @@
 
             <button id="buttonChange">Change</button>
             <button id="buttonSave">Save</button>
+            <button id="buttonCancel">Cancel</button>
         </div>
     </form>
 </div>
