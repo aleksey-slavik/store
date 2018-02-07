@@ -1,5 +1,6 @@
 package com.globallogic.store.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -8,12 +9,34 @@ import java.util.Set;
  *
  * @author oleksii.slavik
  */
-public class Order extends Entity {
+public class Order implements Serializable {
 
+    private Long id;
     private Double totalCost;
     private User user;
     private Status status;
     private Set<OrderItem> items = new HashSet<OrderItem>(0);
+
+    public Order(){}
+
+    public Order(Long id) {
+        this.id = id;
+    }
+
+    public Order(User user) {
+        this.user = user;
+        totalCost = 0D;
+        status = Status.OPENED;
+        items = new HashSet<OrderItem>(0);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Double getTotalCost() {
         return totalCost;
@@ -45,5 +68,24 @@ public class Order extends Entity {
 
     public void setItems(Set<OrderItem> items) {
         this.items = items;
+    }
+
+    public void checkTotalCost() {
+        totalCost = 0D;
+
+        for (OrderItem orderItem : items) {
+            totalCost += orderItem.getPrice() * orderItem.getQuantity();
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", totalCost=" + totalCost +
+                ", user=" + user +
+                ", status=" + status +
+                ", items=" + items +
+                '}';
     }
 }

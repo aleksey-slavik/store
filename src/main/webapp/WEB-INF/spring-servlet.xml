@@ -80,35 +80,52 @@
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
           p:location="classpath:store.properties" name="propertiesBean"/>
 
-    <!-- DAO injection -->
-    <bean name="userDao" class="com.globallogic.store.dao.AbstractDAO">
+    <!-- DAO beans -->
+    <bean name="userDao" class="com.globallogic.store.dao.GenericDao">
         <constructor-arg value="com.globallogic.store.model.User"/>
     </bean>
-    <bean name="userRestController" class="com.globallogic.store.rest.spring.UserRestController">
+
+    <bean name="productDao" class="com.globallogic.store.dao.GenericDao">
+        <constructor-arg value="com.globallogic.store.model.Product"/>
+    </bean>
+
+    <bean name="orderDao" class="com.globallogic.store.dao.GenericDao">
+        <constructor-arg value="com.globallogic.store.model.Order"/>
+    </bean>
+
+    <bean name="orderItemDao" class="com.globallogic.store.dao.GenericDao">
+        <constructor-arg value="com.globallogic.store.model.OrderItem"/>
+    </bean>
+
+    <!-- Spring Rest beans -->
+    <bean name="userSpringRestController" class="com.globallogic.store.rest.spring.UserSpringRestController">
         <property name="userDao" ref="userDao"/>
     </bean>
 
-    <bean name="productDao" class="com.globallogic.store.dao.AbstractDAO">
-        <constructor-arg value="com.globallogic.store.model.Product"/>
-    </bean>
-    <bean name="productRestController" class="com.globallogic.store.rest.spring.ProductRestController">
+    <bean name="productSpringRestController" class="com.globallogic.store.rest.spring.ProductSpringRestController">
         <property name="productDao" ref="productDao"/>
     </bean>
 
-    <bean name="orderDao" class="com.globallogic.store.dao.AbstractDAO">
-        <constructor-arg value="com.globallogic.store.model.Order"/>
+    <bean name="orderSpringRestController" class="com.globallogic.store.rest.spring.OrderSpringRestController">
+        <property name="orderDao" ref="orderDao"/>
+        <property name="orderItemDao" ref="orderItemDao"/>
+        <property name="userDao" ref="userDao"/>
     </bean>
-    <bean name="orderRestController" class="com.globallogic.store.rest.spring.OrderRestController">
+
+    <!-- Jersey Rest beans -->
+    <bean name="userJerseyRestController" class="com.globallogic.store.rest.jersey.UserJerseyRestController">
+        <property name="userDao" ref="userDao"/>
+    </bean>
+
+    <bean name="productJerseyRestController" class="com.globallogic.store.rest.jersey.ProductJerseyRestController">
+        <property name="productDao" ref="productDao"/>
+    </bean>
+
+    <bean name="orderJerseyRestController" class="com.globallogic.store.rest.jersey.OrderJerseyRestController">
         <property name="orderDao" ref="orderDao"/>
     </bean>
 
-    <bean name="orderItemDao" class="com.globallogic.store.dao.AbstractDAO">
-        <constructor-arg value="com.globallogic.store.model.OrderItem"/>
-    </bean>
-    <bean name="orderItemRestController" class="com.globallogic.store.rest.spring.OrderItemRestController">
-        <property name="orderItemDao" ref="orderItemDao"/>
-    </bean>
-
+    <!-- Spring Security -->
     <bean id="loginUserService" class="com.globallogic.store.security.spring.LoginUserService">
         <property name="userDao" ref="userDao"/>
     </bean>
@@ -147,38 +164,43 @@
     <aop:aspectj-autoproxy/>
 
     <aop:config proxy-target-class="true">
-        <aop:pointcut id="userServicePointCut" expression="execution(* com.globallogic.store.security.spring.*Service.*(..))"/>
+        <aop:pointcut id="userServicePointCut"
+                      expression="execution(* com.globallogic.store.security.spring.*Service.*(..))"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="userServicePointCut"/>
     </aop:config>
 
     <aop:config>
-        <aop:pointcut id="userDeleteAspectPointCut" expression="execution(* com.globallogic.store.rest.spring.UserRestController.deleteUserById(..))"/>
-        <aop:pointcut id="userUpdateAspectPointCut" expression="execution(* com.globallogic.store.rest.spring.UserRestController.updateUser(..))"/>
-        <aop:pointcut id="userSelectAllAspectPointCut" expression="execution(* com.globallogic.store.rest.spring.UserRestController.findUser(..))"/>
-        <aop:pointcut id="userSelectAspectPointCut" expression="execution(* com.globallogic.store.rest.spring.UserRestController.getUserById(..))"/>
+        <aop:pointcut id="userDeleteAspectPointCut"
+                      expression="execution(* com.globallogic.store.rest.spring.UserSpringRestController.deleteUserById(..))"/>
+        <aop:pointcut id="userUpdateAspectPointCut"
+                      expression="execution(* com.globallogic.store.rest.spring.UserSpringRestController.updateUser(..))"/>
+        <aop:pointcut id="userSelectAllAspectPointCut"
+                      expression="execution(* com.globallogic.store.rest.spring.UserSpringRestController.findUser(..))"/>
+        <aop:pointcut id="userSelectAspectPointCut"
+                      expression="execution(* com.globallogic.store.rest.spring.UserSpringRestController.getUserById(..))"/>
 
-        <aop:aspect id="adminAccessAspect" ref="securityAspect">
-            <aop:around method="checkAdminAccess" pointcut-ref="userDeleteAspectPointCut"/>
-        </aop:aspect>
+        <!-- <aop:aspect id="adminAccessAspect" ref="securityAspect">
+             <aop:around method="checkAdminAccess" pointcut-ref="userDeleteAspectPointCut"/>
+         </aop:aspect>
 
-        <aop:aspect id="customerBeforeAccessAspect" ref="securityAspect">
-            <aop:before method="getUserDataBefore" pointcut-ref="userUpdateAspectPointCut"/>
-        </aop:aspect>
+         <aop:aspect id="customerBeforeAccessAspect" ref="securityAspect">
+             <aop:before method="getUserDataBefore" pointcut-ref="userUpdateAspectPointCut"/>
+         </aop:aspect>
 
-        <aop:aspect id="customerAccessAspect" ref="securityAspect">
-            <aop:around method="checkAuthorizedAccess" pointcut-ref="userUpdateAspectPointCut"/>
-        </aop:aspect>
+         <aop:aspect id="customerAccessAspect" ref="securityAspect">
+             <aop:around method="checkAuthorizedAccess" pointcut-ref="userUpdateAspectPointCut"/>
+         </aop:aspect>
 
-        <aop:aspect id="customerAfterAccessAspect" ref="securityAspect">
-            <aop:after-returning method="checkAccessAfter" pointcut-ref="userSelectAllAspectPointCut" returning="result"/>
-            <aop:after-returning method="checkAccessAfter" pointcut-ref="userSelectAspectPointCut" returning="result"/>
-        </aop:aspect>
+         <aop:aspect id="customerAfterAccessAspect" ref="securityAspect">
+             <aop:after-returning method="checkAccessAfter" pointcut-ref="userSelectAllAspectPointCut" returning="result"/>
+             <aop:after-returning method="checkAccessAfter" pointcut-ref="userSelectAspectPointCut" returning="result"/>
+         </aop:aspect>-->
     </aop:config>
+    <!--
+        &lt;!&ndash; Security Aspect &ndash;&gt;
+        <bean id="securityAspect" class="com.globallogic.store.security.aspect.SecurityManager">
+            <property name="authenticationFacade" ref="authenticationFacade"/>
+        </bean>
 
-    <!-- Security Aspect -->
-    <bean id="securityAspect" class="com.globallogic.store.security.aspect.SecurityManager">
-        <property name="authenticationFacade" ref="authenticationFacade"/>
-    </bean>
-
-    <bean id="authenticationFacade" class="com.globallogic.store.security.aspect.AuthenticateFacade" />
+        <bean id="authenticationFacade" class="com.globallogic.store.security.aspect.AuthenticateFacade" />-->
 </beans>

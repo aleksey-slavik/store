@@ -1,10 +1,11 @@
 package com.globallogic.store.rest.jersey;
 
-import com.globallogic.store.dao.AbstractDAO;
+import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.model.Order;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -13,31 +14,38 @@ import java.util.List;
  * @author oleksii.slavik
  */
 @Path("/orders")
-public class OrderController {
+public class OrderJerseyRestController {
 
     /**
-     * {@link Order} DAO object for access to database.
+     * Injection of {@link Order} DAO object for access to database.
      */
-    private AbstractDAO<Order> orderDao = new AbstractDAO<Order>(Order.class);
+    private GenericDao<Order> orderDao;
+
+    /**
+     * Injection of {@link Order} DAO object for access to database.
+     */
+    public void setOrderDao(GenericDao<Order> orderDao) {
+        this.orderDao = orderDao;
+    }
 
     /**
      * Return list of {@link Order} represented as json.
      *
      * @return list of {@link Order}
      */
-    @GET
+    /*@GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Order> getOrderList() {
-        return orderDao.findAll();
+        return orderDao.findByParams(Collections.<String, String>emptyMap());
     }
 
-    /**
+    *//**
      * Return {@link Order} item with given id
      *
      * @param id given id
      * @return {@link Order} item
-     */
+     *//*
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -45,12 +53,12 @@ public class OrderController {
         return orderDao.findById(id);
     }
 
-    /**
+    *//**
      * Create given {@link Order}
      *
      * @param order given {@link Order}
      * @return created {@link Order}
-     */
+     *//*
     @POST
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
@@ -59,13 +67,13 @@ public class OrderController {
         return orderDao.create(order);
     }
 
-    /**
+    *//**
      * Update {@link Order} item with given id
      *
      * @param id    given id of {@link Order}
      * @param order updated {@link Order} data
      * @return updated {@link Order}
-     */
+     *//*
     @PUT
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -75,17 +83,17 @@ public class OrderController {
         return orderDao.update(order);
     }
 
-    /**
+    *//**
      * Delete {@link Order} item with given id
      *
      * @param id given id of {@link Order}
      * @return deleted {@link Order}
-     */
+     *//*
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Order deleteOrder(@PathParam("id") Long id) {
         return orderDao.delete(id);
-    }
+    }*/
 }

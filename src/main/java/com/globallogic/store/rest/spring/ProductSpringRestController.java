@@ -1,6 +1,6 @@
 package com.globallogic.store.rest.spring;
 
-import com.globallogic.store.dao.AbstractDAO;
+import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.exception.EmptyResponseException;
 import com.globallogic.store.exception.NotFoundException;
 import com.globallogic.store.model.Product;
@@ -8,7 +8,6 @@ import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -17,17 +16,17 @@ import java.util.List;
  * @author oleksii.slavik
  */
 @RestController
-public class ProductRestController {
+public class ProductSpringRestController {
 
     /**
      * {@link Product} DAO object for access to database.
      */
-    private AbstractDAO<Product> productDao;
+    private GenericDao<Product> productDao;
 
     /**
      * Injection {@link Product} DAO object for access to database.
      */
-    public void setProductDao(AbstractDAO<Product> productDao) {
+    public void setProductDao(GenericDao<Product> productDao) {
         this.productDao = productDao;
     }
 
@@ -40,7 +39,7 @@ public class ProductRestController {
      */
     @RequestMapping(value = "/products/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Product getProductById(@PathVariable Long id) {
-        Product product = productDao.findById(id);
+        Product product = productDao.entityByKey(id);
 
         if (product == null) {
             throw new NotFoundException();
@@ -55,24 +54,16 @@ public class ProductRestController {
      * @param params map of request parameters
      * @return list of {@link Product}
      * @throws EmptyResponseException throws if request parameters is absent
-     * @throws NotFoundException throws when item with parameters not found
+     * @throws NotFoundException      throws when item with parameters not found
      */
     @RequestMapping(value = "/products", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Product> findProduct(@RequestParam MultiValueMap<String, String> params) {
-        if (params.isEmpty()) {
-            throw new EmptyResponseException();
-
-        }
-
+    public List<Product> findProduct(@RequestParam MultiValueMap<String, Object> params) {
         List<Product> products;
 
-        if (params.containsKey("all")) {
-            products = productDao.findAll();
-        } else if (params.containsKey("query")) {
-            String queryKey = params.getFirst("query");
-            products = productDao.fuzzySearch(queryKey, "name", "brand");
+        if (params.isEmpty()) {
+            products = productDao.entityList();
         } else {
-            products = Collections.singletonList(productDao.exactSearch(params.toSingleValueMap()));
+            products = productDao.entityListByValue(params.toSingleValueMap());
         }
 
         if (products == null || products.isEmpty()) {
@@ -90,7 +81,7 @@ public class ProductRestController {
      */
     @RequestMapping(value = "/products", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public Product createProduct(@RequestBody Product product) {
-        return productDao.create(product);
+        return productDao.createEntity(product);
     }
 
     /**
@@ -103,7 +94,7 @@ public class ProductRestController {
     @RequestMapping(value = "/products/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public Product updateProduct(@PathVariable Long id, @RequestBody Product product) {
         product.setId(id);
-        return productDao.update(product);
+        return productDao.updateEntity(product);
     }
 
     /**
@@ -114,6 +105,7 @@ public class ProductRestController {
      */
     @RequestMapping(value = "/products/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Product deleteProductById(@PathVariable Long id) {
-        return productDao.delete(id);
+        getProductById(id);
+        return productDao.deleteEntity(id);
     }
 }
