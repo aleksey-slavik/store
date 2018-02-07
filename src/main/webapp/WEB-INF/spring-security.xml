@@ -6,7 +6,7 @@
 	http://www.springframework.org/schema/security
 	http://www.springframework.org/schema/security/spring-security-4.0.xsd">
 
-    <http pattern="/login" security="none"/>
+    <http pattern="/signin" security="none"/>
     <http pattern="/signup" security="none"/>
 
     <http pattern="/**" entry-point-ref="jwtAuthenticationEntryPoint" create-session="stateless">
@@ -24,10 +24,10 @@
     <beans:bean id="jwtAuthenticationSuccessHandler" class="com.globallogic.store.security.jwt.JwtAuthenticationSuccessHandler"/>
 
     <beans:bean id="jwtAuthenticationProvider" class="com.globallogic.store.security.jwt.JwtAuthenticationProvider">
-        <beans:constructor-arg ref="jwtTokenUtil"/>
+        <beans:constructor-arg ref="tokenUtil"/>
     </beans:bean>
 
-    <beans:bean id="jwtTokenUtil" class="com.globallogic.store.security.jwt.JwtTokenUtil"/>
+    <beans:bean id="tokenUtil" class="com.globallogic.store.security.jwt.TokenUtil"/>
 
     <authentication-manager alias="authenticationManager">
         <authentication-provider ref="jwtAuthenticationProvider"/>

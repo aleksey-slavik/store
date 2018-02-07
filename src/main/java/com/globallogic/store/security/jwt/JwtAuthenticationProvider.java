@@ -13,10 +13,10 @@ import java.util.List;
 
 public class JwtAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
-    private JwtTokenUtil jwtTokenUtil;
+    private TokenUtil tokenUtil;
 
-    public JwtAuthenticationProvider(JwtTokenUtil jwtTokenUtil) {
-        this.jwtTokenUtil = jwtTokenUtil;
+    public JwtAuthenticationProvider(TokenUtil tokenUtil) {
+        this.tokenUtil = tokenUtil;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class JwtAuthenticationProvider extends AbstractUserDetailsAuthentication
     protected UserDetails retrieveUser(String s, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
         JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) authentication;
         String token = jwtAuthenticationToken.getToken();
-        User parsedUser = jwtTokenUtil.parseToken(token);
+        User parsedUser = tokenUtil.parseToken(token);
 
         if (parsedUser == null) {
             throw new JwtTokenMalformedException("JWT token is not valid");

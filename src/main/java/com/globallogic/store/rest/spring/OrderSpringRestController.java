@@ -8,6 +8,7 @@ import com.globallogic.store.model.Order;
 import com.globallogic.store.model.OrderItem;
 import com.globallogic.store.model.Status;
 import com.globallogic.store.model.User;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,18 @@ import java.util.List;
  */
 @RestController
 public class OrderSpringRestController {
+
+    @Value("${user.username}")
+    private String usernameKey;
+
+    @Value("${order.owner}")
+    private String ownerKey;
+
+    @Value("${order.status}")
+    private String statusKey;
+
+    @Value("${orderItem.order}")
+    private String orderKey;
 
     /**
      * {@link Order} DAO object for access to database.
@@ -72,13 +85,13 @@ public class OrderSpringRestController {
     @RequestMapping(value = "/orders/customers/{username}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Order findOrderByUsername(final @PathVariable String username) {
         final User user = userDao.entityByValue(new HashMap<String, Object>() {{
-            put("username", username);
+            put(usernameKey, username);
         }});
 
         try {
             return orderDao.entityByValue(new HashMap<String, Object>() {{
-                put("user", user);
-                put("status", Status.OPENED);
+                put(ownerKey, user);
+                put(statusKey, Status.OPENED);
             }});
         } catch (NoResultException e) {
             return orderDao.createEntity(new Order(user));
@@ -100,7 +113,7 @@ public class OrderSpringRestController {
     public List<OrderItem> getItemsOfOrderByOrderId(final @PathVariable Long id) {
         final Order order = getOrderById(id);
         List<OrderItem> items = orderItemDao.entityListByValue(new HashMap<String, Object>() {{
-            put("order", order);
+            put(orderKey, order);
         }});
 
         if (items == null || items.isEmpty()) {

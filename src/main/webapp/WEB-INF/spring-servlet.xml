@@ -171,39 +171,4 @@
 
     <!-- Security Aspects -->
     <bean id="userSecurityManager" class="com.globallogic.store.security.aop.UserSecurityManager"/>
-
-    <aop:config>
-        <aop:pointcut id="userDeleteAspectPointCut"
-                      expression="execution(* com.globallogic.store.rest.spring.UserSpringRestController.deleteUserById(..))"/>
-        <aop:pointcut id="userUpdateAspectPointCut"
-                      expression="execution(* com.globallogic.store.rest.spring.UserSpringRestController.updateUser(..))"/>
-        <aop:pointcut id="userSelectAllAspectPointCut"
-                      expression="execution(* com.globallogic.store.rest.spring.UserSpringRestController.findUser(..))"/>
-        <aop:pointcut id="userSelectAspectPointCut"
-                      expression="execution(* com.globallogic.store.rest.spring.UserSpringRestController.getUserById(..))"/>
-
-        <!-- <aop:aspect id="adminAccessAspect" ref="securityAspect">
-             <aop:around method="checkAdminAccess" pointcut-ref="userDeleteAspectPointCut"/>
-         </aop:aspect>
-
-         <aop:aspect id="customerBeforeAccessAspect" ref="securityAspect">
-             <aop:before method="getUserDataBefore" pointcut-ref="userUpdateAspectPointCut"/>
-         </aop:aspect>
-
-         <aop:aspect id="customerAccessAspect" ref="securityAspect">
-             <aop:around method="checkAuthorizedAccess" pointcut-ref="userUpdateAspectPointCut"/>
-         </aop:aspect>
-
-         <aop:aspect id="customerAfterAccessAspect" ref="securityAspect">
-             <aop:after-returning method="checkAccessAfter" pointcut-ref="userSelectAllAspectPointCut" returning="result"/>
-             <aop:after-returning method="checkAccessAfter" pointcut-ref="userSelectAspectPointCut" returning="result"/>
-         </aop:aspect>-->
-    </aop:config>
-    <!--
-        &lt;!&ndash; Security Aspect &ndash;&gt;
-        <bean id="securityAspect" class="com.globallogic.store.security.aspect.SecurityManager">
-            <property name="authenticationFacade" ref="authenticationFacade"/>
-        </bean>
-
-        <bean id="authenticationFacade" class="com.globallogic.store.security.aspect.AuthenticateFacade" />-->
 </beans>

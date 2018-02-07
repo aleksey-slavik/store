@@ -116,12 +116,4 @@ public class GenericDao<E> implements DaoAccessible<E, Long> {
             }
         });
     }
-
-    /*public List<T> findByFilter(final SearchFilter<T> filter) {
-        return new TemplateGenericDAO<List<T>>().processQuery(new Queryable<List<T>>() {
-            public List<T> query(Session session) {
-                return filter.getResultList(session);
-            }
-        });
-    }*/
 }

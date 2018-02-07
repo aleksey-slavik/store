@@ -2,6 +2,7 @@ package com.globallogic.store.web.user;
 
 import com.globallogic.store.model.User;
 import com.globallogic.store.security.spring.RegisterUserService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
@@ -16,6 +17,9 @@ import javax.servlet.http.HttpServletResponse;
  * @author oleksii.slavik
  */
 public class RegistrationWebController extends AbstractController {
+
+    @Value("${view.signUp}")
+    private String signUpView;
 
     private RegisterUserService registerUserService;
 
@@ -37,7 +41,7 @@ public class RegistrationWebController extends AbstractController {
     }
 
     private ModelAndView getRegisterForm() {
-        return new ModelAndView("user/register");
+        return new ModelAndView(signUpView);
     }
 
     private ModelAndView registerUser(HttpServletRequest httpServletRequest) {

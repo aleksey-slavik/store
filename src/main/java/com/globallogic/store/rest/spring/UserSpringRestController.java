@@ -5,6 +5,7 @@ import com.globallogic.store.exception.EmptyResponseException;
 import com.globallogic.store.exception.NotAcceptableException;
 import com.globallogic.store.exception.NotFoundException;
 import com.globallogic.store.model.User;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
@@ -20,6 +21,9 @@ import java.util.List;
  */
 @RestController
 public class UserSpringRestController {
+
+    @Value("${user.username}")
+    private String usernameKey;
 
     /**
      * {@link User} DAO object for access to database.
@@ -118,7 +122,7 @@ public class UserSpringRestController {
 
     private void checkUser(final User user) {
         User checkUser = userDao.entityByValue(new HashMap<String, Object>() {{
-            put("username", user.getUsername());
+            put(usernameKey, user.getUsername());
         }});
 
         if (checkUser != null) {
