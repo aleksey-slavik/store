@@ -170,5 +170,5 @@
     </aop:config>
 
     <!-- Security Aspects -->
-    <bean id="userSecurityManager" class="com.globallogic.store.security.aop.UserSecurityManager"/>
+    <!--<bean id="userSecurityManager" class="com.globallogic.store.security.aop.UserSecurityManager"/>-->
 </beans>

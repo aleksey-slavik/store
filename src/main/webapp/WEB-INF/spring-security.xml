@@ -6,31 +6,31 @@
 	http://www.springframework.org/schema/security
 	http://www.springframework.org/schema/security/spring-security-4.0.xsd">
 
-    <http pattern="/signin" security="none"/>
-    <http pattern="/signup" security="none"/>
+    <http pattern="/api/signin" security="none"/>
+    <http pattern="/api/signup" security="none"/>
 
-    <http pattern="/**" entry-point-ref="jwtAuthenticationEntryPoint" create-session="stateless">
+    <http pattern="/**" entry-point-ref="authenticationEntryPoint" create-session="stateless">
         <csrf disabled="true"/>
-        <custom-filter before="FORM_LOGIN_FILTER" ref="jwtAuthenticationFilter"/>
+        <custom-filter before="FORM_LOGIN_FILTER" ref="authenticationFilter"/>
     </http>
 
-    <beans:bean id="jwtAuthenticationFilter" class="com.globallogic.store.security.jwt.JwtAuthenticationFilter">
-        <beans:property name="authenticationManager" ref="authenticationManager"/>
-        <beans:property name="authenticationSuccessHandler" ref="jwtAuthenticationSuccessHandler"/>
+    <beans:bean id="authenticationFilter" class="com.globallogic.store.security.spring.AuthenticationFilter">
+       <!-- <beans:property name="authenticationManager" ref="authenticationManager"/>
+        <beans:property name="authenticationSuccessHandler" ref="authenticationSuccessHandler"/>-->
     </beans:bean>
 
-    <beans:bean id="jwtAuthenticationEntryPoint" class="com.globallogic.store.security.jwt.JwtAuthenticationEntryPoint"/>
+    <beans:bean id="authenticationEntryPoint" class="com.globallogic.store.security.spring.UnauthorizedHandler"/>
 
-    <beans:bean id="jwtAuthenticationSuccessHandler" class="com.globallogic.store.security.jwt.JwtAuthenticationSuccessHandler"/>
+    <beans:bean id="authenticationSuccessHandler" class="com.globallogic.store.security.spring.AuthenticatedHandler"/>
 
-    <beans:bean id="jwtAuthenticationProvider" class="com.globallogic.store.security.jwt.JwtAuthenticationProvider">
-        <beans:constructor-arg ref="tokenUtil"/>
+    <beans:bean id="authenticationProvider" class="com.globallogic.store.security.spring.AuthenticationProvider">
+        <!--<beans:constructor-arg ref="tokenUtil"/>-->
     </beans:bean>
 
     <beans:bean id="tokenUtil" class="com.globallogic.store.security.jwt.TokenUtil"/>
 
     <authentication-manager alias="authenticationManager">
-        <authentication-provider ref="jwtAuthenticationProvider"/>
+        <authentication-provider user-service-ref="loginUserService"/>
     </authentication-manager>
 
 </beans:beans>

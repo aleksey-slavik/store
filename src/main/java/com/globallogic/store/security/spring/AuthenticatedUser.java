@@ -1,4 +1,4 @@
-package com.globallogic.store.security.jwt;
+package com.globallogic.store.security.spring;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
@@ -25,8 +25,12 @@ public class AuthenticatedUser implements UserDetails {
         return id;
     }
 
+    public String getToken() {
+        return token;
+    }
+
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return authorities;
     }
 
     public String getPassword() {
