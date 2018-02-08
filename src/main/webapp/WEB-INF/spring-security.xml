@@ -12,6 +12,7 @@
     <http pattern="/**" entry-point-ref="authenticationEntryPoint" create-session="stateless">
         <csrf disabled="true"/>
         <custom-filter before="FORM_LOGIN_FILTER" ref="authenticationFilter"/>
+        <intercept-url pattern="/products/**" method="GET" access="permitAll()"/>
     </http>
 
     <beans:bean id="authenticationFilter" class="com.globallogic.store.security.spring.AuthenticationFilter">

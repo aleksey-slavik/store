@@ -5,7 +5,6 @@ import com.globallogic.store.model.User;
 import com.globallogic.store.security.spring.AuthenticatedUser;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.DefaultClock;
-import io.jsonwebtoken.impl.TextCodec;
 import io.jsonwebtoken.impl.crypto.MacProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -112,5 +111,11 @@ public class TokenUtil {
 
     private Date calculateExpiration(Date created) {
         return new Date(created.getTime() + expiration * 1000);
+    }
+
+    public static void main(String[] args) {
+        SecretKey key = MacProvider.generateKey();
+        System.out.println(Base64.getEncoder().encodeToString(key.getEncoded()));
+        System.out.println(UUID.randomUUID().toString());
     }
 }
