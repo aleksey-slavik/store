@@ -6,20 +6,20 @@
 	http://www.springframework.org/schema/security
 	http://www.springframework.org/schema/security/spring-security-4.0.xsd">
 
-    <http pattern="/api/signin" security="none"/>
-    <http pattern="/api/signup" security="none"/>
+    <http pattern="/api/auth" security="none"/>
 
-    <http pattern="/**" entry-point-ref="authenticationEntryPoint" create-session="stateless">
+    <http pattern="/**" entry-point-ref="tokenAuthenticationEntryPoint" create-session="stateless">
         <csrf disabled="true"/>
-        <custom-filter before="FORM_LOGIN_FILTER" ref="authenticationFilter"/>
+        <custom-filter before="FORM_LOGIN_FILTER" ref="tokenAuthenticationFilter"/>
         <intercept-url pattern="/products/**" method="GET" access="permitAll()"/>
     </http>
 
-    <beans:bean id="authenticationFilter" class="com.globallogic.store.security.core.TokenAuthenticationFilter">
+    <beans:bean id="tokenAuthenticationFilter" class="com.globallogic.store.security.core.TokenAuthenticationFilter">
+        <beans:property name="authenticationManager" ref="authenticationManager"/>
         <beans:property name="tokenUtil" ref="tokenUtil"/>
     </beans:bean>
 
-    <beans:bean id="authenticationEntryPoint" class="com.globallogic.store.security.core.TokenAuthenticationEntryPoint"/>
+    <beans:bean id="tokenAuthenticationEntryPoint" class="com.globallogic.store.security.core.TokenAuthenticationEntryPoint"/>
 
     <beans:bean id="tokenUtil" class="com.globallogic.store.security.jwt.TokenUtil"/>
 

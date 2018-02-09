@@ -9,9 +9,7 @@ import io.jsonwebtoken.impl.DefaultClock;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
 import java.util.Date;
 
 public class TokenUtil {
@@ -156,7 +154,7 @@ public class TokenUtil {
 
     public boolean validateToken(String token, AuthenticatedUser user) {
         String username = getUsernameFromToken(token);
-        return username.equals(user.getUsername()) && isTokenExpired(token);
+        return username.equals(user.getUsername()) && !isTokenExpired(token);
     }
 
     private Claims getClaimsFromToken(String token) {

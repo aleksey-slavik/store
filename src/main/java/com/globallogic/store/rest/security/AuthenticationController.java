@@ -11,12 +11,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 public class AuthenticationController {
@@ -33,13 +34,27 @@ public class AuthenticationController {
     @Autowired
     private UserDetailsService userDetailsService;
 
-    @RequestMapping(value = "/api/signin", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/auth", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken( authenticationRequest.getUsername(), authenticationRequest.getPassword());
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-        String token = tokenUtil.generateToken((AuthenticatedUser) userDetails);
+        AuthenticatedUser userDetails = (AuthenticatedUser) userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+        String token = tokenUtil.generateToken(userDetails);
         return ResponseEntity.ok(new AuthenticationResponse(token));
+    }
+
+    @RequestMapping(value = "/api/auth", method = RequestMethod.GET)
+    public ResponseEntity<?> refreshAuthenticationToken(HttpServletRequest request) {
+        String token = request.getHeader(header);
+        String username = tokenUtil.getUsernameFromToken(token);
+        AuthenticatedUser user = (AuthenticatedUser) userDetailsService.loadUserByUsername(username);
+
+        if (tokenUtil.validateToken(token, user)) {
+            String refreshedToken = tokenUtil.refreshToken(token);
+            return ResponseEntity.ok(new AuthenticationResponse(refreshedToken));
+        } else {
+            return ResponseEntity.badRequest().body("");
+        }
     }
 }

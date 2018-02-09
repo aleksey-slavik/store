@@ -1,6 +1,7 @@
 package com.globallogic.store.security.core;
 
 import com.globallogic.store.dao.GenericDao;
+import com.globallogic.store.security.AuthenticatedUserFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -41,9 +42,16 @@ public class LoginUserService implements UserDetailsService {
                 new HashMap<String, String>() {{
                     put("username", s);
                 }});
-        List<GrantedAuthority> authorities = buildUserAuthority(user);
+
+        if (user == null) {
+            throw new UsernameNotFoundException(String.format("No user found with username '%s'", s));
+        } else {
+            return AuthenticatedUserFactory.create(user);
+        }
+
+        /*List<GrantedAuthority> authorities = buildUserAuthority(user);
         System.out.println(authorities);
-        return buildUserForAuthentication(user, authorities);
+        return buildUserForAuthentication(user, authorities);*/
     }
 
     /**

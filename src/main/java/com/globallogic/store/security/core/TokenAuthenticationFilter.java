@@ -10,17 +10,29 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 
+import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Entry point of authentication process.
+ *
+ * @author oleksii.slavik
+ */
 public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
     @Value("${jwt.header}")
     private String header;
 
     private TokenUtil tokenUtil;
+
+    public void setTokenUtil(TokenUtil tokenUtil) {
+        this.tokenUtil = tokenUtil;
+    }
 
     public TokenAuthenticationFilter() {
         super("/**");
@@ -42,12 +54,11 @@ public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingF
     }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws AuthenticationException, IOException, ServletException {
-        String requestHeader = httpServletRequest.getHeader(this.header);
+    public Authentication attemptAuthentication(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws AuthenticationException {
+        String authToken = httpServletRequest.getHeader(this.header);
         UsernamePasswordAuthenticationToken authentication;
 
-        if (requestHeader != null && requestHeader.startsWith("Bearer ")) {
-            String authToken = requestHeader.substring(7);
+        if (authToken != null) {
             AuthenticatedUser user = tokenUtil.parseToken(authToken);
             authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
@@ -60,7 +71,8 @@ public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingF
         return authentication;
     }
 
-    public void setTokenUtil(TokenUtil tokenUtil) {
-        this.tokenUtil = tokenUtil;
+    @Override
+    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+        super.doFilter(req, res, chain);
     }
 }
