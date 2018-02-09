@@ -62,12 +62,12 @@ public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingF
             AuthenticatedUser user = tokenUtil.parseToken(authToken);
             authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
         } else {
             authentication = new UsernamePasswordAuthenticationToken(null, null);
             authentication.setAuthenticated(false);
         }
 
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         return authentication;
     }
 

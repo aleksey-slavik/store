@@ -3,14 +3,14 @@
  *
  * @type {string}
  */
-var rootURL = "http://localhost:8080/products";
+var rootURL = "http://localhost:8080/api/products";
 
 /**
  * Root url path for orders rest service
  *
  * @type {string}
  */
-var orderURL = "http://localhost:8080/orders";
+var orderURL = "http://localhost:8080/api/orders";
 
 /**
  * Temporary variable for product data

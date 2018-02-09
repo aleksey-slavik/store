@@ -3,7 +3,7 @@
  *
  * @type {string}
  */
-var rootURL = "http://localhost:8080/users";
+var rootURL = "http://localhost:8080/api/users";
 
 /**
  * Temporary variable for product data
