@@ -1,63 +1,69 @@
-package com.globallogic.store.security.spring;
+package com.globallogic.store.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Collections;
 
 public class AuthenticatedUser implements UserDetails {
 
     private final Long id;
     private final String username;
-    private final String token;
-    private final Collection<? extends GrantedAuthority> authorities;
+    private final String password;
+    private final GrantedAuthority authority;
+    private final boolean isEnabled;
 
-    public AuthenticatedUser(Long id, String username, String token, Collection<? extends GrantedAuthority> authorities) {
+    public AuthenticatedUser(Long id, String username, String password, GrantedAuthority authority, boolean isEnabled) {
         this.id = id;
         this.username = username;
-        this.token = token;
-        this.authorities = authorities;
+        this.password = password;
+        this.authority = authority;
+        this.isEnabled = isEnabled;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singleton(authority);
     }
 
     @JsonIgnore
-    public Long getId() {
-        return id;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
-    }
-
+    @Override
     public String getPassword() {
-        return null;
+        return password;
     }
 
+    @Override
     public String getUsername() {
         return username;
     }
 
     @JsonIgnore
+    @Override
     public boolean isAccountNonExpired() {
         return true;
     }
 
     @JsonIgnore
+    @Override
     public boolean isAccountNonLocked() {
         return true;
     }
 
     @JsonIgnore
+    @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
-    @JsonIgnore
+    @Override
     public boolean isEnabled() {
-        return true;
+        return isEnabled;
+    }
+
+    @JsonIgnore
+    public Long getId() {
+        return id;
     }
 }

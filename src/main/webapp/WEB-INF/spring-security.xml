@@ -15,18 +15,11 @@
         <intercept-url pattern="/products/**" method="GET" access="permitAll()"/>
     </http>
 
-    <beans:bean id="authenticationFilter" class="com.globallogic.store.security.spring.AuthenticationFilter">
-       <!-- <beans:property name="authenticationManager" ref="authenticationManager"/>
-        <beans:property name="authenticationSuccessHandler" ref="authenticationSuccessHandler"/>-->
+    <beans:bean id="authenticationFilter" class="com.globallogic.store.security.core.TokenAuthenticationFilter">
+        <beans:property name="tokenUtil" ref="tokenUtil"/>
     </beans:bean>
 
-    <beans:bean id="authenticationEntryPoint" class="com.globallogic.store.security.spring.UnauthorizedHandler"/>
-
-    <beans:bean id="authenticationSuccessHandler" class="com.globallogic.store.security.spring.AuthenticatedHandler"/>
-
-    <beans:bean id="authenticationProvider" class="com.globallogic.store.security.spring.AuthenticationProvider">
-        <!--<beans:constructor-arg ref="tokenUtil"/>-->
-    </beans:bean>
+    <beans:bean id="authenticationEntryPoint" class="com.globallogic.store.security.core.TokenAuthenticationEntryPoint"/>
 
     <beans:bean id="tokenUtil" class="com.globallogic.store.security.jwt.TokenUtil"/>
 

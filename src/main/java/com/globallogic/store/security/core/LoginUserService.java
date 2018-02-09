@@ -1,4 +1,4 @@
-package com.globallogic.store.security.spring;
+package com.globallogic.store.security.core;
 
 import com.globallogic.store.dao.GenericDao;
 import org.springframework.security.core.GrantedAuthority;
@@ -64,8 +64,8 @@ public class LoginUserService implements UserDetailsService {
      * @return created list of {@link GrantedAuthority}
      */
     private List<GrantedAuthority> buildUserAuthority(com.globallogic.store.model.User user) {
-        Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
+        Set<GrantedAuthority> authorities = new HashSet<>();
         authorities.add(new SimpleGrantedAuthority(user.getRole().name()));
-        return new ArrayList<GrantedAuthority>(authorities);
+        return new ArrayList<>(authorities);
     }
 }

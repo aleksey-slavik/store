@@ -2,78 +2,135 @@ package com.globallogic.store.security.jwt;
 
 import com.globallogic.store.model.Role;
 import com.globallogic.store.model.User;
-import com.globallogic.store.security.spring.AuthenticatedUser;
+import com.globallogic.store.security.AuthenticatedUser;
+import com.globallogic.store.security.AuthenticatedUserFactory;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.DefaultClock;
-import io.jsonwebtoken.impl.crypto.MacProvider;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.crypto.SecretKey;
-import java.util.Base64;
+import java.util.Collection;
 import java.util.Date;
-import java.util.UUID;
 
 public class TokenUtil {
 
+    /**
+     * Secret key for generate and parse tokens
+     */
     @Value("${jwt.secret}")
     private String secret;
 
+    /**
+     * Expiration value in milliseconds
+     */
     @Value("${jwt.expiration}")
     private Long expiration;
 
+    /**
+     * Key for access to user id
+     */
     @Value("${jwt.user.id}")
     private String userIdKey;
 
+    /**
+     * Key for access to user authority
+     */
     @Value("${jwt.user.role}")
     private String userRoleKey;
 
+    @Value("jwt.user.credentials")
+    private String userCredentialsKey;
+
+    /**
+     * {@link Clock} object for create and validate {@link Date} values
+     */
     private Clock clock = DefaultClock.INSTANCE;
 
+    /**
+     * Parse user id from given token
+     *
+     * @param token given token
+     * @return user id
+     */
     public Long getIdFromToken(String token) {
         return Long.parseLong((String) getClaimsFromToken(token).get(userIdKey));
     }
 
+    /**
+     * Parse username from given token
+     *
+     * @param token given token
+     * @return username
+     */
     public String getUsernameFromToken(String token) {
         return getClaimsFromToken(token).getSubject();
     }
 
-    public Role getRoleFromToken(String token) {
-        return Role.valueOf((String) getClaimsFromToken(token).get(userRoleKey));
+    /**
+     * Parse authority from given token
+     *
+     * @param token given token
+     * @return user authority
+     */
+    public GrantedAuthority getRoleFromToken(String token) {
+        return new SimpleGrantedAuthority((String) getClaimsFromToken(token).get(userRoleKey));
     }
 
+    /**
+     * Parse {@link Date} which consist date when token was created
+     *
+     * @param token given token
+     * @return created {@link Date}
+     */
     public Date getIssuedAtFromToken(String token) {
         return getClaimsFromToken(token).getIssuedAt();
     }
 
+    /**
+     * Parse {@link Date} which consist date bigger then token is not valid
+     *
+     * @param token given token
+     * @return expired {@link Date}
+     */
     public Date getExpirationFromToken(String token) {
         return getClaimsFromToken(token).getExpiration();
     }
 
+    /**
+     * Check expiration of given token
+     *
+     * @param token given token
+     * @return true if token is valid, false in otherwise
+     */
     public boolean isTokenExpired(String token) {
         Date expiration = getExpirationFromToken(token);
         return expiration.before(clock.now());
     }
 
-    public User parseToken(String token) {
+    public AuthenticatedUser parseToken(String token) {
         try {
             Claims body = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
             User user = new User();
             user.setId(Long.parseLong((String) body.get(userIdKey)));
             user.setUsername(body.getSubject());
+            user.setPassword((String) body.get(userCredentialsKey));
             user.setRole(Role.valueOf((String) body.get(userRoleKey)));
-            return user;
+            return AuthenticatedUserFactory.create(user);
         } catch (JwtException e) {
             return null;
         }
     }
 
-    public String generateToken(UserDetails user) {
+    public String generateToken(AuthenticatedUser user) {
         Date created = clock.now();
         Date expired = calculateExpiration(created);
 
         Claims claims = Jwts.claims();
+        claims.put(userIdKey, user.getId());
         claims.put(userRoleKey, user.getAuthorities());
+        claims.put(userCredentialsKey, user.getPassword());
         claims.setSubject(user.getUsername());
         claims.setIssuedAt(created);
         claims.setExpiration(expired);
@@ -110,12 +167,6 @@ public class TokenUtil {
     }
 
     private Date calculateExpiration(Date created) {
-        return new Date(created.getTime() + expiration * 1000);
-    }
-
-    public static void main(String[] args) {
-        SecretKey key = MacProvider.generateKey();
-        System.out.println(Base64.getEncoder().encodeToString(key.getEncoded()));
-        System.out.println(UUID.randomUUID().toString());
+        return new Date(created.getTime() + expiration);
     }
 }

@@ -126,11 +126,11 @@
     </bean>
 
     <!-- Spring Security -->
-    <bean id="loginUserService" class="com.globallogic.store.security.spring.LoginUserService">
+    <bean id="loginUserService" class="com.globallogic.store.security.core.LoginUserService">
         <property name="userDao" ref="userDao"/>
     </bean>
 
-    <bean id="registerUserService" class="com.globallogic.store.security.spring.RegisterUserService">
+    <bean id="registerUserService" class="com.globallogic.store.security.core.RegisterUserService">
         <property name="authenticationManager" ref="authenticationManager"/>
         <property name="userDetailsService" ref="loginUserService"/>
     </bean>
@@ -165,7 +165,7 @@
 
     <aop:config proxy-target-class="true">
         <aop:pointcut id="userServicePointCut"
-                      expression="execution(* com.globallogic.store.security.spring.*Service.*(..))"/>
+                      expression="execution(* com.globallogic.store.security.core.*Service.*(..))"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="userServicePointCut"/>
     </aop:config>
 

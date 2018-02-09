@@ -1,10 +1,9 @@
 package com.globallogic.store.rest.security;
 
-import com.globallogic.store.model.User;
+import com.globallogic.store.security.AuthenticatedUser;
 import com.globallogic.store.security.dto.AuthenticationRequest;
 import com.globallogic.store.security.dto.AuthenticationResponse;
 import com.globallogic.store.security.jwt.TokenUtil;
-import com.globallogic.store.security.spring.AuthenticatedUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +39,7 @@ public class AuthenticationController {
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-        String token = tokenUtil.generateToken(userDetails);
+        String token = tokenUtil.generateToken((AuthenticatedUser) userDetails);
         return ResponseEntity.ok(new AuthenticationResponse(token));
     }
 }
