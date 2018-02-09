@@ -22,6 +22,7 @@ import java.util.List;
  * @author oleksii.slavik
  */
 @RestController
+@RequestMapping(value = "/api/orders")
 public class OrderSpringRestController {
 
     @Value("${user.username}")
@@ -77,12 +78,12 @@ public class OrderSpringRestController {
      *
      * @return list of {@link Order}
      */
-    @RequestMapping(value = "/orders", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Order> findOrder() {
         return orderDao.entityList();
     }
 
-    @RequestMapping(value = "/orders/customers/{username}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/customers/{username}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Order findOrderByUsername(final @PathVariable String username) {
         final User user = userDao.entityByValue(new HashMap<String, Object>() {{
             put(usernameKey, username);
@@ -98,7 +99,7 @@ public class OrderSpringRestController {
         }
     }
 
-    @RequestMapping(value = "/orders/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Order getOrderById(@PathVariable Long id) {
         Order order = orderDao.entityByKey(id);
 
@@ -109,7 +110,7 @@ public class OrderSpringRestController {
         }
     }
 
-    @RequestMapping(value = "/orders/{id}/items", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}/items", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<OrderItem> getItemsOfOrderByOrderId(final @PathVariable Long id) {
         final Order order = getOrderById(id);
         List<OrderItem> items = orderItemDao.entityListByValue(new HashMap<String, Object>() {{
@@ -123,7 +124,7 @@ public class OrderSpringRestController {
         return items;
     }
 
-    @RequestMapping(value = "/orders/{id}/items/{itemId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}/items/{itemId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public OrderItem getItemOfOrderByItemId(@PathVariable Long id, @PathVariable Long itemId) {
         Order order = getOrderById(id);
         OrderItem orderItem = orderItemDao.entityByKey(itemId);
@@ -139,7 +140,7 @@ public class OrderSpringRestController {
         }
     }
 
-    @RequestMapping(value = "/orders/{id}/items", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}/items", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public OrderItem addOrderItem(@PathVariable Long id, @RequestBody OrderItem orderItem) {
         Order order = getOrderById(id);
 
@@ -153,7 +154,7 @@ public class OrderSpringRestController {
         return createdOrderItem;
     }
 
-    @RequestMapping(value = "/orders/{id}/items/{itemId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}/items/{itemId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public OrderItem updateOrderItem(@PathVariable Long id, @PathVariable Long itemId, @RequestBody OrderItem orderItem) {
         Order order = getOrderById(id);
 
@@ -168,7 +169,7 @@ public class OrderSpringRestController {
         return updatedOrderItem;
     }
 
-    @RequestMapping(value = "/orders/{id}/items/{itemId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}/items/{itemId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public OrderItem deleteOrderItem(@PathVariable Long id, @PathVariable Long itemId) {
         getItemOfOrderByItemId(id, itemId);
         OrderItem deletedOrderItem = orderItemDao.deleteEntity(itemId);
@@ -182,7 +183,7 @@ public class OrderSpringRestController {
      * @param order given {@link Order}
      * @return created {@link Order}
      */
-    @RequestMapping(value = "/orders", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public Order createOrder(@RequestBody Order order) {
         order.checkTotalCost();
         return orderDao.createEntity(order);
@@ -195,7 +196,7 @@ public class OrderSpringRestController {
      * @param order updated {@link Order} data
      * @return updated {@link Order}
      */
-    @RequestMapping(value = "/orders/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public Order updateOrder(@PathVariable Long id, @RequestBody Order order) {
         order.setId(id);
         order.checkTotalCost();
@@ -213,7 +214,7 @@ public class OrderSpringRestController {
      * @param id given id of {@link Order}
      * @return deleted {@link Order}
      */
-    @RequestMapping(value = "/orders/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Order deleteOrderById(@PathVariable Long id) {
         getOrderById(id);
         return orderDao.deleteEntity(id);

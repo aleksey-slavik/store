@@ -6,6 +6,7 @@ import com.globallogic.store.security.dto.AuthenticationResponse;
 import com.globallogic.store.security.jwt.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
+@RequestMapping(value = "/api")
 public class AuthenticationController {
 
     @Value("${jwt.header}")
@@ -34,7 +36,7 @@ public class AuthenticationController {
     @Autowired
     private UserDetailsService userDetailsService;
 
-    @RequestMapping(value = "/api/auth", method = RequestMethod.POST)
+    @RequestMapping(value = "/auth", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken( authenticationRequest.getUsername(), authenticationRequest.getPassword());
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
@@ -44,7 +46,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(new AuthenticationResponse(token));
     }
 
-    @RequestMapping(value = "/api/auth", method = RequestMethod.GET)
+    @RequestMapping(value = "/auth", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> refreshAuthenticationToken(HttpServletRequest request) {
         String token = request.getHeader(header);
         String username = tokenUtil.getUsernameFromToken(token);
@@ -54,7 +56,7 @@ public class AuthenticationController {
             String refreshedToken = tokenUtil.refreshToken(token);
             return ResponseEntity.ok(new AuthenticationResponse(refreshedToken));
         } else {
-            return ResponseEntity.badRequest().body("");
+            return ResponseEntity.badRequest().body(null);
         }
     }
 }

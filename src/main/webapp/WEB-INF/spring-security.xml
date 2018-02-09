@@ -8,18 +8,21 @@
 
     <http pattern="/api/auth" security="none"/>
 
-    <http pattern="/**" entry-point-ref="tokenAuthenticationEntryPoint" create-session="stateless">
+    <http pattern="/api/**" entry-point-ref="tokenAuthenticationEntryPoint" create-session="stateless">
         <csrf disabled="true"/>
         <custom-filter before="FORM_LOGIN_FILTER" ref="tokenAuthenticationFilter"/>
-        <intercept-url pattern="/products/**" method="GET" access="permitAll()"/>
+        <intercept-url pattern="/api/products/**" method="GET" access="permitAll()"/>
     </http>
 
     <beans:bean id="tokenAuthenticationFilter" class="com.globallogic.store.security.core.TokenAuthenticationFilter">
         <beans:property name="authenticationManager" ref="authenticationManager"/>
+        <beans:property name="authenticationSuccessHandler" ref="tokenAuthenticationSuccessHandler"/>
         <beans:property name="tokenUtil" ref="tokenUtil"/>
     </beans:bean>
 
     <beans:bean id="tokenAuthenticationEntryPoint" class="com.globallogic.store.security.core.TokenAuthenticationEntryPoint"/>
+
+    <beans:bean id="tokenAuthenticationSuccessHandler" class="com.globallogic.store.security.core.TokenAuthenticationSuccessHandler"/>
 
     <beans:bean id="tokenUtil" class="com.globallogic.store.security.jwt.TokenUtil"/>
 

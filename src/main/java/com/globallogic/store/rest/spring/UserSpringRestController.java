@@ -20,6 +20,7 @@ import java.util.List;
  * @author oleksii.slavik
  */
 @RestController
+@RequestMapping(value = "/api/users")
 public class UserSpringRestController {
 
     @Value("${user.username}")
@@ -44,7 +45,7 @@ public class UserSpringRestController {
      * @return {@link User} item
      * @throws NotFoundException throws when user with given id not found
      */
-    @RequestMapping(value = "/users/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public User getUserById(@PathVariable Long id) {
         User user = userDao.entityByKey(id);
@@ -64,7 +65,7 @@ public class UserSpringRestController {
      * @throws NotFoundException      throws when user with given id not found
      * @throws EmptyResponseException throws when user list is empty
      */
-    @RequestMapping(value = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public List<User> getUser(@RequestParam MultiValueMap<String, Object> params) {
         List<User> users;
@@ -88,7 +89,7 @@ public class UserSpringRestController {
      * @param user given {@link User}
      * @return created {@link User}
      */
-    @RequestMapping(value = "/users", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public User createUser(@RequestBody User user) {
         checkUser(user);
         return userDao.createEntity(user);
@@ -101,7 +102,7 @@ public class UserSpringRestController {
      * @param user updated {@link User} data
      * @return updated {@link User}
      */
-    @RequestMapping(value = "/users/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public User updateUser(@PathVariable Long id, final @RequestBody User user) {
         checkUser(user);
         user.setId(id);
@@ -114,7 +115,7 @@ public class UserSpringRestController {
      * @param id given id of {@link User}
      * @return deleted {@link User}
      */
-    @RequestMapping(value = "/users/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public User deleteUserById(@PathVariable Long id) {
         getUserById(id);
         return userDao.deleteEntity(id);

@@ -35,7 +35,7 @@ public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingF
     }
 
     public TokenAuthenticationFilter() {
-        super("/**");
+        super("/api/**");
         //authentication is success
         setAuthenticationSuccessHandler(((httpServletRequest, httpServletResponse, authentication) -> {
             SecurityContextHolder.getContext().setAuthentication(authentication);

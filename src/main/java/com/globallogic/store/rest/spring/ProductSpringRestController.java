@@ -16,6 +16,7 @@ import java.util.List;
  * @author oleksii.slavik
  */
 @RestController
+@RequestMapping(value = "/api/products")
 public class ProductSpringRestController {
 
     /**
@@ -37,7 +38,7 @@ public class ProductSpringRestController {
      * @return {@link Product} item
      * @throws NotFoundException throws when item with given id not found
      */
-    @RequestMapping(value = "/products/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Product getProductById(@PathVariable Long id) {
         Product product = productDao.entityByKey(id);
 
@@ -56,7 +57,7 @@ public class ProductSpringRestController {
      * @throws EmptyResponseException throws if request parameters is absent
      * @throws NotFoundException      throws when item with parameters not found
      */
-    @RequestMapping(value = "/products", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Product> findProduct(@RequestParam MultiValueMap<String, Object> params) {
         List<Product> products;
 
@@ -79,7 +80,7 @@ public class ProductSpringRestController {
      * @param product given {@link Product}
      * @return created {@link Product}
      */
-    @RequestMapping(value = "/products", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public Product createProduct(@RequestBody Product product) {
         return productDao.createEntity(product);
     }
@@ -91,7 +92,7 @@ public class ProductSpringRestController {
      * @param product updated {@link Product} data
      * @return updated {@link Product}
      */
-    @RequestMapping(value = "/products/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public Product updateProduct(@PathVariable Long id, @RequestBody Product product) {
         product.setId(id);
         return productDao.updateEntity(product);
@@ -103,7 +104,7 @@ public class ProductSpringRestController {
      * @param id given id of {@link Product}
      * @return deleted {@link Product}
      */
-    @RequestMapping(value = "/products/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Product deleteProductById(@PathVariable Long id) {
         getProductById(id);
         return productDao.deleteEntity(id);
