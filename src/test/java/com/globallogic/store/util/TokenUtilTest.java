@@ -24,12 +24,21 @@ import static org.mockito.Mockito.when;
  */
 public class TokenUtilTest {
 
+    /**
+     * Mocked {@link Clock} object for manipulate {@link Date} data
+     */
     @Mock
     private Clock clock;
 
+    /**
+     * Injecting {@link TokenUtil} object
+     */
     @InjectMocks
     private TokenUtil tokenUtil;
 
+    /**
+     * Error value for comparison {@link Date} data
+     */
     private static final long DELTA = 1000L;
 
     @Before
