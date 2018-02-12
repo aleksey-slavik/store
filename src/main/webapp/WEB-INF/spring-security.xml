@@ -10,7 +10,7 @@
 
     <http pattern="/api/**" entry-point-ref="tokenAuthenticationEntryPoint" create-session="stateless">
         <csrf disabled="true"/>
-        <!--<custom-filter before="FORM_LOGIN_FILTER" ref="tokenAuthenticationFilter"/>-->
+        <custom-filter before="FORM_LOGIN_FILTER" ref="tokenAuthenticationFilter"/>
         <intercept-url pattern="/api/products/**" method="GET" access="permitAll()"/>
     </http>
 

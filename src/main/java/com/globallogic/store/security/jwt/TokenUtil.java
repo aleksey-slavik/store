@@ -11,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Date;
+import java.util.List;
 
 public class TokenUtil {
 
@@ -53,7 +54,7 @@ public class TokenUtil {
      * @return user id
      */
     public Long getIdFromToken(String token) {
-        return Long.parseLong((String) getClaimsFromToken(token).get(userIdKey));
+        return ((Number) getClaimsFromToken(token).get(userIdKey)).longValue();
     }
 
     /**
@@ -77,6 +78,16 @@ public class TokenUtil {
     }
 
     /**
+     * Parse credentials from given token
+     *
+     * @param token given token
+     * @return user credentials
+     */
+    public String getCredentialsFromToken(String token) {
+        return (String) getClaimsFromToken(token).get(userCredentialsKey);
+    }
+
+    /**
      * Parse {@link Date} which consist date when token was created
      *
      * @param token given token
@@ -96,26 +107,15 @@ public class TokenUtil {
         return getClaimsFromToken(token).getExpiration();
     }
 
-    /**
-     * Check expiration of given token
-     *
-     * @param token given token
-     * @return true if token is valid, false in otherwise
-     */
-    public boolean isTokenExpired(String token) {
-        Date expiration = getExpirationFromToken(token);
-        return expiration.before(clock.now());
-    }
-
     public AuthenticatedUser parseToken(String token) {
         try {
-            Claims body = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
-            User user = new User();
-            user.setId(Long.parseLong((String) body.get(userIdKey)));
-            user.setUsername(body.getSubject());
-            user.setPassword((String) body.get(userCredentialsKey));
-            user.setRole(Role.valueOf((String) body.get(userRoleKey)));
-            return AuthenticatedUserFactory.create(user);
+            return new AuthenticatedUser(
+                    getIdFromToken(token),
+                    getUsernameFromToken(token),
+                    getCredentialsFromToken(token),
+                    getRoleFromToken(token),
+                    true
+            );
         } catch (JwtException e) {
             return null;
         }
@@ -127,7 +127,7 @@ public class TokenUtil {
 
         Claims claims = Jwts.claims();
         claims.put(userIdKey, user.getId());
-        claims.put(userRoleKey, user.getAuthorities());
+        claims.put(userRoleKey, user.getAuthority().getAuthority());
         claims.put(userCredentialsKey, user.getPassword());
         claims.setSubject(user.getUsername());
         claims.setIssuedAt(created);
@@ -166,5 +166,16 @@ public class TokenUtil {
 
     private Date calculateExpiration(Date created) {
         return new Date(created.getTime() + expiration);
+    }
+
+    /**
+     * Check expiration of given token
+     *
+     * @param token given token
+     * @return true if token is valid, false in otherwise
+     */
+    private boolean isTokenExpired(String token) {
+        Date expiration = getExpirationFromToken(token);
+        return expiration.before(clock.now());
     }
 }

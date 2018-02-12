@@ -66,4 +66,32 @@ public class AuthenticatedUser implements UserDetails {
     public Long getId() {
         return id;
     }
+
+    public GrantedAuthority getAuthority() {
+        return authority;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        AuthenticatedUser user = (AuthenticatedUser) o;
+
+        if (isEnabled != user.isEnabled) return false;
+        if (!id.equals(user.id)) return false;
+        if (!username.equals(user.username)) return false;
+        if (!password.equals(user.password)) return false;
+        return authority.equals(user.authority);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+        result = 31 * result + username.hashCode();
+        result = 31 * result + password.hashCode();
+        result = 31 * result + authority.hashCode();
+        result = 31 * result + (isEnabled ? 1 : 0);
+        return result;
+    }
 }

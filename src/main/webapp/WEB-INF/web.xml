@@ -62,4 +62,15 @@
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
+    <!-- JWT Security -->
+    <filter>
+        <filter-name>tokenAuthenticationFilter</filter-name>
+        <filter-class>com.globallogic.store.security.core.TokenAuthenticationFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>tokenAuthenticationFilter</filter-name>
+        <url-pattern>/api/**</url-pattern>
+    </filter-mapping>
 </web-app>

@@ -17,7 +17,7 @@
         </tr>
     </table>
 
-    <form id="loginForm" action="${pageContext.request.contextPath}/j_spring_security_check" method="POST">
+    <form id="loginForm" action="${pageContext.request.contextPath}/api/auth" method="POST">
         <table align="center">
             <tr>
                 <td><label for="username">Username:</label></td>
@@ -42,7 +42,7 @@
     <table align="center">
         <tr>
             <td>
-                or create new account using <a href="/register">registration page</a>.
+                or create new account using <a href="${pageContext.request.contextPath}/register">registration page</a>.
             </td>
         </tr>
     </table>
