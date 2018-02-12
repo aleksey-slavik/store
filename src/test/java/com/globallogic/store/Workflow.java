@@ -4,6 +4,8 @@ import com.globallogic.store.model.Role;
 import com.globallogic.store.model.User;
 import com.globallogic.store.security.AuthenticatedUser;
 import com.globallogic.store.security.AuthenticatedUserFactory;
+import com.globallogic.store.security.jwt.TokenUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Emulates application flow
@@ -14,7 +16,7 @@ public class Workflow {
 
     public static User createAdminUser() {
         User user = new User();
-        user.setId(100L);
+        user.setId(2L);
         user.setUsername("testAdmin");
         user.setPassword("1111");
         user.setFirstName("test");
@@ -26,7 +28,7 @@ public class Workflow {
 
     public static User createCustomerUser() {
         User user = new User();
-        user.setId(200L);
+        user.setId(3L);
         user.setUsername("testCustomer");
         user.setPassword("qwerty");
         user.setFirstName("test");
