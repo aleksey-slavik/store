@@ -1,4 +1,4 @@
-package com.globallogic.store.model.product;
+package com.globallogic.store.domain.product;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

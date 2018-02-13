@@ -20,14 +20,14 @@
         <property name="format_sql">true</property>
 
         <!-- Entities -->
-        <mapping class="com.globallogic.store.model.user.User"/>
-        <mapping class="com.globallogic.store.model.user.Authority"/>
-        <mapping class="com.globallogic.store.model.product.Product"/>
-        <mapping class="com.globallogic.store.model.orders.Bill"/>
-        <mapping class="com.globallogic.store.model.orders.order.Order"/>
-        <mapping class="com.globallogic.store.model.orders.order.OrderItem"/>
-        <mapping class="com.globallogic.store.model.orders.cart.Cart"/>
-        <mapping class="com.globallogic.store.model.orders.cart.CartItem"/>
+        <mapping class="com.globallogic.store.domain.user.User"/>
+        <mapping class="com.globallogic.store.domain.user.Authority"/>
+        <mapping class="com.globallogic.store.domain.product.Product"/>
+        <mapping class="com.globallogic.store.domain.orders.Bill"/>
+        <mapping class="com.globallogic.store.domain.orders.order.Order"/>
+        <mapping class="com.globallogic.store.domain.orders.order.OrderItem"/>
+        <mapping class="com.globallogic.store.domain.orders.cart.Cart"/>
+        <mapping class="com.globallogic.store.domain.orders.cart.CartItem"/>
 
     </session-factory>
 </hibernate-configuration>

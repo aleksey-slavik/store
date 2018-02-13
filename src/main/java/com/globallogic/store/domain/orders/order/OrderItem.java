@@ -1,6 +1,6 @@
-package com.globallogic.store.model.orders.order;
+package com.globallogic.store.domain.orders.order;
 
-import com.globallogic.store.model.product.Product;
+import com.globallogic.store.domain.product.Product;
 
 import javax.persistence.*;
 import java.io.Serializable;

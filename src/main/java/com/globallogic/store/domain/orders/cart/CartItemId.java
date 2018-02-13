@@ -1,28 +1,27 @@
-package com.globallogic.store.model.orders.order;
+package com.globallogic.store.domain.orders.cart;
 
 import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 @Embeddable
-public class OrderItemId implements Serializable {
+public class CartItemId implements Serializable {
 
-    private long orderId;
+    private long cartId;
     private long productId;
 
-    public OrderItemId() {
-    }
+    public CartItemId() {}
 
-    public OrderItemId(long orderId, long productId) {
-        this.orderId = orderId;
+    public CartItemId(long cartId, long productId) {
+        this.cartId = cartId;
         this.productId = productId;
     }
 
-    public long getOrderId() {
-        return orderId;
+    public long getCartId() {
+        return cartId;
     }
 
-    public void setOrderId(long orderId) {
-        this.orderId = orderId;
+    public void setCartId(long cartId) {
+        this.cartId = cartId;
     }
 
     public long getProductId() {
@@ -38,14 +37,14 @@ public class OrderItemId implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        OrderItemId that = (OrderItemId) o;
+        CartItemId that = (CartItemId) o;
 
-        return orderId == that.orderId && productId == that.productId;
+        return cartId == that.cartId && productId == that.productId;
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (orderId ^ (orderId >>> 32));
+        int result = (int) (cartId ^ (cartId >>> 32));
         result = 31 * result + (int) (productId ^ (productId >>> 32));
         return result;
     }

@@ -4,7 +4,6 @@ import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.exception.EmptyResponseException;
 import com.globallogic.store.exception.NotAcceptableException;
 import com.globallogic.store.exception.NotFoundException;
-import com.globallogic.store.model.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

@@ -1,11 +1,7 @@
 package com.globallogic.store;
 
-import com.globallogic.store.model.Role;
-import com.globallogic.store.model.User;
 import com.globallogic.store.security.AuthenticatedUser;
 import com.globallogic.store.security.AuthenticatedUserFactory;
-import com.globallogic.store.security.jwt.TokenUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Emulates application flow

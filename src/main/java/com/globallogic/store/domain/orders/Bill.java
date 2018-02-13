@@ -1,10 +1,12 @@
-package com.globallogic.store.model.orders;
+package com.globallogic.store.domain.orders;
 
-import com.globallogic.store.model.orders.order.Order;
+import com.globallogic.store.domain.orders.order.Order;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 
 @Entity
@@ -21,8 +23,10 @@ public class Bill implements Serializable {
     @PrimaryKeyJoinColumn
     private Order order;
 
-    @Column(name = "number", nullable = false)
-    private int cartNumber;
+    @Column(name = "card", nullable = false)
+    @NotNull
+    @Pattern(regexp = "\\b(?:\\d[ -]*?){13,16}\\b")
+    private int cardNumber;
 
     @Column(name = "total_cost", nullable = false)
     private double totalCost;
@@ -49,12 +53,12 @@ public class Bill implements Serializable {
         this.order = order;
     }
 
-    public int getCartNumber() {
-        return cartNumber;
+    public int getCardNumber() {
+        return cardNumber;
     }
 
-    public void setCartNumber(int cartNumber) {
-        this.cartNumber = cartNumber;
+    public void setCardNumber(int cartNumber) {
+        this.cardNumber = cartNumber;
     }
 
     public double getTotalCost() {

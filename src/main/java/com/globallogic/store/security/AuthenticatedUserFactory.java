@@ -1,7 +1,5 @@
 package com.globallogic.store.security;
 
-import com.globallogic.store.model.Role;
-import com.globallogic.store.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 

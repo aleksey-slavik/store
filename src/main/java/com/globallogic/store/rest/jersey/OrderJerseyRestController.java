@@ -1,7 +1,7 @@
 package com.globallogic.store.rest.jersey;
 
 import com.globallogic.store.dao.GenericDao;
-import com.globallogic.store.model.orders.order.Order;
+import com.globallogic.store.domain.orders.order.Order;
 
 import javax.ws.rs.*;
 

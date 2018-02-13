@@ -1,8 +1,6 @@
 package com.globallogic.store.security.aop;
 
 import com.globallogic.store.exception.AccessDeniedException;
-import com.globallogic.store.model.Role;
-import com.globallogic.store.model.User;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;

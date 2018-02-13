@@ -1,6 +1,6 @@
-package com.globallogic.store.model.user;
+package com.globallogic.store.domain.user;
 
-import com.globallogic.store.model.orders.cart.Cart;
+import com.globallogic.store.domain.orders.cart.Cart;
 
 import javax.persistence.*;
 import java.io.Serializable;

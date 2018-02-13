@@ -1,4 +1,4 @@
-package com.globallogic.store.model.user;
+package com.globallogic.store.domain.user;
 
 public enum AuthorityName {
     CUSTOMER,

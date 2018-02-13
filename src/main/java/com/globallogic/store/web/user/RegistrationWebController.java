@@ -1,6 +1,5 @@
 package com.globallogic.store.web.user;
 
-import com.globallogic.store.model.User;
 import com.globallogic.store.security.core.RegisterUserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;

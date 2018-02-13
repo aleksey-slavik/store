@@ -2,7 +2,6 @@ package com.globallogic.store.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.globallogic.store.Workflow;
-import com.globallogic.store.model.User;
 import com.globallogic.store.security.AuthenticatedUser;
 import com.globallogic.store.security.dto.AuthenticationRequest;
 import com.globallogic.store.security.jwt.TokenUtil;

@@ -1,11 +1,10 @@
-package com.globallogic.store.model.orders.order;
+package com.globallogic.store.domain.orders.order;
 
-import com.globallogic.store.model.orders.Bill;
-import com.globallogic.store.model.user.User;
+import com.globallogic.store.domain.orders.Bill;
+import com.globallogic.store.domain.user.User;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 

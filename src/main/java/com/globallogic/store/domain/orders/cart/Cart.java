@@ -1,7 +1,7 @@
-package com.globallogic.store.model.orders.cart;
+package com.globallogic.store.domain.orders.cart;
 
-import com.globallogic.store.model.product.Product;
-import com.globallogic.store.model.user.User;
+import com.globallogic.store.domain.product.Product;
+import com.globallogic.store.domain.user.User;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 

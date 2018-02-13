@@ -2,17 +2,17 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
         "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="com.globallogic.store.model.orders.order.OrderItem" table="order_item" catalog="public">
+    <class name="com.globallogic.store.domain.orders.order.OrderItem" table="order_item" catalog="public">
         <id name="id" type="java.lang.Long">
             <column name="id"/>
             <generator class="identity"/>
         </id>
 
-        <many-to-one name="order" class="com.globallogic.store.model.orders.order.Order">
+        <many-to-one name="order" class="com.globallogic.store.domain.orders.order.Order">
             <column name="order_id" not-null="true"/>
         </many-to-one>
 
-        <many-to-one name="product" class="com.globallogic.store.model.product.Product" fetch="select" lazy="false">
+        <many-to-one name="product" class="com.globallogic.store.domain.product.Product" fetch="select" lazy="false">
             <column name="product_id" not-null="true"/>
         </many-to-one>
 
