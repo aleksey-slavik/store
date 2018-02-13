@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Web controller for access to order list.
+ * Web controller for access to orders list.
  *
  * @author oleksii.slavik
  */

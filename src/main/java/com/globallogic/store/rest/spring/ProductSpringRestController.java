@@ -3,7 +3,7 @@ package com.globallogic.store.rest.spring;
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.exception.EmptyResponseException;
 import com.globallogic.store.exception.NotFoundException;
-import com.globallogic.store.model.Product;
+import com.globallogic.store.model.product.Product;
 import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;

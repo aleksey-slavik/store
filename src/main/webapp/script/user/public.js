@@ -66,7 +66,7 @@ function fillUserData(item) {
 }
 
 /**
- * Parse order item data from form to json format
+ * Parse orders item data from form to json format
  *
  * @returns {string}
  */

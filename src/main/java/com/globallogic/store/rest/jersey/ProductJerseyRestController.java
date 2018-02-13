@@ -1,12 +1,9 @@
 package com.globallogic.store.rest.jersey;
 
 import com.globallogic.store.dao.GenericDao;
-import com.globallogic.store.model.Product;
+import com.globallogic.store.model.product.Product;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Jersey rest controller for {@link Product}.
