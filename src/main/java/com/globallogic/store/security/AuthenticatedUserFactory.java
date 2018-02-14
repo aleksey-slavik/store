@@ -1,5 +1,6 @@
 package com.globallogic.store.security;
 
+import com.globallogic.store.domain.user.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -13,12 +14,12 @@ public class AuthenticatedUserFactory {
                 user.getId(),
                 user.getUsername(),
                 user.getPassword(),
-                createAuthority(user.getRole()),
+                null,
                 true
         );
     }
 
-    private static GrantedAuthority createAuthority(Role role) {
+   /* private static GrantedAuthority createAuthority(Role role) {
         return new SimpleGrantedAuthority(role.name());
-    }
+    }*/
 }

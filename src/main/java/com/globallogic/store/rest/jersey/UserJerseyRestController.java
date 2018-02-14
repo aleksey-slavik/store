@@ -1,6 +1,7 @@
 package com.globallogic.store.rest.jersey;
 
 import com.globallogic.store.dao.GenericDao;
+import com.globallogic.store.domain.user.User;
 
 import javax.ws.rs.*;
 

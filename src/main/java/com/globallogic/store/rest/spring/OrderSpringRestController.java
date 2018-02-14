@@ -1,6 +1,7 @@
 package com.globallogic.store.rest.spring;
 
 import com.globallogic.store.dao.GenericDao;
+import com.globallogic.store.domain.user.User;
 import com.globallogic.store.exception.EmptyResponseException;
 import com.globallogic.store.exception.NotAcceptableException;
 import com.globallogic.store.exception.NotFoundException;
@@ -90,10 +91,11 @@ public class OrderSpringRestController {
         try {
             return orderDao.entityByValue(new HashMap<String, Object>() {{
                 put(ownerKey, user);
-                put(statusKey, Status.OPENED);
+                //put(statusKey, Status.OPENED);
             }});
         } catch (NoResultException e) {
-            return orderDao.createEntity(new Order(user));
+            //return orderDao.createEntity(new Order(user));
+            return null;
         }
     }
 
@@ -131,7 +133,7 @@ public class OrderSpringRestController {
             throw new NotFoundException();
         }
 
-        if (orderItem.getOrder().getId().equals(order.getId())) {
+        if (orderItem.getOrder().getId() == order.getId()) {
             return orderItem;
         } else {
             throw new NotAcceptableException();
@@ -161,7 +163,7 @@ public class OrderSpringRestController {
         }
 
         orderItem.setOrder(order);
-        orderItem.setId(itemId);
+        //orderItem.setId(itemId);
         OrderItem updatedOrderItem = orderItemDao.updateEntity(orderItem);
         checkOrderTotalCount(id);
         return updatedOrderItem;
@@ -183,7 +185,7 @@ public class OrderSpringRestController {
      */
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public Order createOrder(@RequestBody Order order) {
-        order.checkTotalCost();
+        //order.checkTotalCost();
         return orderDao.createEntity(order);
     }
 
@@ -197,7 +199,7 @@ public class OrderSpringRestController {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public Order updateOrder(@PathVariable Long id, @RequestBody Order order) {
         order.setId(id);
-        order.checkTotalCost();
+        //order.checkTotalCost();
 
         for (OrderItem item : order.getItems()) {
             item.setOrder(order);
@@ -220,7 +222,7 @@ public class OrderSpringRestController {
 
     private void checkOrderTotalCount(Long id) {
         Order order = orderDao.entityByKey(id);
-        order.checkTotalCost();
+        //order.checkTotalCost();
         orderDao.updateEntity(order);
     }
 }

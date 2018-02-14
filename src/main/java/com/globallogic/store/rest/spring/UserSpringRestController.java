@@ -1,6 +1,7 @@
 package com.globallogic.store.rest.spring;
 
 import com.globallogic.store.dao.GenericDao;
+import com.globallogic.store.domain.user.User;
 import com.globallogic.store.exception.EmptyResponseException;
 import com.globallogic.store.exception.NotAcceptableException;
 import com.globallogic.store.exception.NotFoundException;
@@ -45,7 +46,6 @@ public class UserSpringRestController {
      * @throws NotFoundException throws when user with given id not found
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
     public User getUserById(@PathVariable Long id) {
         User user = userDao.entityByKey(id);
 
@@ -65,7 +65,6 @@ public class UserSpringRestController {
      * @throws EmptyResponseException throws when user list is empty
      */
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
     public List<User> getUser(@RequestParam MultiValueMap<String, Object> params) {
         List<User> users;
 

@@ -1,5 +1,6 @@
 package com.globallogic.store.security.aop;
 
+import com.globallogic.store.domain.user.User;
 import com.globallogic.store.exception.AccessDeniedException;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -19,7 +20,7 @@ public class UserSecurityManager {
     public Object checkAuthorizedAccess(ProceedingJoinPoint joinPoint) throws Throwable {
         Object principal = getAuthentication().getPrincipal();
 
-        if (principal instanceof UserDetails) {
+       /* if (principal instanceof UserDetails) {
             UserDetails userDetails = (UserDetails) principal;
 
             //admin can do anything
@@ -33,7 +34,7 @@ public class UserSecurityManager {
             if (containsAuthority(userDetails, Role.CUSTOMER) && user != null && userDetails.getUsername().equals(user.getUsername())) {
                 return joinPoint.proceed();
             }
-        }
+        }*/
 
         throw new AccessDeniedException();
     }
@@ -42,7 +43,7 @@ public class UserSecurityManager {
     public void checkAccessToResultData(Object result) {
         Object principal = getAuthentication().getPrincipal();
 
-        if (principal instanceof UserDetails) {
+        /*if (principal instanceof UserDetails) {
             UserDetails userDetails = (UserDetails) principal;
 
             //admin have access to all data
@@ -54,7 +55,7 @@ public class UserSecurityManager {
             if (containsAuthority(userDetails, Role.CUSTOMER) && userDetails.getUsername().equals(((User) result).getUsername())) {
                 return;
             }
-        }
+        }*/
 
         throw new AccessDeniedException();
     }
@@ -63,7 +64,7 @@ public class UserSecurityManager {
         return SecurityContextHolder.getContext().getAuthentication();
     }
 
-    private boolean containsAuthority(UserDetails userDetails, Role role) {
+    /*private boolean containsAuthority(UserDetails userDetails, Role role) {
         GrantedAuthority authority = new SimpleGrantedAuthority(role.name());
         return userDetails.getAuthorities().contains(authority);
     }
@@ -76,5 +77,5 @@ public class UserSecurityManager {
         }
 
         return null;
-    }
+    }*/
 }

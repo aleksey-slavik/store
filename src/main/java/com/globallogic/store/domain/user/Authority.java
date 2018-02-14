@@ -15,9 +15,10 @@ public class Authority implements Serializable {
     private long id;
 
     @Column(name = "title", nullable = false)
+    @Enumerated(EnumType.STRING)
     private AuthorityName title;
 
-    @ManyToMany(mappedBy = "roles")
+    @ManyToMany(mappedBy = "authorities")
     private Set<User> users = new HashSet<>();
 
     public long getId() {

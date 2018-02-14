@@ -14,7 +14,7 @@ import java.util.Set;
  * @author oleksii.slavik
  */
 @Entity
-@Table(name = "customer_order")
+@Table(name = "order")
 public class Order implements Serializable {
 
     @Id
@@ -23,13 +23,13 @@ public class Order implements Serializable {
     private long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_account_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = OrderItem.class, mappedBy = "order")
     private Set<OrderItem> items = new HashSet<>(0);
 
-    @OneToOne(mappedBy = "orders", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Bill bill;
 
     @Column(name = "created", nullable = false)

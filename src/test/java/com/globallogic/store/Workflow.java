@@ -1,5 +1,7 @@
 package com.globallogic.store;
 
+import com.globallogic.store.domain.product.Product;
+import com.globallogic.store.domain.user.User;
 import com.globallogic.store.security.AuthenticatedUser;
 import com.globallogic.store.security.AuthenticatedUserFactory;
 
@@ -18,7 +20,7 @@ public class Workflow {
         user.setFirstName("test");
         user.setLastName("admin");
         user.setEmail("test.admin@store.com");
-        user.setRole(Role.ADMIN);
+        //user.setRole(Role.ADMIN);
         return user;
     }
 
@@ -30,8 +32,18 @@ public class Workflow {
         user.setFirstName("test");
         user.setLastName("customer");
         user.setEmail("test.customer@store.com");
-        user.setRole(Role.CUSTOMER);
+        //user.setRole(Role.CUSTOMER);
         return user;
+    }
+
+    public static Product createDummyProduct() {
+        Product product = new Product();
+        product.setId(1L);
+        product.setName("Dummy");
+        product.setBrand("Dummy");
+        product.setDescription("Dummy product item for tests");
+        product.setPrice(9999.99);
+        return product;
     }
 
     public static AuthenticatedUser createAdminAuthenticatedUser() {

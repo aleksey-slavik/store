@@ -1,20 +1,39 @@
 package com.globallogic.store.dto;
 
+import com.globallogic.store.domain.product.Product;
+
 public class ProductPreviewDto {
 
-    private long productId;
+    private long id;
     private String name;
     private String brand;
     private double price;
 
-
-
-    public long getProductId() {
-        return productId;
+    public ProductPreviewDto() {
     }
 
-    public void setProductId(long productId) {
-        this.productId = productId;
+    public ProductPreviewDto(long id, String name, String brand, double price) {
+        this.id = id;
+        this.name = name;
+        this.brand = brand;
+        this.price = price;
+    }
+
+    public ProductPreviewDto(Product product) {
+        this(
+                product.getId(),
+                product.getName(),
+                product.getBrand(),
+                product.getPrice()
+        );
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getName() {

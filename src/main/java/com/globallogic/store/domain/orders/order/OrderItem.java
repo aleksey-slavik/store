@@ -18,7 +18,7 @@ public class OrderItem implements Serializable {
     private OrderItemId primaryKey;
 
     @MapsId("orderId")
-    @JoinColumn(name = "customer_order_id", referencedColumnName = "id")
+    @JoinColumn(name = "order_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Order order;
 

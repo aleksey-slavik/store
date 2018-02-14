@@ -1,5 +1,6 @@
 package com.globallogic.store.web.user;
 
+import com.globallogic.store.domain.user.User;
 import com.globallogic.store.security.core.RegisterUserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -49,7 +50,7 @@ public class RegistrationWebController extends AbstractController {
         String username = httpServletRequest.getParameter("username");
         String password = httpServletRequest.getParameter("password");
         String email = httpServletRequest.getParameter("email");
-        User user = new User(firstname, lastname, username, password, email);
+        User user = new User();
 
         ModelAndView mav = new ModelAndView();
         HttpEntity<User> request = new HttpEntity<User>(user);
