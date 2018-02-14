@@ -29,7 +29,7 @@ public class Cart implements Serializable {
     private List<CartItem> items = new ArrayList<>(0);
 
     @Column(name = "total_items")
-    private int itemsCount;
+    private int totalItemsCount;
 
     @Column(name = "total_cost")
     private double totalCost;
@@ -58,12 +58,12 @@ public class Cart implements Serializable {
         this.items = items;
     }
 
-    public int getItemsCount() {
-        return itemsCount;
+    public int getTotalItemsCount() {
+        return totalItemsCount;
     }
 
-    public void setItemsCount(int itemsCount) {
-        this.itemsCount = itemsCount;
+    public void setTotalItemsCount(int itemsCount) {
+        this.totalItemsCount = itemsCount;
     }
 
     public double getTotalCost() {
@@ -75,7 +75,7 @@ public class Cart implements Serializable {
     }
 
     public boolean isEmpty() {
-        return itemsCount == 0;
+        return totalItemsCount == 0;
     }
 
     public void clear() {
@@ -93,7 +93,7 @@ public class Cart implements Serializable {
         }
 
         setTotalCost(cost);
-        setItemsCount(total);
+        setTotalItemsCount(total);
     }
 
     public void update(Product product, int quantity) {

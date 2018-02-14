@@ -26,7 +26,7 @@ public class Bill implements Serializable {
     @Column(name = "card", nullable = false)
     @NotNull
     @Pattern(regexp = "\\b(?:\\d[ -]*?){13,16}\\b")
-    private int cardNumber;
+    private String cardNumber;
 
     @Column(name = "total_cost", nullable = false)
     private double totalCost;
@@ -53,11 +53,11 @@ public class Bill implements Serializable {
         this.order = order;
     }
 
-    public int getCardNumber() {
+    public String getCardNumber() {
         return cardNumber;
     }
 
-    public void setCardNumber(int cartNumber) {
+    public void setCardNumber(String cartNumber) {
         this.cardNumber = cartNumber;
     }
 

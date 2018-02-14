@@ -99,7 +99,7 @@
 
     <!-- DAO beans -->
     <bean name="userDao" class="com.globallogic.store.dao.GenericDao">
-        <constructor-arg value="com.globallogic.store.domain.User"/>
+        <constructor-arg value="com.globallogic.store.domain.user.User"/>
     </bean>
 
     <bean name="productDao" class="com.globallogic.store.dao.GenericDao">
