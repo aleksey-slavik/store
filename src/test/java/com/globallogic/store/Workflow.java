@@ -5,6 +5,9 @@ import com.globallogic.store.domain.user.User;
 import com.globallogic.store.security.AuthenticatedUser;
 import com.globallogic.store.security.AuthenticatedUserFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Emulates application flow
  *
@@ -14,7 +17,7 @@ public class Workflow {
 
     public static User createAdminUser() {
         User user = new User();
-        user.setId(2L);
+        user.setId(2);
         user.setUsername("testAdmin");
         user.setPassword("1111");
         user.setFirstName("test");
@@ -26,7 +29,7 @@ public class Workflow {
 
     public static User createCustomerUser() {
         User user = new User();
-        user.setId(3L);
+        user.setId(3);
         user.setUsername("testCustomer");
         user.setPassword("qwerty");
         user.setFirstName("test");
@@ -36,14 +39,22 @@ public class Workflow {
         return user;
     }
 
-    public static Product createDummyProduct() {
+    public static Product createDummyProduct(long id) {
         Product product = new Product();
-        product.setId(1L);
+        product.setId(id);
         product.setName("Dummy");
         product.setBrand("Dummy");
         product.setDescription("Dummy product item for tests");
         product.setPrice(9999.99);
         return product;
+    }
+
+    public static List<Product> createDummyProductList(int size) {
+        List<Product> products = new ArrayList<>();
+
+        for (int i = 0; i < size; i++) {
+            products.add(createDummyProduct(i))
+        }
     }
 
     public static AuthenticatedUser createAdminAuthenticatedUser() {
