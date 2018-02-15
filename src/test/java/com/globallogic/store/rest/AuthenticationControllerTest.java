@@ -60,7 +60,7 @@ public class AuthenticationControllerTest {
         mvc.perform(post("/api/auth")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(request)))
-                .andExpect(status().is2xxSuccessful());
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -76,7 +76,7 @@ public class AuthenticationControllerTest {
         mvc.perform(get("/api/auth")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("X-Auth-Header", "5d1103e-b3e1-4ae9-b606-46c9c1bc915a"))
-                .andExpect(status().is2xxSuccessful());
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -92,7 +92,7 @@ public class AuthenticationControllerTest {
         mvc.perform(get("/api/auth")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("X-Auth-Header", "5d1103e-b3e1-4ae9-b606-46c9c1bc915a"))
-                .andExpect(status().is2xxSuccessful());
+                .andExpect(status().isOk());
     }
 
     @Test
