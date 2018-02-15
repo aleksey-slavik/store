@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @author oleksii.slavik
  */
 @Entity
-@Table(name = "product")
+@Table(name = "product", schema = "public")
 public class Product implements Serializable {
 
     @Id

@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "role")
+@Table(name = "role", schema = "public")
 public class Authority implements Serializable {
 
     @Id

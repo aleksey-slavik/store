@@ -63,7 +63,7 @@
     <bean id="account" class="com.globallogic.store.web.user.AccountWebController"/>
 
     <!-- Exceptions Resolver -->
-    <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+    <!--<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
         <property name="exceptionMappings">
             <props>
                 <prop key="com.globallogic.store.exception.NotFoundException">error/404</prop>
@@ -77,7 +77,7 @@
                 <prop key="error/error">500</prop>
             </props>
         </property>
-    </bean>
+    </bean>-->
 
     <!-- Resource resolver -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -169,6 +169,20 @@
           class="org.springframework.orm.hibernate5.HibernateTransactionManager">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
+
+   <!-- <bean id="entityManagerFactory"
+          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="packagesToScan" value="com.globallogic.store.domain" />
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+        </property>
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL95Dialect</prop>
+            </props>
+        </property>
+    </bean>-->
 
     <tx:advice id="txAdvice">
         <tx:attributes>
