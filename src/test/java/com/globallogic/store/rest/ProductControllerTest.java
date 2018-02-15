@@ -1,5 +1,6 @@
 package com.globallogic.store.rest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.globallogic.store.Workflow;
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.domain.product.Product;
@@ -11,8 +12,12 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.List;
+
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -34,6 +39,8 @@ public class ProductControllerTest {
 
     private static final long DUMMY_ID = 1;
 
+    private static final int LIST_SIZE = 10;
+
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);
@@ -47,23 +54,19 @@ public class ProductControllerTest {
         when(productDao.entityByKey(DUMMY_ID))
                 .thenReturn(product);
 
-        mvc.perform(get(URL_PATH_GET_BY_ID, DUMMY_ID)
+        ResultActions actual = mvc.perform(get(URL_PATH_GET_BY_ID, DUMMY_ID)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", is((int) product.getId())))
-                .andExpect(jsonPath("$.name", is(product.getName())))
-                .andExpect(jsonPath("$.brand", is(product.getBrand())))
-                .andExpect(jsonPath("$.description", is(product.getDescription())))
-                .andExpect(jsonPath("$.price", is(product.getPrice())));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
+        assertProduct(product, actual);
         verify(productDao, times(1)).entityByKey(DUMMY_ID);
         verifyNoMoreInteractions(productDao);
     }
 
     @Test
     public void checkFindProductByWrongIdTest() throws Exception {
-        when(productDao.entityByKey(eq(DUMMY_ID)))
+        when(productDao.entityByKey(DUMMY_ID))
                 .thenReturn(null);
 
         mvc.perform(get(URL_PATH_ROOT + DUMMY_ID)
@@ -76,6 +79,128 @@ public class ProductControllerTest {
 
     @Test
     public void checkFindAllProductsTest() throws Exception {
+        List<Product> products = Workflow.createDummyProductList(LIST_SIZE);
 
+        when(productDao.entityList())
+                .thenReturn(products);
+
+        ResultActions actual = mvc.perform(get(URL_PATH_ROOT)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(LIST_SIZE)));
+
+        assertProductList(products, actual);
+        verify(productDao, times(1)).entityList();
+        verifyNoMoreInteractions(productDao);
+    }
+
+    @Test
+    public void checkEmptyProductsRest() throws Exception {
+        when(productDao.entityList())
+                .thenReturn(null);
+
+        mvc.perform(get(URL_PATH_ROOT)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+        verify(productDao, times(1)).entityList();
+        verifyNoMoreInteractions(productDao);
+    }
+
+    @Test
+    public void checkCreateProductTest() throws Exception {
+        Product product = Workflow.createDummyProduct(DUMMY_ID);
+
+        when(productDao.createEntity(any(Product.class)))
+                .thenReturn(product);
+
+        ResultActions actual = mvc.perform(post(URL_PATH_ROOT)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(product)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+        assertProduct(product, actual);
+        verify(productDao, times(1)).createEntity(any(Product.class));
+        verifyNoMoreInteractions(productDao);
+    }
+
+    @Test
+    public void checkCreateNullProductTest() throws Exception {
+        when(productDao.createEntity(null))
+                .thenReturn(null);
+
+        mvc.perform(post(URL_PATH_ROOT)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+        verifyZeroInteractions(productDao);
+    }
+
+    @Test
+    public void checkUpdateProductTest() throws Exception {
+        Product product = Workflow.createDummyProduct(DUMMY_ID);
+
+        when(productDao.updateEntity(any(Product.class)))
+                .thenReturn(product);
+
+        ResultActions actual = mvc.perform(put(URL_PATH_GET_BY_ID, DUMMY_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(product)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+        assertProduct(product, actual);
+        verify(productDao, times(1)).updateEntity(any(Product.class));
+        verifyNoMoreInteractions(productDao);
+    }
+
+    @Test
+    public void checkUpdateEmptyProductTest() throws Exception {
+        when(productDao.updateEntity(null))
+                .thenReturn(null);
+
+        mvc.perform(post(URL_PATH_ROOT)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+        verifyZeroInteractions(productDao);
+    }
+
+    @Test
+    public void checkDeleteProductByIdTest() throws Exception {
+        Product product = Workflow.createDummyProduct(DUMMY_ID);
+
+        when(productDao.deleteEntity(DUMMY_ID))
+                .thenReturn(product);
+
+        ResultActions actual = mvc.perform(delete(URL_PATH_GET_BY_ID, DUMMY_ID)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+        assertProduct(product, actual);
+        verify(productDao, times(1)).deleteEntity(DUMMY_ID);
+        verifyNoMoreInteractions(productDao);
+    }
+
+    private void assertProduct(Product expected, ResultActions actual) throws Exception {
+        actual
+                .andExpect(jsonPath("$.id", is((int) expected.getId())))
+                .andExpect(jsonPath("$.name", is(expected.getName())))
+                .andExpect(jsonPath("$.brand", is(expected.getBrand())))
+                .andExpect(jsonPath("$.description", is(expected.getDescription())))
+                .andExpect(jsonPath("$.price", is(expected.getPrice())));
+    }
+
+    private void assertProductList(List<Product> expected, ResultActions actual) throws Exception {
+        for (int i = 0; i < expected.size(); i++) {
+            actual
+                    .andExpect(jsonPath("$[" + i + "].id", is((int) expected.get(i).getId())))
+                    .andExpect(jsonPath("$[" + i + "].name", is(expected.get(i).getName())))
+                    .andExpect(jsonPath("$[" + i + "].brand", is(expected.get(i).getBrand())))
+                    .andExpect(jsonPath("$[" + i + "].price", is(expected.get(i).getPrice())));
+        }
     }
 }

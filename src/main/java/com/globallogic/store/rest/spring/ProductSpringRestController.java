@@ -81,9 +81,9 @@ public class ProductSpringRestController {
      * @return created {@link Product}
      */
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ProductDto createProduct(@RequestBody Product product) {
+    public ResponseEntity<?> createProduct(@RequestBody Product product) {
         Product created = productDao.createEntity(product);
-        return new ProductDto(created);
+        return ResponseEntity.ok().body(new ProductDto(created));
     }
 
     /**
@@ -94,10 +94,10 @@ public class ProductSpringRestController {
      * @return updated {@link Product}
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ProductDto updateProduct(@PathVariable Long id, @RequestBody Product product) {
+    public ResponseEntity<?> updateProduct(@PathVariable Long id, @RequestBody Product product) {
         product.setId(id);
         Product updated = productDao.updateEntity(product);
-        return new ProductDto(updated);
+        return ResponseEntity.ok(new ProductDto(updated));
     }
 
     /**
@@ -107,9 +107,9 @@ public class ProductSpringRestController {
      * @return deleted {@link Product}
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ProductDto deleteProductById(@PathVariable Long id) {
+    public ResponseEntity<?> deleteProductById(@PathVariable Long id) {
         Product deleted = productDao.deleteEntity(id);
-        return new ProductDto(deleted);
+        return ResponseEntity.ok(new ProductDto(deleted));
     }
 
     private List<ProductPreviewDto> createPreviews(List<Product> originals) {

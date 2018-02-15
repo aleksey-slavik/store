@@ -53,8 +53,10 @@ public class Workflow {
         List<Product> products = new ArrayList<>();
 
         for (int i = 0; i < size; i++) {
-            products.add(createDummyProduct(i))
+            products.add(createDummyProduct(i));
         }
+
+        return products;
     }
 
     public static AuthenticatedUser createAdminAuthenticatedUser() {
