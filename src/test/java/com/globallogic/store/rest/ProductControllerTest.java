@@ -96,7 +96,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void checkEmptyProductsRest() throws Exception {
+    public void checkEmptyProductsTest() throws Exception {
         when(productDao.entityList())
                 .thenReturn(null);
 
@@ -105,6 +105,39 @@ public class ProductControllerTest {
                 .andExpect(status().isNoContent());
 
         verify(productDao, times(1)).entityList();
+        verifyNoMoreInteractions(productDao);
+    }
+
+    @Test
+    public void checkFindProductsByParameterTest() throws Exception {
+        List<Product> products = Workflow.createDummyProductList(LIST_SIZE);
+
+        when(productDao.entityListByValue(any()))
+                .thenReturn(products);
+
+        ResultActions actual = mvc.perform(get(URL_PATH_ROOT)
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("name", "Dummy"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(LIST_SIZE)));
+
+        assertProductList(products, actual);
+        verify(productDao, times(1)).entityListByValue(any());
+        verifyNoMoreInteractions(productDao);
+    }
+
+    @Test
+    public void checkProductsNotFoundByParameterTest() throws Exception {
+        when(productDao.entityListByValue(any()))
+                .thenReturn(null);
+
+        mvc.perform(get(URL_PATH_ROOT)
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("brand", "Dummy"))
+                .andExpect(status().isNotFound());
+
+        verify(productDao, times(1)).entityListByValue(any());
         verifyNoMoreInteractions(productDao);
     }
 

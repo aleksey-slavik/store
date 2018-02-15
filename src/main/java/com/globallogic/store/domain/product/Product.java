@@ -27,6 +27,7 @@ public class Product implements Serializable {
     private String brand;
 
     @Column(name = "description")
+    @NotNull
     private String description;
 
     @Column(name = "price", nullable = false)

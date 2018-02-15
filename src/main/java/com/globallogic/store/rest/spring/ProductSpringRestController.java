@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,15 +64,23 @@ public class ProductSpringRestController {
 
         if (params.isEmpty()) {
             products = productDao.entityList();
+
+            if (products == null || products.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+            } else {
+                return ResponseEntity.ok().body(createPreviews(products));
+            }
         } else {
             products = productDao.entityListByValue(params.toSingleValueMap());
+
+            if (products == null || products.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            } else {
+                return ResponseEntity.ok().body(createPreviews(products));
+            }
         }
 
-        if (products == null || products.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        } else {
-            return ResponseEntity.ok().body(createPreviews(products));
-        }
+
     }
 
     /**
@@ -81,7 +90,7 @@ public class ProductSpringRestController {
      * @return created {@link Product}
      */
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createProduct(@RequestBody Product product) {
+    public ResponseEntity<?> createProduct(@Valid @RequestBody Product product) {
         Product created = productDao.createEntity(product);
         return ResponseEntity.ok().body(new ProductDto(created));
     }
@@ -94,7 +103,7 @@ public class ProductSpringRestController {
      * @return updated {@link Product}
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateProduct(@PathVariable Long id, @RequestBody Product product) {
+    public ResponseEntity<?> updateProduct(@PathVariable Long id, @Valid @RequestBody Product product) {
         product.setId(id);
         Product updated = productDao.updateEntity(product);
         return ResponseEntity.ok(new ProductDto(updated));
