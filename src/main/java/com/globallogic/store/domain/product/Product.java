@@ -19,20 +19,30 @@ public class Product implements Serializable {
     private long id;
 
     @Column(name = "name", nullable = false)
-    @NotNull
     private String name;
 
     @Column(name = "brand", nullable = false)
-    @NotNull
     private String brand;
 
     @Column(name = "description")
-    @NotNull
     private String description;
 
     @Column(name = "price", nullable = false)
-    @NotNull
     private double price;
+
+    public Product() {}
+
+    public Product(long id, String name, String brand, double price) {
+        this.id = id;
+        this.name = name;
+        this.brand = brand;
+        this.price = price;
+    }
+
+    public Product(long id, String name, String brand, String description, double price) {
+        this(id, name, brand, price);
+        this.description = description;
+    }
 
     public long getId() {
         return id;

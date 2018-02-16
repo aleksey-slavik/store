@@ -108,5 +108,6 @@
     <orderEntry type="library" scope="TEST" name="Maven: com.jayway.jsonpath:json-path:0.8.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: net.minidev:json-smart:1.1.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: commons-lang:commons-lang:2.6" level="project" />
+    <orderEntry type="library" name="Maven: org.hibernate:hibernate-validator:5.3.6.Final" level="project" />
   </component>
 </module>

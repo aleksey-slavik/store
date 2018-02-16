@@ -1,21 +1,30 @@
-package com.globallogic.store.dto;
+package com.globallogic.store.dto.product;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.globallogic.store.domain.product.Product;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 public class ProductDto {
 
     private long id;
 
-    @NotNull
+    @NotEmpty
+    @Length(max = 30)
     private String name;
 
-    @NotNull
+    @NotEmpty
+    @Length(max = 30)
     private String brand;
+
+    @Length(max = 10000)
     private String description;
 
-    @NotNull
+    @NotEmpty
     private double price;
 
     public ProductDto() {
@@ -77,5 +86,21 @@ public class ProductDto {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    /**
+     * Get {@link Product} object using current {@link ProductDto} data
+     *
+     * @return {@link Product} object
+     */
+    @JsonIgnore
+    public Product getProduct() {
+        return new Product(
+                getId(),
+                getName(),
+                getBrand(),
+                getDescription(),
+                getPrice()
+        );
     }
 }

@@ -1,8 +1,8 @@
 package com.globallogic.store.rest.spring;
 
 import com.globallogic.store.dao.GenericDao;
-import com.globallogic.store.dto.ProductDto;
-import com.globallogic.store.dto.ProductPreviewDto;
+import com.globallogic.store.dto.product.ProductDto;
+import com.globallogic.store.dto.product.ProductPreviewDto;
 import com.globallogic.store.domain.product.Product;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -90,8 +90,8 @@ public class ProductSpringRestController {
      * @return created {@link Product}
      */
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createProduct(@Valid @RequestBody Product product) {
-        Product created = productDao.createEntity(product);
+    public ResponseEntity<?> createProduct(@Valid @RequestBody ProductDto product) {
+        Product created = productDao.createEntity(product.getProduct());
         return ResponseEntity.ok().body(new ProductDto(created));
     }
 
@@ -103,9 +103,10 @@ public class ProductSpringRestController {
      * @return updated {@link Product}
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateProduct(@PathVariable Long id, @Valid @RequestBody Product product) {
+    public ResponseEntity<?> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductDto product) {
+        System.out.println(product.getName());
         product.setId(id);
-        Product updated = productDao.updateEntity(product);
+        Product updated = productDao.updateEntity(product.getProduct());
         return ResponseEntity.ok(new ProductDto(updated));
     }
 

@@ -1,4 +1,4 @@
-package com.globallogic.store.dto;
+package com.globallogic.store.dto.order;
 
 public class OrderDto {
 

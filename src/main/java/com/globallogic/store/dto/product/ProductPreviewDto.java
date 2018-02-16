@@ -1,4 +1,4 @@
-package com.globallogic.store.dto;
+package com.globallogic.store.dto.product;
 
 import com.globallogic.store.domain.product.Product;
 

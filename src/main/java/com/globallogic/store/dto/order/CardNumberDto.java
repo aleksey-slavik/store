@@ -1,4 +1,4 @@
-package com.globallogic.store.dto;
+package com.globallogic.store.dto.order;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;

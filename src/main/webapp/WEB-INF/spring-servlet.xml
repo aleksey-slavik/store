@@ -67,8 +67,8 @@
         <property name="exceptionMappings">
             <props>
                 <prop key="com.globallogic.store.exception.NotFoundException">error/404</prop>
-                <prop key="java.lang.Exception">/error</prop>
-                <prop key="java.lang.RuntimeException">/error</prop>
+                <prop key="java.lang.Exception">error/error</prop>
+                <prop key="java.lang.RuntimeException">error/error</prop>
             </props>
         </property>
         <property name="statusCodes">
