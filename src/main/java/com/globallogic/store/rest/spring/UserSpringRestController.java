@@ -2,7 +2,6 @@ package com.globallogic.store.rest.spring;
 
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.domain.user.User;
-import com.globallogic.store.dto.user.UserDto;
 import com.globallogic.store.exception.EmptyResponseException;
 import com.globallogic.store.exception.NotAcceptableException;
 import com.globallogic.store.exception.NotFoundException;
@@ -54,7 +53,7 @@ public class UserSpringRestController {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         } else  {
-            return ResponseEntity.ok(new UserDto(user));
+            return ResponseEntity.ok(user);
         }
     }
 

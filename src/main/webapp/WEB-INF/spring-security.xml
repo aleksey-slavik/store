@@ -14,6 +14,34 @@
         <intercept-url pattern="/api/products/**" method="GET" access="permitAll()"/>
     </http>
 
+    <http use-expressions="true">
+        <!-- interceptors -->
+        <intercept-url pattern="/user" access="hasAuthority('ADMIN')"/>
+        <intercept-url pattern="/order" access="hasAuthority('ADMIN')"/>
+        <intercept-url pattern="/cart" access="hasAuthority('CUSTOMER')"/>
+        <intercept-url pattern="/account" access="isAuthenticated()"/>
+
+        <!-- access denied page -->
+        <access-denied-handler
+                error-page="/403"/>
+
+        <!--<form-login
+                login-page="/login"
+                login-processing-url="/j_spring_security_check"
+                username-parameter="username"
+                password-parameter="password"
+                default-target-url="/home"
+                authentication-failure-url="/login?error"/>
+
+        <logout
+                logout-url="/j_spring_security_logout"
+                logout-success-url="/home"
+                invalidate-session="true"
+                delete-cookies="true"/>-->
+
+        <csrf disabled="true"/>
+    </http>
+
     <beans:bean id="tokenAuthenticationFilter" class="com.globallogic.store.security.core.TokenAuthenticationFilter">
         <beans:property name="authenticationManager" ref="authenticationManager"/>
         <beans:property name="authenticationSuccessHandler" ref="tokenAuthenticationSuccessHandler"/>

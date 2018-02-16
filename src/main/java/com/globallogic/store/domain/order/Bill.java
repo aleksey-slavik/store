@@ -4,8 +4,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 
 @Entity
@@ -23,8 +21,6 @@ public class Bill implements Serializable {
     private Order order;
 
     @Column(name = "card", nullable = false)
-    @NotNull
-    @Pattern(regexp = "\\b(?:\\d[ -]*?){13,16}\\b")
     private String cardNumber;
 
     @Column(name = "total_cost", nullable = false)

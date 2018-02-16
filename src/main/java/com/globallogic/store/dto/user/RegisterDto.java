@@ -2,34 +2,17 @@ package com.globallogic.store.dto.user;
 
 import com.globallogic.store.domain.user.User;
 
-import javax.validation.constraints.*;
+public class RegisterDto {
 
-public class UserDto {
-
-    @NotNull
-    @Size(min = 6, max = 50)
     private String username;
-
-    @NotNull
-    @Size(min = 6, max = 50)
     private String password;
-
-    @NotNull
-    @Size(min = 6, max = 50)
     private String firstName;
-
-    @NotNull
-    @Size(min = 6, max = 50)
     private String lastName;
-
-    @NotNull
-    @Size(max = 50)
-    @Pattern(regexp = "^[\\w-]+(\\.[\\w-]+)*@([\\w-]+\\.)+[a-zA-Z]+$")
     private String email;
 
-    public UserDto() {}
+    public RegisterDto() {}
 
-    public UserDto(String username, String password, String firstName, String lastName, String email) {
+    public RegisterDto(String username, String password, String firstName, String lastName, String email) {
         this.username = username;
         this.password = password;
         this.firstName = firstName;
@@ -37,7 +20,7 @@ public class UserDto {
         this.email = email;
     }
 
-    public UserDto(User user) {
+    public RegisterDto(User user) {
         this(
                 user.getUsername(),
                 user.getPassword(),

@@ -1,12 +1,16 @@
 package com.globallogic.store;
 
 import com.globallogic.store.domain.product.Product;
+import com.globallogic.store.domain.user.Authority;
+import com.globallogic.store.domain.user.AuthorityName;
 import com.globallogic.store.domain.user.User;
 import com.globallogic.store.security.AuthenticatedUser;
 import com.globallogic.store.security.AuthenticatedUserFactory;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Emulates application flow
@@ -23,7 +27,11 @@ public class Workflow {
         user.setFirstName("test");
         user.setLastName("admin");
         user.setEmail("test.admin@store.com");
-        //user.setRole(Role.ADMIN);
+        user.setEnabled(true);
+        user.setAuthorities(new HashSet<Authority>() {{
+            add(createCustomerAuthority());
+            add(createAdminAuthority());
+        }});
         return user;
     }
 
@@ -35,7 +43,10 @@ public class Workflow {
         user.setFirstName("test");
         user.setLastName("customer");
         user.setEmail("test.customer@store.com");
-        //user.setRole(Role.CUSTOMER);
+        user.setEnabled(true);
+        user.setAuthorities(new HashSet<Authority>() {{
+            add(createCustomerAuthority());
+        }});
         return user;
     }
 
@@ -65,5 +76,19 @@ public class Workflow {
 
     public static AuthenticatedUser createCustomerAuthenticatedUser() {
         return AuthenticatedUserFactory.create(createCustomerUser());
+    }
+
+    public static Authority createAdminAuthority() {
+        Authority authority = new Authority();
+        authority.setId(1);
+        authority.setTitle(AuthorityName.ADMIN);
+        return authority;
+    }
+
+    public static Authority createCustomerAuthority() {
+        Authority authority = new Authority();
+        authority.setId(2);
+        authority.setTitle(AuthorityName.CUSTOMER);
+        return authority;
     }
 }

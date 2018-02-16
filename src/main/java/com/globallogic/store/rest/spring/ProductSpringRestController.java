@@ -1,7 +1,6 @@
 package com.globallogic.store.rest.spring;
 
 import com.globallogic.store.dao.GenericDao;
-import com.globallogic.store.dto.product.ProductDto;
 import com.globallogic.store.dto.product.ProductPreviewDto;
 import com.globallogic.store.domain.product.Product;
 import org.springframework.http.HttpStatus;
@@ -10,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +46,7 @@ public class ProductSpringRestController {
         if (product == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         } else {
-            return ResponseEntity.ok().body(new ProductDto(product));
+            return ResponseEntity.ok().body(product);
         }
     }
 
@@ -90,9 +88,9 @@ public class ProductSpringRestController {
      * @return created {@link Product}
      */
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createProduct(@Valid @RequestBody ProductDto product) {
-        Product created = productDao.createEntity(product.getProduct());
-        return ResponseEntity.ok().body(new ProductDto(created));
+    public ResponseEntity<?> createProduct(@RequestBody Product product) {
+        Product created = productDao.createEntity(product);
+        return ResponseEntity.ok().body(created);
     }
 
     /**
@@ -103,11 +101,10 @@ public class ProductSpringRestController {
      * @return updated {@link Product}
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductDto product) {
-        System.out.println(product.getName());
+    public ResponseEntity<?> updateProduct(@RequestBody Product product, @PathVariable Long id) {
         product.setId(id);
-        Product updated = productDao.updateEntity(product.getProduct());
-        return ResponseEntity.ok(new ProductDto(updated));
+        Product updated = productDao.updateEntity(product);
+        return ResponseEntity.ok(updated);
     }
 
     /**
@@ -119,7 +116,7 @@ public class ProductSpringRestController {
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteProductById(@PathVariable Long id) {
         Product deleted = productDao.deleteEntity(id);
-        return ResponseEntity.ok(new ProductDto(deleted));
+        return ResponseEntity.ok(deleted);
     }
 
     private List<ProductPreviewDto> createPreviews(List<Product> originals) {
