@@ -107,11 +107,11 @@
     </bean>
 
     <bean name="orderDao" class="com.globallogic.store.dao.GenericDao">
-        <constructor-arg value="com.globallogic.store.domain.orders.order.Order"/>
+        <constructor-arg value="com.globallogic.store.domain.order.Order"/>
     </bean>
 
     <bean name="orderItemDao" class="com.globallogic.store.dao.GenericDao">
-        <constructor-arg value="com.globallogic.store.domain.orders.order.OrderItem"/>
+        <constructor-arg value="com.globallogic.store.domain.order.OrderItem"/>
     </bean>
 
     <!-- Spring Rest beans -->

@@ -1,6 +1,5 @@
-package com.globallogic.store.domain.orders;
+package com.globallogic.store.domain.order;
 
-import com.globallogic.store.domain.orders.order.Order;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -10,7 +9,7 @@ import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "bill")
+@Table(name = "bill", schema = "public")
 public class Bill implements Serializable {
 
     @Id

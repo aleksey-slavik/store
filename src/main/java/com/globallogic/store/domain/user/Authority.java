@@ -1,5 +1,7 @@
 package com.globallogic.store.domain.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -18,6 +20,7 @@ public class Authority implements Serializable {
     @Enumerated(EnumType.STRING)
     private AuthorityName title;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "authorities")
     private Set<User> users = new HashSet<>();
 

@@ -1,8 +1,13 @@
-package com.globallogic.store.domain.orders.order;
+package com.globallogic.store.domain.order;
 
 import javax.persistence.Embeddable;
 import java.io.Serializable;
 
+/**
+ * Composite id for {@link com.globallogic.store.domain.order.OrderItem} table
+ *
+ * @author oleksii.slavik
+ */
 @Embeddable
 public class OrderItemId implements Serializable {
 

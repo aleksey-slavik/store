@@ -1,4 +1,4 @@
-package com.globallogic.store.domain.orders.order;
+package com.globallogic.store.domain.order;
 
 import com.globallogic.store.domain.product.Product;
 
@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @author oleksii.slavik
  */
 @Entity
-@Table(name = "order_item")
+@Table(name = "order_item", schema = "public")
 public class OrderItem implements Serializable {
 
     @EmbeddedId
@@ -32,6 +32,16 @@ public class OrderItem implements Serializable {
 
     @Column(name = "quantity")
     private int quantity;
+
+    public OrderItem() {}
+
+    public OrderItem(Order order, Product product, int quantity) {
+        this.primaryKey = new OrderItemId(order.getId(), product.getId());
+        this.order = order;
+        this.product = product;
+        this.price = product.getPrice();
+        this.quantity = quantity;
+    }
 
     public OrderItemId getPrimaryKey() {
         return primaryKey;

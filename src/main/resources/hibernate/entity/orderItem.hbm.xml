@@ -2,13 +2,13 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
         "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="com.globallogic.store.domain.orders.order.OrderItem" table="order_item" catalog="public">
+    <class name="com.globallogic.store.domain.orders.OrderItem" table="order_item" catalog="public">
         <id name="id" type="java.lang.Long">
             <column name="id"/>
             <generator class="identity"/>
         </id>
 
-        <many-to-one name="order" class="com.globallogic.store.domain.orders.order.Order">
+        <many-to-one name="order" class="com.globallogic.store.domain.orders.Order">
             <column name="order_id" not-null="true"/>
         </many-to-one>
 
