@@ -11,19 +11,21 @@
         <property name="hibernate.connection.username">root</property>
         <property name="hibernate.connection.password">root</property>
         <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/store</property>
-        <property name="hibernate.current_session_context_class">thread</property>
+        <!--<property name="hibernate.current_session_context_class">thread</property>
         <property name="hibernate.hbm2ddl.auto">update</property>
-        <property name="hibernate.bytecode.use_reflection_optimizer">false</property>
+        <property name="hibernate.bytecode.use_reflection_optimizer">false</property>-->
 
         <!-- Output hibernate queries -->
         <property name="show_sql">true</property>
         <property name="format_sql">true</property>
 
         <!-- Entities -->
-        <mapping resource="hibernate/entity/user.hbm.xml"/>
-        <mapping resource="hibernate/entity/product.hbm.xml"/>
-        <mapping resource="hibernate/entity/order.hbm.xml"/>
-        <mapping resource="hibernate/entity/orderItem.hbm.xml"/>
+        <mapping class="com.globallogic.store.domain.user.User"/>
+        <mapping class="com.globallogic.store.domain.user.Authority"/>
+        <mapping class="com.globallogic.store.domain.product.Product"/>
+        <mapping class="com.globallogic.store.domain.order.Bill"/>
+        <mapping class="com.globallogic.store.domain.order.Order"/>
+        <mapping class="com.globallogic.store.domain.order.OrderItem"/>
 
     </session-factory>
 </hibernate-configuration>

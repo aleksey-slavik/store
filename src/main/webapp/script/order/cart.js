@@ -3,10 +3,10 @@
  *
  * @type {string}
  */
-var rootURL = "http://localhost:8080/orders";
+var rootURL = "http://localhost:8080/api/orders";
 
 /**
- * Id of order for current user
+ * Id of orders for current user
  */
 var sessionOrderId;
 
@@ -26,7 +26,7 @@ $('#orderTable').on('click', 'a', function () {
 });
 
 /**
- * Fill list of order using given data
+ * Fill list of orders using given data
  *
  * @param data given data
  */
@@ -57,7 +57,7 @@ function fillUserOrderList(data) {
 }
 
 /**
- * Fill order item form using given item data
+ * Fill orders item form using given item data
  *
  * @param item given data
  */
@@ -71,7 +71,7 @@ function fillUserOrderItem(item) {
 }
 
 /**
- * Parse order item data from form to json format
+ * Parse orders item data from form to json format
  *
  * @returns {string}
  */
@@ -93,7 +93,7 @@ function clearUserOrderItemForm() {
 }
 
 /**
- * Sending DELETE request to rest service for delete order item by given item id.
+ * Sending DELETE request to rest service for delete orders item by given item id.
  * Implementation of {@link deleteItem} method.
  *
  * @param id given item id
@@ -109,7 +109,7 @@ function deleteOrderItem(id) {
 }
 
 /**
- * Sending PUT request to rest service for update order item by given item id.
+ * Sending PUT request to rest service for update orders item by given item id.
  * Implementation of {@link updateItem} method.
  *
  * @param id given item id
@@ -126,7 +126,7 @@ function updateOrderItem(id) {
 }
 
 /**
- * Sending GET request to rest service for get opened order for current user if it exist.
+ * Sending GET request to rest service for get opened orders for current user if it exist.
  * Implementation of {@link getItem} method.
  */
 function findUserOrderByUsername() {

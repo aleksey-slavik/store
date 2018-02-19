@@ -6,9 +6,16 @@
 	http://www.springframework.org/schema/security
 	http://www.springframework.org/schema/security/spring-security-4.0.xsd">
 
+   <!-- <http pattern="/api/auth" security="none"/>-->
+
+   <!-- <http pattern="/api/**" entry-point-ref="tokenAuthenticationEntryPoint" create-session="stateless">
+        <csrf disabled="true"/>
+       &lt;!&ndash; <custom-filter before="FORM_LOGIN_FILTER" ref="tokenAuthenticationFilter"/>&ndash;&gt;
+        <intercept-url pattern="/api/products/**" method="GET" access="permitAll()"/>
+    </http>-->
+
     <http use-expressions="true">
         <!-- interceptors -->
-        <intercept-url method="DELETE" pattern="/users" access="hasAuthority('ADMIN')"/>
         <intercept-url pattern="/user" access="hasAuthority('ADMIN')"/>
         <intercept-url pattern="/order" access="hasAuthority('ADMIN')"/>
         <intercept-url pattern="/cart" access="hasAuthority('CUSTOMER')"/>
@@ -34,6 +41,18 @@
 
         <csrf disabled="true"/>
     </http>
+
+    <beans:bean id="tokenAuthenticationFilter" class="com.globallogic.store.security.core.TokenAuthenticationFilter">
+        <beans:property name="authenticationManager" ref="authenticationManager"/>
+        <beans:property name="authenticationSuccessHandler" ref="tokenAuthenticationSuccessHandler"/>
+        <beans:property name="tokenUtil" ref="tokenUtil"/>
+    </beans:bean>
+
+    <beans:bean id="tokenAuthenticationEntryPoint" class="com.globallogic.store.security.core.TokenAuthenticationEntryPoint"/>
+
+    <beans:bean id="tokenAuthenticationSuccessHandler" class="com.globallogic.store.security.core.TokenAuthenticationSuccessHandler"/>
+
+    <beans:bean id="tokenUtil" class="com.globallogic.store.security.jwt.TokenUtil"/>
 
     <authentication-manager alias="authenticationManager">
         <authentication-provider user-service-ref="loginUserService"/>

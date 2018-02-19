@@ -3,7 +3,7 @@
  *
  * @type {string}
  */
-var rootURL = "http://localhost:8080/users";
+var rootURL = "http://localhost:8080/api/users";
 
 /**
  * Temporary variable for product data
@@ -66,7 +66,7 @@ function fillUserData(item) {
 }
 
 /**
- * Parse order item data from form to json format
+ * Parse orders item data from form to json format
  *
  * @returns {string}
  */

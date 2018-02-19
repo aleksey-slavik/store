@@ -4,7 +4,7 @@
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:tx="http://www.springframework.org/schema/tx"
-       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
        http://www.springframework.org/schema/mvc
@@ -62,6 +62,23 @@
     <bean id="cart" class="com.globallogic.store.web.order.CartWebController"/>
     <bean id="account" class="com.globallogic.store.web.user.AccountWebController"/>
 
+    <!-- Exceptions Resolver -->
+    <!--<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="exceptionMappings">
+            <props>
+                <prop key="com.globallogic.store.exception.NotFoundException">error/404</prop>
+                <prop key="java.lang.Exception">error/error</prop>
+                <prop key="java.lang.RuntimeException">error/error</prop>
+            </props>
+        </property>
+        <property name="statusCodes">
+            <props>
+                <prop key="error/404">404</prop>
+                <prop key="error/error">500</prop>
+            </props>
+        </property>
+    </bean>-->
+
     <!-- Resource resolver -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/pages/"/>
@@ -76,21 +93,25 @@
     <!-- JSP Fragments -->
     <mvc:resources mapping="/parts/**" location="/parts/"/>
 
+    <!-- Properties -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
+          p:location="classpath:store.properties" name="propertiesBean"/>
+
     <!-- DAO beans -->
     <bean name="userDao" class="com.globallogic.store.dao.GenericDao">
-        <constructor-arg value="com.globallogic.store.model.User"/>
+        <constructor-arg value="com.globallogic.store.domain.user.User"/>
     </bean>
 
     <bean name="productDao" class="com.globallogic.store.dao.GenericDao">
-        <constructor-arg value="com.globallogic.store.model.Product"/>
+        <constructor-arg value="com.globallogic.store.domain.product.Product"/>
     </bean>
 
     <bean name="orderDao" class="com.globallogic.store.dao.GenericDao">
-        <constructor-arg value="com.globallogic.store.model.Order"/>
+        <constructor-arg value="com.globallogic.store.domain.order.Order"/>
     </bean>
 
     <bean name="orderItemDao" class="com.globallogic.store.dao.GenericDao">
-        <constructor-arg value="com.globallogic.store.model.OrderItem"/>
+        <constructor-arg value="com.globallogic.store.domain.order.OrderItem"/>
     </bean>
 
     <!-- Spring Rest beans -->
@@ -108,25 +129,12 @@
         <property name="userDao" ref="userDao"/>
     </bean>
 
-    <!-- Jersey Rest beans -->
-    <bean name="userJerseyRestController" class="com.globallogic.store.rest.jersey.UserJerseyRestController">
-        <property name="userDao" ref="userDao"/>
-    </bean>
-
-    <bean name="productJerseyRestController" class="com.globallogic.store.rest.jersey.ProductJerseyRestController">
-        <property name="productDao" ref="productDao"/>
-    </bean>
-
-    <bean name="orderJerseyRestController" class="com.globallogic.store.rest.jersey.OrderJerseyRestController">
-        <property name="orderDao" ref="orderDao"/>
-    </bean>
-
     <!-- Spring Security -->
-    <bean id="loginUserService" class="com.globallogic.store.security.spring.LoginUserService">
+    <bean id="loginUserService" class="com.globallogic.store.security.core.LoginUserService">
         <property name="userDao" ref="userDao"/>
     </bean>
 
-    <bean id="registerUserService" class="com.globallogic.store.security.spring.RegisterUserService">
+    <bean id="registerUserService" class="com.globallogic.store.security.core.RegisterUserService">
         <property name="authenticationManager" ref="authenticationManager"/>
         <property name="userDetailsService" ref="loginUserService"/>
     </bean>
@@ -149,6 +157,20 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
+   <!-- <bean id="entityManagerFactory"
+          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="packagesToScan" value="com.globallogic.store.domain" />
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+        </property>
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL95Dialect</prop>
+            </props>
+        </property>
+    </bean>-->
+
     <tx:advice id="txAdvice">
         <tx:attributes>
             <tx:method name="get*" read-only="true"/>
@@ -161,10 +183,10 @@
 
     <aop:config proxy-target-class="true">
         <aop:pointcut id="userServicePointCut"
-                      expression="execution(* com.globallogic.store.security.spring.*Service.*(..))"/>
+                      expression="execution(* com.globallogic.store.security.core.*Service.*(..))"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="userServicePointCut"/>
     </aop:config>
 
     <!-- Security Aspects -->
-    <bean id="userSecurityManager" class="com.globallogic.store.security.aop.UserSecurityManager"/>
+    <!--<bean id="userSecurityManager" class="com.globallogic.store.security.aop.UserSecurityManager"/>-->
 </beans>

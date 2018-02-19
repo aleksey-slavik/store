@@ -3,15 +3,15 @@
  *
  * @type {string}
  */
-var rootURL = "http://localhost:8080/orders";
+var rootURL = "http://localhost:8080/api/orders";
 
 /**
- * Temporary variable for order data
+ * Temporary variable for orders data
  */
 var currentOrder;
 
 /**
- * Temporary variable for order item data
+ * Temporary variable for orders item data
  */
 var currentOrderItem;
 
@@ -51,14 +51,14 @@ $('#itemList').on('click', 'a', function () {
 });
 
 /**
- * Register listener for list of order items
+ * Register listener for list of orders items
  */
 $('#orderItemList').on('click', 'a', function () {
     findOrderItemById($(this).data('identity'));
 });
 
 /**
- * Fill list of order items using given data
+ * Fill list of orders items using given data
  *
  * @param data given data
  */
@@ -71,7 +71,7 @@ function fillOrderItemList(data) {
 }
 
 /**
- * Fill list of order using given data
+ * Fill list of orders using given data
  *
  * @param data given data
  */
@@ -84,7 +84,7 @@ function fillOrderList(data) {
 }
 
 /**
- * Fill order item form using given item data
+ * Fill orders item form using given item data
  *
  * @param item given data
  */
@@ -103,7 +103,7 @@ function fillOrderItem(item) {
 }
 
 /**
- * Parse order data from form to json format
+ * Parse orders data from form to json format
  *
  * @returns {string}
  */
@@ -118,7 +118,7 @@ function orderToJSON() {
 }
 
 /**
- * Parse order item data from form to json format
+ * Parse orders item data from form to json format
  *
  * @returns {string}
  */
@@ -148,10 +148,10 @@ function findAllOrders() {
 }
 
 /**
- * Sending GET request to rest service for get order by given id.
+ * Sending GET request to rest service for get orders by given id.
  * Implementation of {@link getItem} method.
  *
- * @param id given order id
+ * @param id given orders id
  */
 function findOrderById(id) {
     getItem(
@@ -169,10 +169,10 @@ function findOrderById(id) {
 }
 
 /**
- * Sending GET request to rest service for get order item by given id.
+ * Sending GET request to rest service for get orders item by given id.
  * Implementation of {@link getItem} method.
  *
- * @param id given order item id
+ * @param id given orders item id
  */
 function findOrderItemById(id) {
     getItem(
@@ -189,7 +189,7 @@ function findOrderItemById(id) {
 }
 
 /**
- * Sending PUT request to rest service for update current order.
+ * Sending PUT request to rest service for update current orders.
  * Implementation of {@link updateItem} method.
  */
 function updateOrder() {
@@ -205,7 +205,7 @@ function updateOrder() {
 }
 
 /**
- * Sending PUT request to rest service for delete current order.
+ * Sending PUT request to rest service for delete current orders.
  * Implementation of {@link deleteItem} method.
  */
 function deleteOrder() {
@@ -222,7 +222,7 @@ function deleteOrder() {
 }
 
 /**
-* Sending DELETE request to rest service for delete order item by given item id.
+* Sending DELETE request to rest service for delete orders item by given item id.
 * Implementation of {@link deleteItem} method.
 *
 * @param id given item id
@@ -238,7 +238,7 @@ function deleteOrderItem(id) {
 }
 
 /**
-* Sending PUT request to rest service for update order item by given item id.
+* Sending PUT request to rest service for update orders item by given item id.
 * Implementation of {@link updateItem} method.
 *
 * @param id given item id
@@ -266,7 +266,7 @@ function clearOrderForm() {
 }
 
 /**
- * Clear order item form
+ * Clear orders item form
  */
 function clearOrderItemForm() {
     currentOrderItem = {};

@@ -1,5 +1,6 @@
 package com.globallogic.store.web.user;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -13,6 +14,9 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class LoginWebController extends AbstractController {
 
+    @Value("${view.signIn}")
+    private String signInView;
+
     @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         String error = httpServletRequest.getParameter("error");
@@ -22,7 +26,7 @@ public class LoginWebController extends AbstractController {
             mav.addObject("message", "Error during login process! Check input data!");
         }
 
-        mav.setViewName("user/login");
+        mav.setViewName(signInView);
         return mav;
     }
 }

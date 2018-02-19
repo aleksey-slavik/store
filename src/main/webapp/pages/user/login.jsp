@@ -42,7 +42,7 @@
     <table align="center">
         <tr>
             <td>
-                or create new account using <a href="/register">registration page</a>.
+                or create new account using <a href="${pageContext.request.contextPath}/register">registration page</a>.
             </td>
         </tr>
     </table>

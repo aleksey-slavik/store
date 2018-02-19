@@ -60,7 +60,7 @@
             src="${pageContext.request.contextPath}/script/product/secured.js"></script>
 </sec:authorize>
 
-<sec:authorize access="!hasAuthority('ADMIN')">
+<sec:authorize access="!hasAnyAuthority('ADMIN')">
     <div class="header" align="center">
         <%@ include file="/parts/search.jsp" %>
     </div>

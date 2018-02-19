@@ -1,13 +1,15 @@
 package com.globallogic.store.rest.spring;
 
 import com.globallogic.store.dao.GenericDao;
-import com.globallogic.store.exception.EmptyResponseException;
-import com.globallogic.store.exception.NotFoundException;
-import com.globallogic.store.model.Product;
+import com.globallogic.store.dto.product.ProductPreviewDto;
+import com.globallogic.store.domain.product.Product;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,6 +18,7 @@ import java.util.List;
  * @author oleksii.slavik
  */
 @RestController
+@RequestMapping(value = "/api/products")
 public class ProductSpringRestController {
 
     /**
@@ -35,16 +38,15 @@ public class ProductSpringRestController {
      *
      * @param id given id
      * @return {@link Product} item
-     * @throws NotFoundException throws when item with given id not found
      */
-    @RequestMapping(value = "/products/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Product getProductById(@PathVariable Long id) {
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getProductById(@PathVariable long id) {
         Product product = productDao.entityByKey(id);
 
         if (product == null) {
-            throw new NotFoundException();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         } else {
-            return product;
+            return ResponseEntity.ok().body(product);
         }
     }
 
@@ -53,24 +55,30 @@ public class ProductSpringRestController {
      *
      * @param params map of request parameters
      * @return list of {@link Product}
-     * @throws EmptyResponseException throws if request parameters is absent
-     * @throws NotFoundException      throws when item with parameters not found
      */
-    @RequestMapping(value = "/products", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Product> findProduct(@RequestParam MultiValueMap<String, Object> params) {
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> findProduct(@RequestParam MultiValueMap<String, Object> params) {
         List<Product> products;
 
         if (params.isEmpty()) {
             products = productDao.entityList();
+
+            if (products == null || products.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+            } else {
+                return ResponseEntity.ok().body(createPreviews(products));
+            }
         } else {
             products = productDao.entityListByValue(params.toSingleValueMap());
+
+            if (products == null || products.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            } else {
+                return ResponseEntity.ok().body(createPreviews(products));
+            }
         }
 
-        if (products == null || products.isEmpty()) {
-            throw new NotFoundException();
-        } else {
-            return products;
-        }
+
     }
 
     /**
@@ -79,9 +87,10 @@ public class ProductSpringRestController {
      * @param product given {@link Product}
      * @return created {@link Product}
      */
-    @RequestMapping(value = "/products", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Product createProduct(@RequestBody Product product) {
-        return productDao.createEntity(product);
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> createProduct(@RequestBody Product product) {
+        Product created = productDao.createEntity(product);
+        return ResponseEntity.ok().body(created);
     }
 
     /**
@@ -91,10 +100,11 @@ public class ProductSpringRestController {
      * @param product updated {@link Product} data
      * @return updated {@link Product}
      */
-    @RequestMapping(value = "/products/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Product updateProduct(@PathVariable Long id, @RequestBody Product product) {
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateProduct(@RequestBody Product product, @PathVariable Long id) {
         product.setId(id);
-        return productDao.updateEntity(product);
+        Product updated = productDao.updateEntity(product);
+        return ResponseEntity.ok(updated);
     }
 
     /**
@@ -103,9 +113,19 @@ public class ProductSpringRestController {
      * @param id given id of {@link Product}
      * @return deleted {@link Product}
      */
-    @RequestMapping(value = "/products/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Product deleteProductById(@PathVariable Long id) {
-        getProductById(id);
-        return productDao.deleteEntity(id);
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteProductById(@PathVariable Long id) {
+        Product deleted = productDao.deleteEntity(id);
+        return ResponseEntity.ok(deleted);
+    }
+
+    private List<ProductPreviewDto> createPreviews(List<Product> originals) {
+        List<ProductPreviewDto> previews = new ArrayList<>();
+
+        for (Product product : originals) {
+            previews.add(new ProductPreviewDto(product));
+        }
+
+        return previews;
     }
 }

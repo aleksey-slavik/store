@@ -1,5 +1,8 @@
 package com.globallogic.store.web.product;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -13,8 +16,12 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ProductWebController extends AbstractController {
 
+    @Value("${view.product}")
+    private String productView;
+
     @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        return new ModelAndView("product/products");
+        System.out.println(SecurityContextHolder.getContext().getAuthentication());
+        return new ModelAndView(productView);
     }
 }
