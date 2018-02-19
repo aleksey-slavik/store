@@ -1,13 +1,16 @@
 package com.globallogic.store.rest;
 
 import com.globallogic.store.dao.GenericDao;
+import com.globallogic.store.dto.product.ProductDto;
 import com.globallogic.store.dto.product.ProductPreviewDto;
 import com.globallogic.store.domain.product.Product;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -108,8 +111,11 @@ public class ProductSpringRestController {
      * @return created {@link Product}
      */
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createProduct(@RequestBody Product product) {
-        Product created = productDao.createEntity(product);
+    public ResponseEntity<?> createProduct(@Valid @RequestBody ProductDto product, BindingResult errors) {
+        if (errors.hasErrors()) {
+            System.out.println("errre");
+        }
+        Product created = productDao.createEntity(product.getProduct());
         return ResponseEntity.ok().body(created);
     }
 
