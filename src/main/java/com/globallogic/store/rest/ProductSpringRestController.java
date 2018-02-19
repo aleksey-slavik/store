@@ -6,11 +6,12 @@ import com.globallogic.store.domain.product.Product;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Spring rest controller for {@link Product}.
@@ -53,14 +54,24 @@ public class ProductSpringRestController {
     /**
      * Return list of {@link Product} represented as json.
      *
-     * @param params map of request parameters
+     * @param name  name of product
+     * @param brand brand pf product
+     * @param price price of product
+     * @param page  number of page
+     * @param size  count of product per page
      * @return list of {@link Product}
      */
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> findProduct(@RequestParam MultiValueMap<String, Object> params) {
+    public ResponseEntity<?> findProduct(
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "brand", required = false) String brand,
+            @RequestParam(value = "price", required = false) Double price,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "5") int size) {
+
         List<Product> products;
 
-        if (params.isEmpty()) {
+        if (name == null && brand == null && price == null) {
             products = productDao.entityList();
 
             if (products == null || products.isEmpty()) {
@@ -69,7 +80,16 @@ public class ProductSpringRestController {
                 return ResponseEntity.ok().body(createPreviews(products));
             }
         } else {
-            products = productDao.entityListByValue(params.toSingleValueMap());
+            Map<String, Object> params = new HashMap<>();
+
+            if (name != null)
+                params.put("name", name);
+            if (brand != null)
+                params.put("brand", brand);
+            if (price != null)
+                params.put("price", price);
+
+            products = productDao.entityListByValue(params);
 
             if (products == null || products.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -77,8 +97,6 @@ public class ProductSpringRestController {
                 return ResponseEntity.ok().body(createPreviews(products));
             }
         }
-
-
     }
 
     /**

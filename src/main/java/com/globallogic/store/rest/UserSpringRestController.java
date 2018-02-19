@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Spring rest controller for {@link User}.
@@ -52,7 +53,7 @@ public class UserSpringRestController {
 
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        } else  {
+        } else {
             return ResponseEntity.ok(user);
         }
     }
@@ -60,19 +61,31 @@ public class UserSpringRestController {
     /**
      * Return list of {@link User} items result of search by given parameters.
      *
-     * @param params given parameters
+     * @param username username of user
+     * @param password password of user
      * @return list of {@link User}
      * @throws NotFoundException      throws when user with given id not found
      * @throws EmptyResponseException throws when user list is empty
      */
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<User> getUser(@RequestParam MultiValueMap<String, Object> params) {
+    public List<User> getUser(
+            @RequestParam(value = "username", required = false) String username,
+            @RequestParam(value = "password", required = false) String password,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "5") int size) {
         List<User> users;
 
-        if (params.isEmpty()) {
+        if (username == null && password == null) {
             users = userDao.entityList();
         } else {
-            users = userDao.entityListByValue(params.toSingleValueMap());
+            Map<String, Object> params = new HashMap<>();
+
+            if (username != null)
+                params.put("username", username);
+            if (password != null)
+                params.put("password", password);
+
+            users = userDao.entityListByValue(params);
         }
 
         if (users == null || users.isEmpty()) {
