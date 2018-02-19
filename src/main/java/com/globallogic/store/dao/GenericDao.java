@@ -57,11 +57,6 @@ public class GenericDao<E> implements DaoAccessible<E, Long> {
         return new TemplateGenericDao<List<E>>().processQuery(session -> {
             CriteriaBuilder builder = session.getCriteriaBuilder();
 
-            //getting the total number of entities
-            CriteriaQuery<Long> countQuery = builder.createQuery(Long.class);
-            countQuery.select(builder.count(countQuery.from(entityClass)));
-            Long count = session.createQuery(countQuery).getSingleResult();
-
             //create select statement for entities
             CriteriaQuery<E> allEntitiesQuery = builder.createQuery(entityClass);
             Root<E> root = allEntitiesQuery.from(entityClass);
@@ -69,20 +64,17 @@ public class GenericDao<E> implements DaoAccessible<E, Long> {
 
             //create pagination
             TypedQuery<E> paginationQuery = session.createQuery(selectAll);
-
-            if (offset < count.intValue()) {
-                paginationQuery.setFirstResult(offset);
-                paginationQuery.setMaxResults(limit);
-                return paginationQuery.getResultList();
-            } else {
-                throw new PaginationException();
-            }
+            paginationQuery.setFirstResult(offset);
+            paginationQuery.setMaxResults(limit);
+            return paginationQuery.getResultList();
         });
     }
 
     public List<E> entityListByValue(final Map<String, Object> params, int offset, int limit) {
         return new TemplateGenericDao<List<E>>().processQuery(session -> {
             CriteriaBuilder builder = session.getCriteriaBuilder();
+
+            //create select statement for entities
             CriteriaQuery<E> query = builder.createQuery(entityClass);
             Root<E> root = query.from(entityClass);
             query.select(root);
@@ -92,8 +84,13 @@ public class GenericDao<E> implements DaoAccessible<E, Long> {
                 predicates.add(builder.equal(root.get(entry.getKey()), entry.getValue()));
             }
 
-            query.where(builder.and(predicates.toArray(new Predicate[]{})));
-            return session.createQuery(query).getResultList();
+            CriteriaQuery<E> selectAll = query.where(builder.and(predicates.toArray(new Predicate[]{})));
+
+            //create pagination
+            TypedQuery<E> paginationQuery = session.createQuery(selectAll);
+            paginationQuery.setFirstResult(offset);
+            paginationQuery.setMaxResults(limit);
+            return paginationQuery.getResultList();
         });
     }
 
