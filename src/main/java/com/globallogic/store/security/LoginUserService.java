@@ -1,4 +1,4 @@
-package com.globallogic.store.security.core;
+package com.globallogic.store.security;
 
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.domain.user.Authority;

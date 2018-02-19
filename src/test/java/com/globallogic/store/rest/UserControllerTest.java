@@ -3,7 +3,6 @@ package com.globallogic.store.rest;
 import com.globallogic.store.Workflow;
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.domain.user.User;
-import com.globallogic.store.rest.spring.UserSpringRestController;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;

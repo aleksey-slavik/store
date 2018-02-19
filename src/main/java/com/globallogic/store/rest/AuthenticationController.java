@@ -1,4 +1,4 @@
-package com.globallogic.store.rest.security;
+package com.globallogic.store.rest;
 
 import com.globallogic.store.security.AuthenticatedUser;
 import com.globallogic.store.security.dto.AuthenticationRequest;

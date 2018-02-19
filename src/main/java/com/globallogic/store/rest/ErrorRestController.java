@@ -1,4 +1,4 @@
-package com.globallogic.store.rest.spring;
+package com.globallogic.store.rest;
 
 import com.globallogic.store.dto.error.ValidationErrorDto;
 import org.springframework.http.HttpHeaders;
@@ -26,14 +26,14 @@ public class ErrorRestController extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(processFieldErrors(errors), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    /*@ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ValidationErrorDto processValidationError(MethodArgumentNotValidException exception) {
         BindingResult result = exception.getBindingResult();
         List<FieldError> errors = result.getFieldErrors();
         return processFieldErrors(errors);
-    }
+    }*/
 
     private ValidationErrorDto processFieldErrors(List<FieldError> fieldErrors) {
         ValidationErrorDto dto = new ValidationErrorDto();

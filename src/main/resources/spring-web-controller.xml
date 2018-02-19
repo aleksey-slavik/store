@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!-- URL Handler -->
+    <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/">product</prop>
+                <prop key="/home">product</prop>
+                <prop key="/product">product</prop>
+                <prop key="/login">login</prop>
+                <prop key="/403">accessDenied</prop>
+                <prop key="/register">register</prop>
+                <prop key="/user">user</prop>
+                <prop key="/order">order</prop>
+                <prop key="/cart">cart</prop>
+                <prop key="/account">account</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- Controllers -->
+    <bean id="product" class="com.globallogic.store.web.product.ProductWebController"/>
+    <bean id="login" class="com.globallogic.store.web.user.LoginWebController"/>
+    <bean id="accessDenied" class="com.globallogic.store.web.security.AccessDeniedWebController"/>
+    <bean id="register" class="com.globallogic.store.web.user.RegistrationWebController">
+        <property name="registerUserService" ref="registerUserService"/>
+    </bean>
+    <bean id="user" class="com.globallogic.store.web.user.UserWebController"/>
+    <bean id="order" class="com.globallogic.store.web.order.OrderWebController"/>
+    <bean id="cart" class="com.globallogic.store.web.order.CartWebController"/>
+    <bean id="account" class="com.globallogic.store.web.user.AccountWebController"/>
+
+    <!-- Exceptions Resolver -->
+    <!--<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="exceptionMappings">
+            <props>
+                <prop key="com.globallogic.store.exception.NotFoundException">error/404</prop>
+                <prop key="java.lang.Exception">error/error</prop>
+                <prop key="java.lang.RuntimeException">error/error</prop>
+            </props>
+        </property>
+        <property name="statusCodes">
+            <props>
+                <prop key="error/404">404</prop>
+                <prop key="error/error">500</prop>
+            </props>
+        </property>
+    </bean>-->
+
+    <!-- Resource resolver -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/pages/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!-- Static resources-->
+    <mvc:resources mapping="/style/**" location="/style/"/>
+    <mvc:resources mapping="/images/**" location="/images/"/>
+    <mvc:resources mapping="/script/**" location="/script/"/>
+
+    <!-- JSP Fragments -->
+    <mvc:resources mapping="/parts/**" location="/parts/"/>
+</beans>

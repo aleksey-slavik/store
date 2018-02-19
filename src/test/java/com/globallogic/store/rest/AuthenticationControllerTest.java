@@ -32,8 +32,8 @@ import static org.mockito.Mockito.when;
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
-                "file:src/main/webapp/WEB-INF/spring-servlet.xml",
-                "file:src/main/webapp/WEB-INF/spring-security.xml"})
+                "file:src/main/resources/spring-dao.xml",
+                "file:src/main/resources/spring-security.xml"})
 public class AuthenticationControllerTest {
 
     private MockMvc mvc;

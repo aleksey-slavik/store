@@ -1,4 +1,4 @@
-package com.globallogic.store.security.core;
+package com.globallogic.store.security;
 
 /**
  * Interface which consist method of auto login during success registration.

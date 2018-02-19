@@ -1,7 +1,7 @@
 package com.globallogic.store.web.user;
 
 import com.globallogic.store.domain.user.User;
-import com.globallogic.store.security.core.RegisterUserService;
+import com.globallogic.store.security.RegisterUserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.web.client.RestTemplate;

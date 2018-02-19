@@ -1,4 +1,4 @@
-package com.globallogic.store.rest.spring;
+package com.globallogic.store.rest;
 
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.dto.product.ProductPreviewDto;
