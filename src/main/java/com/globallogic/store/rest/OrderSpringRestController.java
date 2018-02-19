@@ -78,8 +78,9 @@ public class OrderSpringRestController {
      * @return list of {@link Order}
      */
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Order> findOrder() {
-        return orderDao.entityList();
+    public List<Order> findOrder(@RequestParam(value = "page", defaultValue = "1") int page,
+                                 @RequestParam(value = "size", defaultValue = "5") int size) {
+        return orderDao.entityList((page - 1) * size, size);
     }
 
     @RequestMapping(value = "/customers/{username}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -111,11 +112,12 @@ public class OrderSpringRestController {
     }
 
     @RequestMapping(value = "/{id}/items", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<OrderItem> getItemsOfOrderByOrderId(final @PathVariable Long id) {
+    public List<OrderItem> getItemsOfOrderByOrderId(final @PathVariable Long id,@RequestParam(value = "page", defaultValue = "1") int page,
+                                                    @RequestParam(value = "size", defaultValue = "5") int size) {
         final Order order = getOrderById(id);
         List<OrderItem> items = orderItemDao.entityListByValue(new HashMap<String, Object>() {{
             put(orderKey, order);
-        }});
+        }}, (page - 1) * size, size);
 
         if (items == null || items.isEmpty()) {
             throw new EmptyResponseException();

@@ -1,5 +1,6 @@
 package com.globallogic.store.dao;
 
+import com.globallogic.store.exception.PaginationException;
 import org.hibernate.Session;
 
 /**

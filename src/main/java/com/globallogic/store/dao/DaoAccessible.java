@@ -28,9 +28,9 @@ public interface DaoAccessible<E, K> {
      */
     E entityByValue(Map<String, Object> params);
 
-    List<E> entityList();
+    List<E> entityList(int offset, int limit);
 
-    List<E> entityListByValue(Map<String, Object> params);
+    List<E> entityListByValue(Map<String, Object> params, int offset, int limit);
 
     E createEntity(E entity);
 

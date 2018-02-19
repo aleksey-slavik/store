@@ -72,7 +72,7 @@ public class ProductSpringRestController {
         List<Product> products;
 
         if (name == null && brand == null && price == null) {
-            products = productDao.entityList();
+            products = productDao.entityList((page - 1) * size, size);
 
             if (products == null || products.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -89,7 +89,7 @@ public class ProductSpringRestController {
             if (price != null)
                 params.put("price", price);
 
-            products = productDao.entityListByValue(params);
+            products = productDao.entityListByValue(params, (page - 1) * size, size);
 
             if (products == null || products.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);

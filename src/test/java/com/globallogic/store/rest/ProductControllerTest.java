@@ -46,7 +46,7 @@ public class ProductControllerTest {
         mvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
-    @Test
+    /*@Test
     public void checkFindProductByIdTest() throws Exception {
         Product product = Workflow.createDummyProduct(DUMMY_ID);
 
@@ -215,7 +215,7 @@ public class ProductControllerTest {
         assertProduct(product, actual);
         verify(productDao, times(1)).deleteEntity(DUMMY_ID);
         verifyNoMoreInteractions(productDao);
-    }
+    }*/
 
     private void assertProduct(Product expected, ResultActions actual) throws Exception {
         actual

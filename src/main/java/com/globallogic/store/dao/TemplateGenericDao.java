@@ -23,11 +23,10 @@ public class TemplateGenericDao<T> {
      */
     public final T processQuery(Queryable<T> queryable) {
         SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
-        Session session = sessionFactory.openSession();
         Transaction transaction = null;
         T result = null;
 
-        try {
+        try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
             result = queryable.query(session);
             transaction.commit();
@@ -35,8 +34,6 @@ public class TemplateGenericDao<T> {
             if (transaction != null) {
                 transaction.rollback();
             }
-        } finally {
-            session.close();
         }
 
         return result;

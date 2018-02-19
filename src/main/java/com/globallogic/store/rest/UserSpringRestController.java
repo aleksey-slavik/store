@@ -76,7 +76,7 @@ public class UserSpringRestController {
         List<User> users;
 
         if (username == null && password == null) {
-            users = userDao.entityList();
+            users = userDao.entityList((page - 1) * size, size);
         } else {
             Map<String, Object> params = new HashMap<>();
 
@@ -85,7 +85,7 @@ public class UserSpringRestController {
             if (password != null)
                 params.put("password", password);
 
-            users = userDao.entityListByValue(params);
+            users = userDao.entityListByValue(params, (page - 1) * size, size);
         }
 
         if (users == null || users.isEmpty()) {

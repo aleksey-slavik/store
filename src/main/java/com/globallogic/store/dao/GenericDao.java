@@ -1,11 +1,13 @@
 package com.globallogic.store.dao;
 
-import org.hibernate.Session;
+import com.globallogic.store.exception.PaginationException;
 
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -31,89 +33,89 @@ public class GenericDao<E> implements DaoAccessible<E, Long> {
     }
 
     public E entityByKey(final Long id) {
-        return new TemplateGenericDao<E>().processQuery(new Queryable<E>() {
-            public E query(Session session) {
-                return session.get(entityClass, id);
-            }
-        });
+        return new TemplateGenericDao<E>().processQuery(session -> session.get(entityClass, id));
     }
 
     public E entityByValue(final Map<String, Object> params) {
-        return new TemplateGenericDao<E>().processQuery(new Queryable<E>() {
-            public E query(Session session) {
-                CriteriaBuilder builder = session.getCriteriaBuilder();
-                CriteriaQuery<E> query = builder.createQuery(entityClass);
-                Root<E> root = query.from(entityClass);
-                query.select(root);
-                ArrayList<Predicate> predicates = new ArrayList<Predicate>();
+        return new TemplateGenericDao<E>().processQuery(session -> {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<E> query = builder.createQuery(entityClass);
+            Root<E> root = query.from(entityClass);
+            query.select(root);
+            ArrayList<Predicate> predicates = new ArrayList<>();
 
-                for (Map.Entry<String, Object> entry : params.entrySet()) {
-                    predicates.add(builder.equal(root.get(entry.getKey()), entry.getValue()));
-                }
+            for (Map.Entry<String, Object> entry : params.entrySet()) {
+                predicates.add(builder.equal(root.get(entry.getKey()), entry.getValue()));
+            }
 
-                query.where(builder.and(predicates.toArray(new Predicate[]{})));
-                return session.createQuery(query).getSingleResult();
+            query.where(builder.and(predicates.toArray(new Predicate[]{})));
+            return session.createQuery(query).getSingleResult();
+        });
+    }
+
+    public List<E> entityList(int offset, int limit) {
+        return new TemplateGenericDao<List<E>>().processQuery(session -> {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+
+            //getting the total number of entities
+            CriteriaQuery<Long> countQuery = builder.createQuery(Long.class);
+            countQuery.select(builder.count(countQuery.from(entityClass)));
+            Long count = session.createQuery(countQuery).getSingleResult();
+
+            //create select statement for entities
+            CriteriaQuery<E> allEntitiesQuery = builder.createQuery(entityClass);
+            Root<E> root = allEntitiesQuery.from(entityClass);
+            CriteriaQuery<E> selectAll = allEntitiesQuery.select(root);
+
+            //create pagination
+            TypedQuery<E> paginationQuery = session.createQuery(selectAll);
+
+            if (offset < count.intValue()) {
+                paginationQuery.setFirstResult(offset);
+                paginationQuery.setMaxResults(limit);
+                return paginationQuery.getResultList();
+            } else {
+                throw new PaginationException();
             }
         });
     }
 
-    public List<E> entityList() {
-        return new TemplateGenericDao<List<E>>().processQuery(new Queryable<List<E>>() {
-            public List<E> query(Session session) {
-                CriteriaBuilder builder = session.getCriteriaBuilder();
-                CriteriaQuery<E> query = builder.createQuery(entityClass);
-                Root<E> root = query.from(entityClass);
-                query.select(root);
+    public List<E> entityListByValue(final Map<String, Object> params, int offset, int limit) {
+        return new TemplateGenericDao<List<E>>().processQuery(session -> {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<E> query = builder.createQuery(entityClass);
+            Root<E> root = query.from(entityClass);
+            query.select(root);
+            ArrayList<Predicate> predicates = new ArrayList<>();
 
-                return session.createQuery(query).getResultList();
+            for (Map.Entry<String, Object> entry : params.entrySet()) {
+                predicates.add(builder.equal(root.get(entry.getKey()), entry.getValue()));
             }
-        });
-    }
 
-    public List<E> entityListByValue(final Map<String, Object> params) {
-        return new TemplateGenericDao<List<E>>().processQuery(new Queryable<List<E>>() {
-            public List<E> query(Session session) {
-                CriteriaBuilder builder = session.getCriteriaBuilder();
-                CriteriaQuery<E> query = builder.createQuery(entityClass);
-                Root<E> root = query.from(entityClass);
-                query.select(root);
-                ArrayList<Predicate> predicates = new ArrayList<Predicate>();
-
-                for (Map.Entry<String, Object> entry : params.entrySet()) {
-                    predicates.add(builder.equal(root.get(entry.getKey()), entry.getValue()));
-                }
-
-                query.where(builder.and(predicates.toArray(new Predicate[]{})));
-                return session.createQuery(query).getResultList();
-            }
+            query.where(builder.and(predicates.toArray(new Predicate[]{})));
+            return session.createQuery(query).getResultList();
         });
     }
 
     public E createEntity(final E entity) {
-        return new TemplateGenericDao<E>().processQuery(new Queryable<E>() {
-            public E query(Session session) {
-                session.save(entity);
-                return entity;
-            }
+        return new TemplateGenericDao<E>().processQuery(session -> {
+            session.save(entity);
+            return entity;
         });
     }
 
     public E updateEntity(final E entity) {
-        return new TemplateGenericDao<E>().processQuery(new Queryable<E>() {
-            public E query(Session session) {
-                session.update(entity);
-                return entity;
-            }
+        return new TemplateGenericDao<E>().processQuery(session -> {
+            session.update(entity);
+            return entity;
         });
     }
 
     public E deleteEntity(final Long id) {
-        return new TemplateGenericDao<E>().processQuery(new Queryable<E>() {
-            public E query(Session session) {
-                E entity = session.get(entityClass, id);
-                session.delete(entity);
-                return entity;
-            }
+        return new TemplateGenericDao<E>().processQuery(session -> {
+            E entity = session.get(entityClass, id);
+            session.delete(entity);
+            return entity;
         });
     }
 }
