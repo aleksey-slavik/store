@@ -67,12 +67,14 @@ public class ProductSpringRestController {
             @RequestParam(value = "brand", required = false) String brand,
             @RequestParam(value = "price", required = false) Double price,
             @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "size", defaultValue = "5") int size) {
+            @RequestParam(value = "size", defaultValue = "5") int size,
+            @RequestParam(value = "sort", defaultValue = "id") String sort,
+            @RequestParam(value = "order", defaultValue = "asc") String order) {
 
         List<Product> products;
 
         if (name == null && brand == null && price == null) {
-            products = productDao.entityList((page - 1) * size, size);
+            products = productDao.entityList((page - 1) * size, size, sort, order);
 
             if (products == null || products.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -89,7 +91,7 @@ public class ProductSpringRestController {
             if (price != null)
                 params.put("price", price);
 
-            products = productDao.entityListByValue(params, (page - 1) * size, size);
+            products = productDao.entityListByValue(params, (page - 1) * size, size, sort, order);
 
             if (products == null || products.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);

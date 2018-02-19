@@ -72,11 +72,13 @@ public class UserSpringRestController {
             @RequestParam(value = "username", required = false) String username,
             @RequestParam(value = "password", required = false) String password,
             @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "size", defaultValue = "5") int size) {
+            @RequestParam(value = "size", defaultValue = "5") int size,
+            @RequestParam(value = "sort", defaultValue = "id") String sort,
+            @RequestParam(value = "order", defaultValue = "asc") String order) {
         List<User> users;
 
         if (username == null && password == null) {
-            users = userDao.entityList((page - 1) * size, size);
+            users = userDao.entityList((page - 1) * size, size, sort, order);
         } else {
             Map<String, Object> params = new HashMap<>();
 
@@ -85,7 +87,7 @@ public class UserSpringRestController {
             if (password != null)
                 params.put("password", password);
 
-            users = userDao.entityListByValue(params, (page - 1) * size, size);
+            users = userDao.entityListByValue(params, (page - 1) * size, size, sort, order);
         }
 
         if (users == null || users.isEmpty()) {

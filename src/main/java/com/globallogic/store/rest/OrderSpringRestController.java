@@ -79,8 +79,10 @@ public class OrderSpringRestController {
      */
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Order> findOrder(@RequestParam(value = "page", defaultValue = "1") int page,
-                                 @RequestParam(value = "size", defaultValue = "5") int size) {
-        return orderDao.entityList((page - 1) * size, size);
+                                 @RequestParam(value = "size", defaultValue = "5") int size,
+                                 @RequestParam(value = "sort", defaultValue = "id") String sort,
+                                 @RequestParam(value = "order", defaultValue = "asc") String order) {
+        return orderDao.entityList((page - 1) * size, size, sort, order);
     }
 
     @RequestMapping(value = "/customers/{username}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -112,12 +114,15 @@ public class OrderSpringRestController {
     }
 
     @RequestMapping(value = "/{id}/items", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<OrderItem> getItemsOfOrderByOrderId(final @PathVariable Long id,@RequestParam(value = "page", defaultValue = "1") int page,
-                                                    @RequestParam(value = "size", defaultValue = "5") int size) {
+    public List<OrderItem> getItemsOfOrderByOrderId(final @PathVariable Long id,
+                                                    @RequestParam(value = "page", defaultValue = "1") int page,
+                                                    @RequestParam(value = "size", defaultValue = "5") int size,
+                                                    @RequestParam(value = "sort", defaultValue = "id") String sort,
+                                                    @RequestParam(value = "order", defaultValue = "asc") String orderBy) {
         final Order order = getOrderById(id);
         List<OrderItem> items = orderItemDao.entityListByValue(new HashMap<String, Object>() {{
             put(orderKey, order);
-        }}, (page - 1) * size, size);
+        }}, (page - 1) * size, size, sort, orderBy);
 
         if (items == null || items.isEmpty()) {
             throw new EmptyResponseException();

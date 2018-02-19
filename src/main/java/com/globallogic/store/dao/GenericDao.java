@@ -1,13 +1,10 @@
 package com.globallogic.store.dao;
 
-import com.globallogic.store.exception.PaginationException;
-
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -53,13 +50,20 @@ public class GenericDao<E> implements DaoAccessible<E, Long> {
         });
     }
 
-    public List<E> entityList(int offset, int limit) {
+    public List<E> entityList(int offset, int limit, String sort, String order) {
         return new TemplateGenericDao<List<E>>().processQuery(session -> {
             CriteriaBuilder builder = session.getCriteriaBuilder();
 
             //create select statement for entities
             CriteriaQuery<E> allEntitiesQuery = builder.createQuery(entityClass);
             Root<E> root = allEntitiesQuery.from(entityClass);
+
+            if (order.equalsIgnoreCase("DESC")) {
+                allEntitiesQuery.orderBy(builder.desc(root.get(sort)));
+            } else {
+                allEntitiesQuery.orderBy(builder.asc(root.get(sort)));
+            }
+
             CriteriaQuery<E> selectAll = allEntitiesQuery.select(root);
 
             //create pagination
@@ -70,21 +74,26 @@ public class GenericDao<E> implements DaoAccessible<E, Long> {
         });
     }
 
-    public List<E> entityListByValue(final Map<String, Object> params, int offset, int limit) {
+    public List<E> entityListByValue(final Map<String, Object> params, int offset, int limit, String sort, String order) {
         return new TemplateGenericDao<List<E>>().processQuery(session -> {
             CriteriaBuilder builder = session.getCriteriaBuilder();
 
             //create select statement for entities
-            CriteriaQuery<E> query = builder.createQuery(entityClass);
-            Root<E> root = query.from(entityClass);
-            query.select(root);
+            CriteriaQuery<E> selectQuery = builder.createQuery(entityClass);
+            Root<E> root = selectQuery.from(entityClass);
+            selectQuery.select(root);
             ArrayList<Predicate> predicates = new ArrayList<>();
 
             for (Map.Entry<String, Object> entry : params.entrySet()) {
                 predicates.add(builder.equal(root.get(entry.getKey()), entry.getValue()));
             }
 
-            CriteriaQuery<E> selectAll = query.where(builder.and(predicates.toArray(new Predicate[]{})));
+            if (order.equalsIgnoreCase("DESC")) {
+                selectQuery.orderBy(builder.desc(root.get(sort)));
+            } else {
+                selectQuery.orderBy(builder.asc(root.get(sort)));
+            }
+            CriteriaQuery<E> selectAll = selectQuery.where(builder.and(predicates.toArray(new Predicate[]{})));
 
             //create pagination
             TypedQuery<E> paginationQuery = session.createQuery(selectAll);
