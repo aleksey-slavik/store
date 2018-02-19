@@ -1,12 +1,14 @@
 package com.globallogic.store.rest.spring;
 
 import com.globallogic.store.dao.GenericDao;
+import com.globallogic.store.domain.user.User;
 import com.globallogic.store.exception.EmptyResponseException;
 import com.globallogic.store.exception.NotAcceptableException;
 import com.globallogic.store.exception.NotFoundException;
-import com.globallogic.store.model.User;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +21,11 @@ import java.util.List;
  * @author oleksii.slavik
  */
 @RestController
+@RequestMapping(value = "/api/users")
 public class UserSpringRestController {
+
+    @Value("${user.username}")
+    private String usernameKey;
 
     /**
      * {@link User} DAO object for access to database.
@@ -40,16 +46,15 @@ public class UserSpringRestController {
      * @return {@link User} item
      * @throws NotFoundException throws when user with given id not found
      */
-    @RequestMapping(value = "/users/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    public User getUserById(@PathVariable Long id) {
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
         User user = userDao.entityByKey(id);
 
-        if (user != null) {
-            return user;
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } else  {
+            return ResponseEntity.ok(user);
         }
-
-        throw new NotFoundException();
     }
 
     /**
@@ -60,8 +65,7 @@ public class UserSpringRestController {
      * @throws NotFoundException      throws when user with given id not found
      * @throws EmptyResponseException throws when user list is empty
      */
-    @RequestMapping(value = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<User> getUser(@RequestParam MultiValueMap<String, Object> params) {
         List<User> users;
 
@@ -84,7 +88,7 @@ public class UserSpringRestController {
      * @param user given {@link User}
      * @return created {@link User}
      */
-    @RequestMapping(value = "/users", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public User createUser(@RequestBody User user) {
         checkUser(user);
         return userDao.createEntity(user);
@@ -97,7 +101,7 @@ public class UserSpringRestController {
      * @param user updated {@link User} data
      * @return updated {@link User}
      */
-    @RequestMapping(value = "/users/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public User updateUser(@PathVariable Long id, final @RequestBody User user) {
         checkUser(user);
         user.setId(id);
@@ -110,7 +114,7 @@ public class UserSpringRestController {
      * @param id given id of {@link User}
      * @return deleted {@link User}
      */
-    @RequestMapping(value = "/users/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public User deleteUserById(@PathVariable Long id) {
         getUserById(id);
         return userDao.deleteEntity(id);
@@ -118,7 +122,7 @@ public class UserSpringRestController {
 
     private void checkUser(final User user) {
         User checkUser = userDao.entityByValue(new HashMap<String, Object>() {{
-            put("username", user.getUsername());
+            put(usernameKey, user.getUsername());
         }});
 
         if (checkUser != null) {

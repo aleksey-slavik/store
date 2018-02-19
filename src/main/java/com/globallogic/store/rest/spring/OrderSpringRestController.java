@@ -1,13 +1,13 @@
 package com.globallogic.store.rest.spring;
 
 import com.globallogic.store.dao.GenericDao;
+import com.globallogic.store.domain.user.User;
 import com.globallogic.store.exception.EmptyResponseException;
 import com.globallogic.store.exception.NotAcceptableException;
 import com.globallogic.store.exception.NotFoundException;
-import com.globallogic.store.model.Order;
-import com.globallogic.store.model.OrderItem;
-import com.globallogic.store.model.Status;
-import com.globallogic.store.model.User;
+import com.globallogic.store.domain.order.Order;
+import com.globallogic.store.domain.order.OrderItem;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +21,20 @@ import java.util.List;
  * @author oleksii.slavik
  */
 @RestController
+@RequestMapping(value = "/api/orders")
 public class OrderSpringRestController {
+
+    @Value("${user.username}")
+    private String usernameKey;
+
+    @Value("${order.owner}")
+    private String ownerKey;
+
+    @Value("${order.status}")
+    private String statusKey;
+
+    @Value("${orderItem.order}")
+    private String orderKey;
 
     /**
      * {@link Order} DAO object for access to database.
@@ -64,28 +77,29 @@ public class OrderSpringRestController {
      *
      * @return list of {@link Order}
      */
-    @RequestMapping(value = "/orders", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Order> findOrder() {
         return orderDao.entityList();
     }
 
-    @RequestMapping(value = "/orders/customers/{username}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/customers/{username}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Order findOrderByUsername(final @PathVariable String username) {
         final User user = userDao.entityByValue(new HashMap<String, Object>() {{
-            put("username", username);
+            put(usernameKey, username);
         }});
 
         try {
             return orderDao.entityByValue(new HashMap<String, Object>() {{
-                put("user", user);
-                put("status", Status.OPENED);
+                put(ownerKey, user);
+                //put(statusKey, Status.OPENED);
             }});
         } catch (NoResultException e) {
-            return orderDao.createEntity(new Order(user));
+            //return orderDao.createEntity(new Order(user));
+            return null;
         }
     }
 
-    @RequestMapping(value = "/orders/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Order getOrderById(@PathVariable Long id) {
         Order order = orderDao.entityByKey(id);
 
@@ -96,11 +110,11 @@ public class OrderSpringRestController {
         }
     }
 
-    @RequestMapping(value = "/orders/{id}/items", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}/items", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<OrderItem> getItemsOfOrderByOrderId(final @PathVariable Long id) {
         final Order order = getOrderById(id);
         List<OrderItem> items = orderItemDao.entityListByValue(new HashMap<String, Object>() {{
-            put("order", order);
+            put(orderKey, order);
         }});
 
         if (items == null || items.isEmpty()) {
@@ -110,7 +124,7 @@ public class OrderSpringRestController {
         return items;
     }
 
-    @RequestMapping(value = "/orders/{id}/items/{itemId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}/items/{itemId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public OrderItem getItemOfOrderByItemId(@PathVariable Long id, @PathVariable Long itemId) {
         Order order = getOrderById(id);
         OrderItem orderItem = orderItemDao.entityByKey(itemId);
@@ -119,14 +133,14 @@ public class OrderSpringRestController {
             throw new NotFoundException();
         }
 
-        if (orderItem.getOrder().getId().equals(order.getId())) {
+        if (orderItem.getOrder().getId() == order.getId()) {
             return orderItem;
         } else {
             throw new NotAcceptableException();
         }
     }
 
-    @RequestMapping(value = "/orders/{id}/items", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}/items", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public OrderItem addOrderItem(@PathVariable Long id, @RequestBody OrderItem orderItem) {
         Order order = getOrderById(id);
 
@@ -140,7 +154,7 @@ public class OrderSpringRestController {
         return createdOrderItem;
     }
 
-    @RequestMapping(value = "/orders/{id}/items/{itemId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}/items/{itemId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public OrderItem updateOrderItem(@PathVariable Long id, @PathVariable Long itemId, @RequestBody OrderItem orderItem) {
         Order order = getOrderById(id);
 
@@ -149,13 +163,13 @@ public class OrderSpringRestController {
         }
 
         orderItem.setOrder(order);
-        orderItem.setId(itemId);
+        //orderItem.setId(itemId);
         OrderItem updatedOrderItem = orderItemDao.updateEntity(orderItem);
         checkOrderTotalCount(id);
         return updatedOrderItem;
     }
 
-    @RequestMapping(value = "/orders/{id}/items/{itemId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}/items/{itemId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public OrderItem deleteOrderItem(@PathVariable Long id, @PathVariable Long itemId) {
         getItemOfOrderByItemId(id, itemId);
         OrderItem deletedOrderItem = orderItemDao.deleteEntity(itemId);
@@ -169,9 +183,9 @@ public class OrderSpringRestController {
      * @param order given {@link Order}
      * @return created {@link Order}
      */
-    @RequestMapping(value = "/orders", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public Order createOrder(@RequestBody Order order) {
-        order.checkTotalCost();
+        //order.checkTotalCost();
         return orderDao.createEntity(order);
     }
 
@@ -182,10 +196,10 @@ public class OrderSpringRestController {
      * @param order updated {@link Order} data
      * @return updated {@link Order}
      */
-    @RequestMapping(value = "/orders/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public Order updateOrder(@PathVariable Long id, @RequestBody Order order) {
         order.setId(id);
-        order.checkTotalCost();
+        //order.checkTotalCost();
 
         for (OrderItem item : order.getItems()) {
             item.setOrder(order);
@@ -200,7 +214,7 @@ public class OrderSpringRestController {
      * @param id given id of {@link Order}
      * @return deleted {@link Order}
      */
-    @RequestMapping(value = "/orders/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Order deleteOrderById(@PathVariable Long id) {
         getOrderById(id);
         return orderDao.deleteEntity(id);
@@ -208,7 +222,7 @@ public class OrderSpringRestController {
 
     private void checkOrderTotalCount(Long id) {
         Order order = orderDao.entityByKey(id);
-        order.checkTotalCost();
+        //order.checkTotalCost();
         orderDao.updateEntity(order);
     }
 }

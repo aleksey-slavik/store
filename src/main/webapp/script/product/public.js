@@ -3,14 +3,14 @@
  *
  * @type {string}
  */
-var rootURL = "http://localhost:8080/products";
+var rootURL = "http://localhost:8080/api/products";
 
 /**
  * Root url path for orders rest service
  *
  * @type {string}
  */
-var orderURL = "http://localhost:8080/orders";
+var orderURL = "http://localhost:8080/api/orders";
 
 /**
  * Temporary variable for product data
@@ -18,7 +18,7 @@ var orderURL = "http://localhost:8080/orders";
 var currentItem;
 
 /**
- * Id of order for current user
+ * Id of orders for current user
  */
 var sessionOrderId;
 
@@ -66,7 +66,7 @@ function fillProduct(item) {
 }
 
 /**
- * Parse order item data from form to json format
+ * Parse orders item data from form to json format
  *
  * @returns {string}
  */
@@ -168,7 +168,7 @@ function showModalWindow() {
 }
 
 /**
- * Check opened order of given user.
+ * Check opened orders of given user.
  */
 function checkUserOrderByUsername() {
     getItem(
@@ -183,7 +183,7 @@ function checkUserOrderByUsername() {
 }
 
 /**
- * Add order item to opened order
+ * Add orders item to opened orders
  */
 function addOrderItem() {
     checkUserOrderByUsername();
