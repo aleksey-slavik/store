@@ -129,19 +129,6 @@
         <property name="userDao" ref="userDao"/>
     </bean>
 
-    <!-- Jersey Rest beans -->
-    <bean name="userJerseyRestController" class="com.globallogic.store.rest.jersey.UserJerseyRestController">
-        <property name="userDao" ref="userDao"/>
-    </bean>
-
-    <bean name="productJerseyRestController" class="com.globallogic.store.rest.jersey.ProductJerseyRestController">
-        <property name="productDao" ref="productDao"/>
-    </bean>
-
-    <bean name="orderJerseyRestController" class="com.globallogic.store.rest.jersey.OrderJerseyRestController">
-        <property name="orderDao" ref="orderDao"/>
-    </bean>
-
     <!-- Spring Security -->
     <bean id="loginUserService" class="com.globallogic.store.security.core.LoginUserService">
         <property name="userDao" ref="userDao"/>

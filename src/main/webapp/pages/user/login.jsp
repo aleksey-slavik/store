@@ -17,7 +17,7 @@
         </tr>
     </table>
 
-    <form id="loginForm" action="${pageContext.request.contextPath}/api/auth" method="POST">
+    <form id="loginForm" action="${pageContext.request.contextPath}/j_spring_security_check" method="POST">
         <table align="center">
             <tr>
                 <td><label for="username">Username:</label></td>
