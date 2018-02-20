@@ -1,9 +1,10 @@
 package com.globallogic.store.dto.product;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.globallogic.store.domain.product.Product;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 public class ProductDto {
@@ -21,7 +22,7 @@ public class ProductDto {
     @Size(max = 10000, message = "Description of product must be less than 10000 characters")
     private String description;
 
-    @Positive(message = "Price of product must be positive")
+    @Min(value = 0)
     private double price;
 
     public ProductDto() {}
@@ -82,6 +83,7 @@ public class ProductDto {
         this.price = price;
     }
 
+    @JsonIgnore
     public Product getProduct() {
         return new Product(
                 getId(),

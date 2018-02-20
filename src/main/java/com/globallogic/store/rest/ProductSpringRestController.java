@@ -7,7 +7,8 @@ import com.globallogic.store.domain.product.Product;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
+import org.springframework.validation.Validator;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -30,11 +31,22 @@ public class ProductSpringRestController {
      */
     private GenericDao<Product> productDao;
 
+    private Validator validator;
+
     /**
      * Injection {@link Product} DAO object for access to database.
      */
     public void setProductDao(GenericDao<Product> productDao) {
         this.productDao = productDao;
+    }
+
+    public void setValidator(Validator validator) {
+        this.validator = validator;
+    }
+
+    @InitBinder
+    protected void initBinder(WebDataBinder binder) {
+        binder.setValidator(validator);
     }
 
     /**
@@ -111,10 +123,7 @@ public class ProductSpringRestController {
      * @return created {@link Product}
      */
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createProduct(@Valid @RequestBody ProductDto product, BindingResult errors) {
-        if (errors.hasErrors()) {
-            System.out.println("errre");
-        }
+    public ResponseEntity<?> createProduct(@Valid @RequestBody ProductDto product) {
         Product created = productDao.createEntity(product.getProduct());
         return ResponseEntity.ok().body(created);
     }

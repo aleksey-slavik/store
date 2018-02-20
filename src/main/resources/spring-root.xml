@@ -11,8 +11,17 @@
        http://www.springframework.org/schema/mvc
        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
+    <context:component-scan base-package="com.globallogic.store"/>
+
+    <!-- support JSR303 annotation if JSR 303 validation present on classpath -->
     <mvc:annotation-driven/>
-    <context:component-scan base-package="com.globallogic.store.*"/>
+
+    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+
+    <!-- Validation Messages -->
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basename" value="messages"/>
+    </bean>
 
     <!-- Properties -->
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
