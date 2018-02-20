@@ -41,5 +41,4 @@ public class ErrorRestController extends ResponseEntityExceptionHandler {
 
         return dto;
     }
-
 }

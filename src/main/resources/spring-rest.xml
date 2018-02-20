@@ -27,7 +27,7 @@
     </bean>
 
     <bean name="productSpringRestController" class="com.globallogic.store.rest.ProductSpringRestController">
-        <property name="validator" ref="validator"/>
+        <!--<property name="validator" ref="validator"/>-->
         <property name="productDao" ref="productDao"/>
     </bean>
 

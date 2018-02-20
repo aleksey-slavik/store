@@ -31,7 +31,7 @@ public class ProductSpringRestController {
      */
     private GenericDao<Product> productDao;
 
-    private Validator validator;
+    /*private Validator validator;*/
 
     /**
      * Injection {@link Product} DAO object for access to database.
@@ -40,14 +40,14 @@ public class ProductSpringRestController {
         this.productDao = productDao;
     }
 
-    public void setValidator(Validator validator) {
+    /*public void setValidator(Validator validator) {
         this.validator = validator;
     }
-
-    @InitBinder
+*/
+    /*@InitBinder
     protected void initBinder(WebDataBinder binder) {
         binder.setValidator(validator);
-    }
+    }*/
 
     /**
      * Return {@link Product} item with given id
