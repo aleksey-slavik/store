@@ -29,11 +29,11 @@ public class GenericDao<E> implements DaoAccessible<E, Long> {
         this.entityClass = entityClass;
     }
 
-    public E entityByKey(final Long id) {
+    public E getEntityByKey(final Long id) {
         return new TemplateGenericDao<E>().processQuery(session -> session.get(entityClass, id));
     }
 
-    public E entityByValue(final Map<String, Object> params) {
+    public E getEntity(final SearchCriteria criteria) {
         return new TemplateGenericDao<E>().processQuery(session -> {
             CriteriaBuilder builder = session.getCriteriaBuilder();
             CriteriaQuery<E> query = builder.createQuery(entityClass);
@@ -41,8 +41,14 @@ public class GenericDao<E> implements DaoAccessible<E, Long> {
             query.select(root);
             ArrayList<Predicate> predicates = new ArrayList<>();
 
-            for (Map.Entry<String, Object> entry : params.entrySet()) {
-                predicates.add(builder.equal(root.get(entry.getKey()), entry.getValue()));
+            for (Map.Entry<String, List<Object>> entry : criteria.getParams().entrySet()) {
+                ArrayList<Predicate> innerPredicates = new ArrayList<>();
+
+                for (Object value : entry.getValue()) {
+                    innerPredicates.add(builder.equal(root.get(entry.getKey()), value));
+                }
+
+                predicates.add( builder.or(innerPredicates.toArray(new Predicate[]{})));
             }
 
             query.where(builder.and(predicates.toArray(new Predicate[]{})));
@@ -74,7 +80,7 @@ public class GenericDao<E> implements DaoAccessible<E, Long> {
         });
     }
 
-    public List<E> entityListByValue(final Map<String, Object> params, int offset, int limit, String sort, String order) {
+    public List<E> getEntityList(final SearchCriteria criteria) {
         return new TemplateGenericDao<List<E>>().processQuery(session -> {
             CriteriaBuilder builder = session.getCriteriaBuilder();
 
@@ -84,21 +90,27 @@ public class GenericDao<E> implements DaoAccessible<E, Long> {
             selectQuery.select(root);
             ArrayList<Predicate> predicates = new ArrayList<>();
 
-            for (Map.Entry<String, Object> entry : params.entrySet()) {
-                predicates.add(builder.equal(root.get(entry.getKey()), entry.getValue()));
+            for (Map.Entry<String, List<Object>> entry : criteria.getParams().entrySet()) {
+                ArrayList<Predicate> innerPredicates = new ArrayList<>();
+
+                for (Object value : entry.getValue()) {
+                    innerPredicates.add(builder.equal(root.get(entry.getKey()), value));
+                }
+
+                predicates.add( builder.or(innerPredicates.toArray(new Predicate[]{})));
             }
 
-            if (order.equalsIgnoreCase("DESC")) {
-                selectQuery.orderBy(builder.desc(root.get(sort)));
+            if (criteria.getOrderBy().equalsIgnoreCase("DESC")) {
+                selectQuery.orderBy(builder.desc(root.get(criteria.getSortBy())));
             } else {
-                selectQuery.orderBy(builder.asc(root.get(sort)));
+                selectQuery.orderBy(builder.asc(root.get(criteria.getSortBy())));
             }
             CriteriaQuery<E> selectAll = selectQuery.where(builder.and(predicates.toArray(new Predicate[]{})));
 
             //create pagination
             TypedQuery<E> paginationQuery = session.createQuery(selectAll);
-            paginationQuery.setFirstResult(offset);
-            paginationQuery.setMaxResults(limit);
+            paginationQuery.setFirstResult(criteria.getOffset());
+            paginationQuery.setMaxResults(criteria.getLimit());
             return paginationQuery.getResultList();
         });
     }

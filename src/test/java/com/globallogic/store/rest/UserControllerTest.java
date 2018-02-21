@@ -46,7 +46,7 @@ public class UserControllerTest {
     public void checkFindUserByIdTest() throws Exception {
         User user = Workflow.createCustomerUser();
 
-        when(userDao.entityByKey(DUMMY_ID))
+        when(userDao.getEntityByKey(DUMMY_ID))
                 .thenReturn(user);
 
         ResultActions actual = mvc.perform(get(URL_PATH_GET_BY_ID, DUMMY_ID)
@@ -55,20 +55,20 @@ public class UserControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
         assertUser(user, actual);
-        verify(userDao, times(1)).entityByKey(DUMMY_ID);
+        verify(userDao, times(1)).getEntityByKey(DUMMY_ID);
         verifyNoMoreInteractions(userDao);
     }
 
     @Test
     public void checkFindUserByWrongIdTest() throws Exception {
-        when(userDao.entityByKey(DUMMY_ID))
+        when(userDao.getEntityByKey(DUMMY_ID))
                 .thenReturn(null);
 
         mvc.perform(get(URL_PATH_ROOT + DUMMY_ID)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
 
-        verify(userDao, times(1)).entityByKey(DUMMY_ID);
+        verify(userDao, times(1)).getEntityByKey(DUMMY_ID);
         verifyNoMoreInteractions(userDao);
     }
 

@@ -87,24 +87,25 @@ public class OrderRestController {
 
     @RequestMapping(value = "/customers/{username}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Order findOrderByUsername(final @PathVariable String username) {
-        final User user = userDao.entityByValue(new HashMap<String, Object>() {{
+        /*final User user = userDao.getEntity(new HashMap<String, Object>() {{
             put(usernameKey, username);
         }});
 
         try {
-            return orderDao.entityByValue(new HashMap<String, Object>() {{
+            return orderDao.getEntity(new HashMap<String, Object>() {{
                 put(ownerKey, user);
                 //put(statusKey, Status.OPENED);
             }});
         } catch (NoResultException e) {
             //return orderDao.createEntity(new Order(user));
             return null;
-        }
+        }*/
+        return null;
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Order getOrderById(@PathVariable Long id) {
-        Order order = orderDao.entityByKey(id);
+        Order order = orderDao.getEntityByKey(id);
 
         if (order != null) {
             return order;
@@ -119,8 +120,8 @@ public class OrderRestController {
                                                     @RequestParam(value = "size", defaultValue = "5") int size,
                                                     @RequestParam(value = "sort", defaultValue = "id") String sort,
                                                     @RequestParam(value = "order", defaultValue = "asc") String orderBy) {
-        final Order order = getOrderById(id);
-        List<OrderItem> items = orderItemDao.entityListByValue(new HashMap<String, Object>() {{
+        /*final Order order = getOrderById(id);
+        List<OrderItem> items = orderItemDao.getEntityList(new HashMap<String, Object>() {{
             put(orderKey, order);
         }}, (page - 1) * size, size, sort, orderBy);
 
@@ -128,13 +129,14 @@ public class OrderRestController {
             throw new EmptyResponseException();
         }
 
-        return items;
+        return items;*/
+        return null;
     }
 
     @RequestMapping(value = "/{id}/items/{itemId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public OrderItem getItemOfOrderByItemId(@PathVariable Long id, @PathVariable Long itemId) {
         Order order = getOrderById(id);
-        OrderItem orderItem = orderItemDao.entityByKey(itemId);
+        OrderItem orderItem = orderItemDao.getEntityByKey(itemId);
 
         if (orderItem == null) {
             throw new NotFoundException();
@@ -228,7 +230,7 @@ public class OrderRestController {
     }
 
     private void checkOrderTotalCount(Long id) {
-        Order order = orderDao.entityByKey(id);
+        Order order = orderDao.getEntityByKey(id);
         //order.checkTotalCost();
         orderDao.updateEntity(order);
     }

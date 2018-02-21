@@ -1,6 +1,7 @@
 package com.globallogic.store.rest;
 
 import com.globallogic.store.dao.GenericDao;
+import com.globallogic.store.dao.SearchCriteria;
 import com.globallogic.store.dto.product.ProductDto;
 import com.globallogic.store.dto.product.ProductPreviewDto;
 import com.globallogic.store.domain.product.Product;
@@ -11,9 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Spring rest controller for {@link Product}.
@@ -42,9 +41,12 @@ public class ProductRestController {
      * @param id given id
      * @return {@link Product} item
      */
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(
+            value = "/{id}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getProductById(@PathVariable long id) {
-        Product product = productDao.entityByKey(id);
+        Product product = productDao.getEntityByKey(id);
 
         if (product == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -61,45 +63,34 @@ public class ProductRestController {
      * @param price price of product
      * @param page  number of page
      * @param size  count of product per page
+     * @param sort  name of field for sorting
+     * @param order orderBy value
      * @return list of {@link Product}
      */
-    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> findProduct(
-            @RequestParam(value = "name", required = false) String name,
-            @RequestParam(value = "brand", required = false) String brand,
-            @RequestParam(value = "price", required = false) Double price,
+    @RequestMapping(
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getProductList(
+            @RequestParam(value = "name", required = false) String[] name,
+            @RequestParam(value = "brand", required = false) String[] brand,
+            @RequestParam(value = "price", required = false) Double[] price,
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "5") int size,
             @RequestParam(value = "sort", defaultValue = "id") String sort,
             @RequestParam(value = "order", defaultValue = "asc") String order) {
 
-        List<Product> products;
+        SearchCriteria criteria = new SearchCriteria(page, size, sort, order);
+        criteria.addCriteria("name", name);
+        criteria.addCriteria("brand", brand);
+        criteria.addCriteria("price", price);
 
-        if (name == null && brand == null && price == null) {
-            products = productDao.entityList((page - 1) * size, size, sort, order);
+        List<Product> products = productDao.getEntityList(criteria);
 
-            if (products == null || products.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-            } else {
-                return ResponseEntity.ok().body(createPreviews(products));
-            }
+        if (products == null || products.isEmpty()) {
+            HttpStatus status = criteria.isParamsAbsent() ? HttpStatus.NO_CONTENT : HttpStatus.NOT_FOUND;
+            return ResponseEntity.status(status).body(null);
         } else {
-            Map<String, Object> params = new HashMap<>();
-
-            if (name != null)
-                params.put("name", name);
-            if (brand != null)
-                params.put("brand", brand);
-            if (price != null)
-                params.put("price", price);
-
-            products = productDao.entityListByValue(params, (page - 1) * size, size, sort, order);
-
-            if (products == null || products.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-            } else {
-                return ResponseEntity.ok().body(createPreviews(products));
-            }
+            return ResponseEntity.ok().body(createPreviews(products));
         }
     }
 
@@ -109,7 +100,9 @@ public class ProductRestController {
      * @param product given {@link Product}
      * @return created {@link Product}
      */
-    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createProduct(@Valid @RequestBody ProductDto product) {
         Product created = productDao.createEntity(product.getProduct());
         return ResponseEntity.ok().body(created);
@@ -122,10 +115,13 @@ public class ProductRestController {
      * @param product updated {@link Product} data
      * @return updated {@link Product}
      */
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateProduct(@RequestBody Product product, @PathVariable Long id) {
+    @RequestMapping(
+            value = "/{id}",
+            method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateProduct(@Valid @RequestBody ProductDto product, @PathVariable Long id) {
         product.setId(id);
-        Product updated = productDao.updateEntity(product);
+        Product updated = productDao.updateEntity(product.getProduct());
         return ResponseEntity.ok(updated);
     }
 
@@ -135,8 +131,11 @@ public class ProductRestController {
      * @param id given id of {@link Product}
      * @return deleted {@link Product}
      */
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteProductById(@PathVariable Long id) {
+    @RequestMapping(
+            value = "/{id}",
+            method = RequestMethod.DELETE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
         Product deleted = productDao.deleteEntity(id);
         return ResponseEntity.ok(deleted);
     }

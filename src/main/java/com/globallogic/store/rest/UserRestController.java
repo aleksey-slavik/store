@@ -1,6 +1,7 @@
 package com.globallogic.store.rest;
 
 import com.globallogic.store.dao.GenericDao;
+import com.globallogic.store.dao.SearchCriteria;
 import com.globallogic.store.domain.user.User;
 import com.globallogic.store.exception.EmptyResponseException;
 import com.globallogic.store.exception.NotAcceptableException;
@@ -9,12 +10,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Spring rest controller for {@link User}.
@@ -49,7 +47,7 @@ public class UserRestController {
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getUserById(@PathVariable Long id) {
-        User user = userDao.entityByKey(id);
+        User user = userDao.getEntityByKey(id);
 
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -75,20 +73,12 @@ public class UserRestController {
             @RequestParam(value = "size", defaultValue = "5") int size,
             @RequestParam(value = "sort", defaultValue = "id") String sort,
             @RequestParam(value = "order", defaultValue = "asc") String order) {
-        List<User> users;
 
-        if (username == null && password == null) {
-            users = userDao.entityList((page - 1) * size, size, sort, order);
-        } else {
-            Map<String, Object> params = new HashMap<>();
+        SearchCriteria criteria = new SearchCriteria(page, size, sort, order);
+        criteria.addCriteria("username", username);
+        criteria.addCriteria("password", password);
+        List<User> users = userDao.getEntityList(criteria);
 
-            if (username != null)
-                params.put("username", username);
-            if (password != null)
-                params.put("password", password);
-
-            users = userDao.entityListByValue(params, (page - 1) * size, size, sort, order);
-        }
 
         if (users == null || users.isEmpty()) {
             throw new NotFoundException();
@@ -135,10 +125,10 @@ public class UserRestController {
         return userDao.deleteEntity(id);
     }
 
-    private void checkUser(final User user) {
-        User checkUser = userDao.entityByValue(new HashMap<String, Object>() {{
-            put(usernameKey, user.getUsername());
-        }});
+    private void checkUser(User user) {
+        SearchCriteria criteria = new SearchCriteria();
+        criteria.addCriteria("username", user.getUsername());
+        User checkUser = userDao.getEntity(criteria);
 
         if (checkUser != null) {
             throw new NotAcceptableException();

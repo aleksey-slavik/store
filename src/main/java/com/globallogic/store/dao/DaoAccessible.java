@@ -12,25 +12,11 @@ import java.util.Map;
  */
 public interface DaoAccessible<E, K> {
 
-    /**
-     * Find entity by given item key.
-     *
-     * @param key given key
-     * @return entity with given key
-     */
-    E entityByKey(K key);
+    E getEntityByKey(K key);
 
-    /**
-     * Find entity by given parameters.
-     *
-     * @param params given parameters
-     * @return entity with given parameters
-     */
-    E entityByValue(Map<String, Object> params);
+    E getEntity(SearchCriteria criteria);
 
-    List<E> entityList(int offset, int limit, String sort, String order);
-
-    List<E> entityListByValue(Map<String, Object> params, int offset, int limit, String sort, String order);
+    List<E> getEntityList(SearchCriteria criteria);
 
     E createEntity(E entity);
 

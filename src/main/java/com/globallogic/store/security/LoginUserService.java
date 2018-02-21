@@ -1,8 +1,8 @@
 package com.globallogic.store.security;
 
 import com.globallogic.store.dao.GenericDao;
+import com.globallogic.store.dao.SearchCriteria;
 import com.globallogic.store.domain.user.Authority;
-import com.globallogic.store.security.AuthenticatedUserFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -39,10 +39,9 @@ public class LoginUserService implements UserDetailsService {
      * @throws UsernameNotFoundException throws when {@link com.globallogic.store.domain.user.User} with given username is not found
      */
     public UserDetails loadUserByUsername(final String s) throws UsernameNotFoundException {
-        com.globallogic.store.domain.user.User user = (com.globallogic.store.domain.user.User) userDao.entityByValue(
-                new HashMap<String, String>() {{
-                    put("username", s);
-                }});
+        SearchCriteria criteria = new SearchCriteria();
+        criteria.addCriteria("username", s);
+        com.globallogic.store.domain.user.User user = (com.globallogic.store.domain.user.User) userDao.getEntity(criteria);
 
         /*if (user == null) {
             throw new UsernameNotFoundException(String.format("No user found with username '%s'", s));
