@@ -22,7 +22,7 @@ public class ProductDto {
     @Size(max = 10000, message = "Description of product must be less than 10000 characters")
     private String description;
 
-    @Min(value = 0)
+    @Min(value = 0, message = "Price of product must be positive value")
     private double price;
 
     public ProductDto() {}

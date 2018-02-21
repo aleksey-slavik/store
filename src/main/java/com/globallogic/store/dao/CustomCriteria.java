@@ -7,6 +7,10 @@ public class CustomCriteria {
     private String sortBy;
     private String orderBy;
 
+    public CustomCriteria() {
+        this(1, 5, "id", "desc");
+    }
+
     public CustomCriteria(int page, int size, String sortBy, String orderBy) {
         this.offset = (page - 1) * size;
         this.limit = size;

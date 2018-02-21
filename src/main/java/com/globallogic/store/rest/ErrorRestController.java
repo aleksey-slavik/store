@@ -1,6 +1,8 @@
 package com.globallogic.store.rest;
 
 import com.globallogic.store.dto.error.ValidationErrorDto;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,25 +14,19 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.List;
+import java.util.Locale;
 
 @ControllerAdvice
-public class ErrorRestController extends ResponseEntityExceptionHandler {
+public class ErrorRestController {
 
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        BindingResult result = ex.getBindingResult();
-        List<FieldError> errors = result.getFieldErrors();
-        return new ResponseEntity<>(processFieldErrors(errors), HttpStatus.BAD_REQUEST);
-    }
-
-    /*@ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ValidationErrorDto processValidationError(MethodArgumentNotValidException exception) {
         BindingResult result = exception.getBindingResult();
         List<FieldError> errors = result.getFieldErrors();
         return processFieldErrors(errors);
-    }*/
+    }
 
     private ValidationErrorDto processFieldErrors(List<FieldError> fieldErrors) {
         ValidationErrorDto dto = new ValidationErrorDto();

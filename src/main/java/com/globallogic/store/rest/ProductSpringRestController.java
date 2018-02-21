@@ -7,8 +7,6 @@ import com.globallogic.store.domain.product.Product;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.Validator;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -31,23 +29,12 @@ public class ProductSpringRestController {
      */
     private GenericDao<Product> productDao;
 
-    /*private Validator validator;*/
-
     /**
      * Injection {@link Product} DAO object for access to database.
      */
     public void setProductDao(GenericDao<Product> productDao) {
         this.productDao = productDao;
     }
-
-    /*public void setValidator(Validator validator) {
-        this.validator = validator;
-    }
-*/
-    /*@InitBinder
-    protected void initBinder(WebDataBinder binder) {
-        binder.setValidator(validator);
-    }*/
 
     /**
      * Return {@link Product} item with given id

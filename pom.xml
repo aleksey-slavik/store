@@ -242,7 +242,7 @@
             <version>5.3.6.Final</version>
         </dependency>
 
-        <dependency>
+       <!-- <dependency>
             <groupId>javax.el</groupId>
             <artifactId>javax.el-api</artifactId>
             <version>2.2.4</version>
@@ -251,7 +251,7 @@
             <groupId>org.glassfish.web</groupId>
             <artifactId>javax.el</artifactId>
             <version>2.2.4</version>
-        </dependency>
+        </dependency>-->
 
     </dependencies>
 
