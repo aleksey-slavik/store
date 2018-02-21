@@ -1,11 +1,15 @@
 package com.globallogic.store.rest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.globallogic.store.Workflow;
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.domain.product.Product;
 import org.junit.Before;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -14,6 +18,8 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class ProductControllerTest {
@@ -40,11 +46,11 @@ public class ProductControllerTest {
         mvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
-    /*@Test
+    @Test
     public void checkFindProductByIdTest() throws Exception {
         Product product = Workflow.createDummyProduct(DUMMY_ID);
 
-        when(productDao.entityByKey(DUMMY_ID))
+        when(productDao.getEntityByKey(DUMMY_ID))
                 .thenReturn(product);
 
         ResultActions actual = mvc.perform(get(URL_PATH_GET_BY_ID, DUMMY_ID)
@@ -53,20 +59,20 @@ public class ProductControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
         assertProduct(product, actual);
-        verify(productDao, times(1)).entityByKey(DUMMY_ID);
+        verify(productDao, times(1)).getEntityByKey(DUMMY_ID);
         verifyNoMoreInteractions(productDao);
     }
 
     @Test
     public void checkFindProductByWrongIdTest() throws Exception {
-        when(productDao.entityByKey(DUMMY_ID))
+        when(productDao.getEntityByKey(DUMMY_ID))
                 .thenReturn(null);
 
         mvc.perform(get(URL_PATH_ROOT + DUMMY_ID)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
 
-        verify(productDao, times(1)).entityByKey(DUMMY_ID);
+        verify(productDao, times(1)).getEntityByKey(DUMMY_ID);
         verifyNoMoreInteractions(productDao);
     }
 
@@ -74,7 +80,7 @@ public class ProductControllerTest {
     public void checkFindAllProductsTest() throws Exception {
         List<Product> products = Workflow.createDummyProductList(LIST_SIZE);
 
-        when(productDao.entityList())
+        when(productDao.getEntityList(any()))
                 .thenReturn(products);
 
         ResultActions actual = mvc.perform(get(URL_PATH_ROOT)
@@ -84,20 +90,20 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$", hasSize(LIST_SIZE)));
 
         assertProductList(products, actual);
-        verify(productDao, times(1)).entityList();
+        verify(productDao, times(1)).getEntityList(any());
         verifyNoMoreInteractions(productDao);
     }
 
     @Test
     public void checkEmptyProductsTest() throws Exception {
-        when(productDao.entityList())
+        when(productDao.getEntityList(any()))
                 .thenReturn(null);
 
         mvc.perform(get(URL_PATH_ROOT)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
-        verify(productDao, times(1)).entityList();
+        verify(productDao, times(1)).getEntityList(any());
         verifyNoMoreInteractions(productDao);
     }
 
@@ -105,7 +111,7 @@ public class ProductControllerTest {
     public void checkFindProductsByParameterTest() throws Exception {
         List<Product> products = Workflow.createDummyProductList(LIST_SIZE);
 
-        when(productDao.entityListByValue(any()))
+        when(productDao.getEntityList(any()))
                 .thenReturn(products);
 
         ResultActions actual = mvc.perform(get(URL_PATH_ROOT)
@@ -116,13 +122,13 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$", hasSize(LIST_SIZE)));
 
         assertProductList(products, actual);
-        verify(productDao, times(1)).entityListByValue(any());
+        verify(productDao, times(1)).getEntityList(any());
         verifyNoMoreInteractions(productDao);
     }
 
     @Test
     public void checkProductsNotFoundByParameterTest() throws Exception {
-        when(productDao.entityListByValue(any()))
+        when(productDao.getEntityList(any()))
                 .thenReturn(null);
 
         mvc.perform(get(URL_PATH_ROOT)
@@ -130,7 +136,7 @@ public class ProductControllerTest {
                 .param("brand", "Dummy"))
                 .andExpect(status().isNotFound());
 
-        verify(productDao, times(1)).entityListByValue(any());
+        verify(productDao, times(1)).getEntityList(any());
         verifyNoMoreInteractions(productDao);
     }
 
@@ -150,18 +156,6 @@ public class ProductControllerTest {
         assertProduct(product, actual);
         verify(productDao, times(1)).createEntity(any(Product.class));
         verifyNoMoreInteractions(productDao);
-    }
-
-    @Test
-    public void checkCreateNullProductTest() throws Exception {
-        when(productDao.createEntity(null))
-                .thenReturn(null);
-
-        mvc.perform(post(URL_PATH_ROOT)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-
-        verifyZeroInteractions(productDao);
     }
 
     @Test
@@ -209,7 +203,7 @@ public class ProductControllerTest {
         assertProduct(product, actual);
         verify(productDao, times(1)).deleteEntity(DUMMY_ID);
         verifyNoMoreInteractions(productDao);
-    }*/
+    }
 
     private void assertProduct(Product expected, ResultActions actual) throws Exception {
         actual

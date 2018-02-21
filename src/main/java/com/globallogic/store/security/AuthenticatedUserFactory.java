@@ -1,8 +1,13 @@
 package com.globallogic.store.security;
 
+import com.globallogic.store.domain.user.Authority;
 import com.globallogic.store.domain.user.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class AuthenticatedUserFactory {
 
@@ -14,12 +19,22 @@ public class AuthenticatedUserFactory {
                 user.getId(),
                 user.getUsername(),
                 user.getPassword(),
-                null,
-                true
+                createAuthorityList(user.getAuthorities()),
+                user.isEnabled()
         );
     }
 
-   /* private static GrantedAuthority createAuthority(Role role) {
-        return new SimpleGrantedAuthority(role.name());
-    }*/
+    private static List<GrantedAuthority> createAuthorityList(Set<Authority> authorities) {
+        List<GrantedAuthority> result = new ArrayList<>();
+
+        for (Authority authority : authorities) {
+            result.add(createAuthority(authority));
+        }
+
+        return result;
+    }
+
+    private static GrantedAuthority createAuthority(Authority authority) {
+        return new SimpleGrantedAuthority(authority.getTitle().name());
+    }
 }

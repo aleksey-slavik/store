@@ -59,7 +59,7 @@ public class ProductRestController {
      * Return list of {@link Product} represented as json.
      *
      * @param name  name of product
-     * @param brand brand pf product
+     * @param brand brand of product
      * @param price price of product
      * @param page  number of page
      * @param size  count of product per page

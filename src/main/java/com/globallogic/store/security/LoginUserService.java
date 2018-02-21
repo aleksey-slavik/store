@@ -49,9 +49,10 @@ public class LoginUserService implements UserDetailsService {
             return AuthenticatedUserFactory.create(user);
         }*/
 
-        List<GrantedAuthority> authorities = buildUserAuthority(user);
-        System.out.println(authorities);
-        return buildUserForAuthentication(user, authorities);
+        /*List<GrantedAuthority> authorities = buildUserAuthority(user);
+        return buildUserForAuthentication(user, authorities);*/
+
+        return AuthenticatedUserFactory.create(user);
     }
 
     /**

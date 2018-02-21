@@ -5,27 +5,26 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.Collections;
 
 public class AuthenticatedUser implements UserDetails {
 
     private final Long id;
     private final String username;
     private final String password;
-    private final GrantedAuthority authority;
+    private final Collection<? extends GrantedAuthority> authorities;
     private final boolean isEnabled;
 
-    public AuthenticatedUser(Long id, String username, String password, GrantedAuthority authority, boolean isEnabled) {
+    public AuthenticatedUser(Long id, String username, String password, Collection<? extends GrantedAuthority> authorities, boolean isEnabled) {
         this.id = id;
         this.username = username;
         this.password = password;
-        this.authority = authority;
+        this.authorities = authorities;
         this.isEnabled = isEnabled;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(authority);
+        return authorities;
     }
 
     @JsonIgnore
@@ -67,10 +66,6 @@ public class AuthenticatedUser implements UserDetails {
         return id;
     }
 
-    public GrantedAuthority getAuthority() {
-        return authority;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -78,11 +73,11 @@ public class AuthenticatedUser implements UserDetails {
 
         AuthenticatedUser user = (AuthenticatedUser) o;
 
-        if (isEnabled != user.isEnabled) return false;
-        if (!id.equals(user.id)) return false;
-        if (!username.equals(user.username)) return false;
-        if (!password.equals(user.password)) return false;
-        return authority.equals(user.authority);
+        return isEnabled == user.isEnabled &&
+                id.equals(user.id) &&
+                username.equals(user.username) &&
+                password.equals(user.password) &&
+                authorities.equals(user.authorities);
     }
 
     @Override
@@ -90,7 +85,7 @@ public class AuthenticatedUser implements UserDetails {
         int result = id.hashCode();
         result = 31 * result + username.hashCode();
         result = 31 * result + password.hashCode();
-        result = 31 * result + authority.hashCode();
+        result = 31 * result + authorities.hashCode();
         result = 31 * result + (isEnabled ? 1 : 0);
         return result;
     }

@@ -7,7 +7,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.Date;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class TokenUtil {
 
@@ -69,8 +70,9 @@ public class TokenUtil {
      * @param token given token
      * @return user authority
      */
-    public GrantedAuthority getRoleFromToken(String token) {
-        return new SimpleGrantedAuthority((String) getClaimsFromToken(token).get(userRoleKey));
+    public Collection<? extends GrantedAuthority> getRoleFromToken(String token) {
+        String[] authorityNames = ((String) getClaimsFromToken(token).get(userRoleKey)).split(",");
+        return Arrays.stream(authorityNames).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 
     /**
@@ -123,7 +125,7 @@ public class TokenUtil {
 
         Claims claims = Jwts.claims();
         claims.put(userIdKey, user.getId());
-        claims.put(userRoleKey, user.getAuthority().getAuthority());
+        claims.put(userRoleKey, createAuthorityList(user.getAuthorities()));
         claims.put(userCredentialsKey, user.getPassword());
         claims.setSubject(user.getUsername());
         claims.setIssuedAt(created);
@@ -173,5 +175,17 @@ public class TokenUtil {
     private boolean isTokenExpired(String token) {
         Date expiration = getExpirationFromToken(token);
         return expiration.before(clock.now());
+    }
+
+    private String createAuthorityList(Collection<? extends GrantedAuthority> authorities) {
+        StringBuilder builder = new StringBuilder();
+
+        for (GrantedAuthority authority : authorities) {
+            builder.append(authority.getAuthority());
+            builder.append(",");
+        }
+
+        builder.deleteCharAt(builder.lastIndexOf(","));
+        return builder.toString();
     }
 }
