@@ -26,7 +26,7 @@ public class UserControllerTest {
     private GenericDao<User> userDao;
 
     @InjectMocks
-    private UserSpringRestController controller;
+    private UserRestController controller;
 
     private static final String URL_PATH_ROOT = "/api/users/";
 

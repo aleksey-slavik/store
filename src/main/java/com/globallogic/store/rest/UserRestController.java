@@ -23,7 +23,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping(value = "/api/users")
-public class UserSpringRestController {
+public class UserRestController {
 
     @Value("${user.username}")
     private String usernameKey;

@@ -1,15 +1,11 @@
 package com.globallogic.store.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.globallogic.store.Workflow;
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.domain.product.Product;
 import org.junit.Before;
-import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -18,8 +14,6 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class ProductControllerTest {
@@ -30,7 +24,7 @@ public class ProductControllerTest {
     private GenericDao<Product> productDao;
 
     @InjectMocks
-    private ProductSpringRestController controller;
+    private ProductRestController controller;
 
     private static final String URL_PATH_ROOT = "/api/products/";
 

@@ -22,7 +22,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping(value = "/api/products")
-public class ProductSpringRestController {
+public class ProductRestController {
 
     /**
      * {@link Product} DAO object for access to database.

@@ -22,16 +22,15 @@
     <bean name="jsonTemplate" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView"/>
 
     <!-- Spring Rest Beans -->
-    <bean name="userSpringRestController" class="com.globallogic.store.rest.UserSpringRestController">
+    <bean id="userRestController" class="com.globallogic.store.rest.UserRestController">
         <property name="userDao" ref="userDao"/>
     </bean>
 
-    <bean name="productSpringRestController" class="com.globallogic.store.rest.ProductSpringRestController">
-        <!--<property name="validator" ref="validator"/>-->
+    <bean id="productRestController" class="com.globallogic.store.rest.ProductRestController">
         <property name="productDao" ref="productDao"/>
     </bean>
 
-    <bean name="orderSpringRestController" class="com.globallogic.store.rest.OrderSpringRestController">
+    <bean id="orderRestController" class="com.globallogic.store.rest.OrderRestController">
         <property name="orderDao" ref="orderDao"/>
         <property name="orderItemDao" ref="orderItemDao"/>
         <property name="userDao" ref="userDao"/>
