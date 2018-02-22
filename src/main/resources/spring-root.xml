@@ -18,6 +18,13 @@
 
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
 
+    <!-- Enables swagger ui-->
+    <mvc:resources mapping="swagger-ui.html" location="classpath:/META-INF/resources/"/>
+    <mvc:resources mapping="/webjars/**" location="classpath:/META-INF/resources/webjars/"/>
+
+    <!-- Include a swagger configuration-->
+    <bean class="com.globallogic.store.rest.SwaggerConfig"/>
+
     <!-- Properties -->
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
           p:location="classpath:store.properties" name="propertiesBean"/>

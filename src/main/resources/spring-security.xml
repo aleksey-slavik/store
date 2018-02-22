@@ -95,20 +95,6 @@
         <beans:property name="sessionFactory" ref="sessionFactory"/>
     </beans:bean>
 
-    <!-- <bean id="entityManagerFactory"
-           class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-         <property name="dataSource" ref="dataSource" />
-         <property name="packagesToScan" value="com.globallogic.store.domain" />
-         <property name="jpaVendorAdapter">
-             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
-         </property>
-         <property name="jpaProperties">
-             <props>
-                 <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL95Dialect</prop>
-             </props>
-         </property>
-     </bean>-->
-
     <tx:advice id="txAdvice">
         <tx:attributes>
             <tx:method name="get*" read-only="true"/>
@@ -124,8 +110,5 @@
                       expression="execution(* com.globallogic.store.security.core.*Service.*(..))"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="userServicePointCut"/>
     </aop:config>
-
-    <!-- Security Aspects -->
-    <!--<bean id="userSecurityManager" class="com.globallogic.store.security.aop.UserSecurityManager"/>-->
 
 </beans:beans>

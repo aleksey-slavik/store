@@ -5,6 +5,9 @@ import com.globallogic.store.dao.SearchCriteria;
 import com.globallogic.store.dto.product.ProductDto;
 import com.globallogic.store.dto.product.ProductPreviewDto;
 import com.globallogic.store.domain.product.Product;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,38 +17,25 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Spring rest controller for {@link Product}.
- *
- * @author oleksii.slavik
- */
+@Api(value = "store", description = "Product rest controller")
 @RestController
 @RequestMapping(value = "/api/products")
 public class ProductRestController {
 
-    /**
-     * {@link Product} DAO object for access to database.
-     */
     private GenericDao<Product> productDao;
 
-    /**
-     * Injection {@link Product} DAO object for access to database.
-     */
     public void setProductDao(GenericDao<Product> productDao) {
         this.productDao = productDao;
     }
 
-    /**
-     * Return {@link Product} item with given id
-     *
-     * @param id given id
-     * @return {@link Product} item
-     */
+    @ApiOperation(value = "Search product by given id")
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getProductById(@PathVariable long id) {
+    public ResponseEntity<?> getProductById(
+            @ApiParam(name="id", value="The Id of the product to be viewed", required=true)
+            @PathVariable long id) {
         Product product = productDao.getEntityByKey(id);
 
         if (product == null) {

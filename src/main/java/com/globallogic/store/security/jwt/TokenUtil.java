@@ -36,7 +36,7 @@ public class TokenUtil {
     @Value("${jwt.user.role}")
     private String userRoleKey;
 
-    @Value("jwt.user.credentials")
+    @Value("jwt.user.password")
     private String userCredentialsKey;
 
     /**
