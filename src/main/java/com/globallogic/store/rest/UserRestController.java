@@ -75,8 +75,8 @@ public class UserRestController {
             @RequestParam(value = "order", defaultValue = "asc") String order) {
 
         SearchCriteria criteria = new SearchCriteria(page, size, sort, order);
-        criteria.addCriteria("username", username);
-        criteria.addCriteria("password", password);
+        criteria.criteria("username", username);
+        criteria.criteria("password", password);
         List<User> users = userDao.getEntityList(criteria);
 
 
@@ -127,7 +127,7 @@ public class UserRestController {
 
     private void checkUser(User user) {
         SearchCriteria criteria = new SearchCriteria();
-        criteria.addCriteria("username", user.getUsername());
+        criteria.criteria("username", user.getUsername());
         User checkUser = userDao.getEntity(criteria);
 
         if (checkUser != null) {

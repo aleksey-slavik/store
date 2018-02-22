@@ -8,7 +8,6 @@ import com.globallogic.store.domain.product.Product;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -48,7 +47,7 @@ public class ProductRestController {
      * @param page  number of page
      * @param size  count of product per page
      * @param sort  name of field for sorting
-     * @param order orderBy value
+     * @param order order value
      * @return list of {@link Product}
      */
     @RequestMapping(
@@ -63,16 +62,19 @@ public class ProductRestController {
             @RequestParam(value = "sort", defaultValue = "id") String sort,
             @RequestParam(value = "order", defaultValue = "asc") String order) {
 
-        SearchCriteria criteria = new SearchCriteria(page, size, sort, order);
-        criteria.addCriteria("name", name);
-        criteria.addCriteria("brand", brand);
-        criteria.addCriteria("price", price);
+        SearchCriteria criteria = new SearchCriteria()
+                .criteria("name", new Object[]{name})
+                .criteria("brand", new Object[]{brand})
+                .criteria("price", new Object[]{price})
+                .offset(page)
+                .limit(size)
+                .sortBy(sort)
+                .order(order);
 
         List<Product> products = productDao.getEntityList(criteria);
 
         if (products == null || products.isEmpty()) {
-            HttpStatus status = criteria.isParamsAbsent() ? HttpStatus.NO_CONTENT : HttpStatus.NOT_FOUND;
-            return ResponseEntity.status(status).body(null);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else {
             return ResponseEntity.ok().body(createPreviews(products));
         }
@@ -84,7 +86,6 @@ public class ProductRestController {
      * @param product given {@link Product}
      * @return created {@link Product}
      */
-    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -100,7 +101,6 @@ public class ProductRestController {
      * @param product updated {@link Product} data
      * @return updated {@link Product}
      */
-    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.PUT,
@@ -117,7 +117,6 @@ public class ProductRestController {
      * @param id given id of {@link Product}
      * @return deleted {@link Product}
      */
-    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.DELETE,

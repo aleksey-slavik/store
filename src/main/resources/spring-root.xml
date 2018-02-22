@@ -23,7 +23,7 @@
     <mvc:resources mapping="/webjars/**" location="classpath:/META-INF/resources/webjars/"/>
 
     <!-- Include a swagger configuration-->
-    <bean class="com.globallogic.store.rest.SwaggerConfig"/>
+    <bean class="com.globallogic.store.swagger.SwaggerConfig"/>
 
     <!-- Properties -->
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"

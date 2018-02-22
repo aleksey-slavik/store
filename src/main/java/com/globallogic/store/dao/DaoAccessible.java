@@ -1,5 +1,7 @@
 package com.globallogic.store.dao;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import java.util.List;
 
 /**
@@ -17,9 +19,12 @@ public interface DaoAccessible<E, K> {
 
     List<E> getEntityList(SearchCriteria criteria);
 
+    @PreAuthorize("hasRole('ADMIN')")
     E createEntity(E entity);
 
+    @PreAuthorize("hasRole('ADMIN')")
     E updateEntity(E entity);
 
+    @PreAuthorize("hasRole('ADMIN')")
     E deleteEntity(K id);
 }

@@ -100,10 +100,10 @@ public class GenericDao<E> implements DaoAccessible<E, Long> {
                 predicates.add( builder.or(innerPredicates.toArray(new Predicate[]{})));
             }
 
-            if (criteria.getOrderBy().equalsIgnoreCase("DESC")) {
-                selectQuery.orderBy(builder.desc(root.get(criteria.getSortBy())));
+            if (criteria.getOrder().equalsIgnoreCase("DESC")) {
+                selectQuery.orderBy(builder.desc(root.get(criteria.getOrderBy())));
             } else {
-                selectQuery.orderBy(builder.asc(root.get(criteria.getSortBy())));
+                selectQuery.orderBy(builder.asc(root.get(criteria.getOrderBy())));
             }
             CriteriaQuery<E> selectAll = selectQuery.where(builder.and(predicates.toArray(new Predicate[]{})));
 

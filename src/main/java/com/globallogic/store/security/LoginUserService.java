@@ -40,7 +40,7 @@ public class LoginUserService implements UserDetailsService {
      */
     public UserDetails loadUserByUsername(final String s) throws UsernameNotFoundException {
         SearchCriteria criteria = new SearchCriteria();
-        criteria.addCriteria("username", s);
+        criteria.criteria("username", s);
         com.globallogic.store.domain.user.User user = (com.globallogic.store.domain.user.User) userDao.getEntity(criteria);
 
         /*if (user == null) {

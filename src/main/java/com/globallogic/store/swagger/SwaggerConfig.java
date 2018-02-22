@@ -1,4 +1,4 @@
-package com.globallogic.store.rest;
+package com.globallogic.store.swagger;
 
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
