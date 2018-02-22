@@ -1,7 +1,6 @@
 package com.globallogic.store.dao;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Interface which consist methods for work with database.

@@ -5,19 +5,16 @@ import com.globallogic.store.dao.SearchCriteria;
 import com.globallogic.store.dto.product.ProductDto;
 import com.globallogic.store.dto.product.ProductPreviewDto;
 import com.globallogic.store.domain.product.Product;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
-@Api(value = "store", description = "Product rest controller")
 @RestController
 @RequestMapping(value = "/api/products")
 public class ProductRestController {
@@ -28,14 +25,11 @@ public class ProductRestController {
         this.productDao = productDao;
     }
 
-    @ApiOperation(value = "Search product by given id")
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getProductById(
-            @ApiParam(name="id", value="The Id of the product to be viewed", required=true)
-            @PathVariable long id) {
+    public ResponseEntity<?> getProductById(@PathVariable long id) {
         Product product = productDao.getEntityByKey(id);
 
         if (product == null) {
@@ -90,6 +84,7 @@ public class ProductRestController {
      * @param product given {@link Product}
      * @return created {@link Product}
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -105,6 +100,7 @@ public class ProductRestController {
      * @param product updated {@link Product} data
      * @return updated {@link Product}
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.PUT,
@@ -121,6 +117,7 @@ public class ProductRestController {
      * @param id given id of {@link Product}
      * @return deleted {@link Product}
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.DELETE,
