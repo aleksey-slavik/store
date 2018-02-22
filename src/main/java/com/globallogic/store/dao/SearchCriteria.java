@@ -90,4 +90,15 @@ public class SearchCriteria {
     public String getOrder() {
         return order;
     }
+
+    @Override
+    public String toString() {
+        return "SearchCriteria{" +
+                "params=" + params +
+                ", offset=" + offset +
+                ", limit=" + limit +
+                ", orderBy='" + orderBy + '\'' +
+                ", order='" + order + '\'' +
+                '}';
+    }
 }

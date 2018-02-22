@@ -63,9 +63,9 @@ public class ProductRestController {
             @RequestParam(value = "order", defaultValue = "asc") String order) {
 
         SearchCriteria criteria = new SearchCriteria()
-                .criteria("name", new Object[]{name})
-                .criteria("brand", new Object[]{brand})
-                .criteria("price", new Object[]{price})
+                .criteria("name", (Object[]) name)
+                .criteria("brand", (Object[]) brand)
+                .criteria("price", (Object[]) price)
                 .offset(page)
                 .limit(size)
                 .sortBy(sort)
