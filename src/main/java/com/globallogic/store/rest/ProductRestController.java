@@ -8,6 +8,7 @@ import com.globallogic.store.domain.product.Product;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -86,6 +87,7 @@ public class ProductRestController {
      * @param product given {@link Product}
      * @return created {@link Product}
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -101,6 +103,7 @@ public class ProductRestController {
      * @param product updated {@link Product} data
      * @return updated {@link Product}
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.PUT,
@@ -117,6 +120,7 @@ public class ProductRestController {
      * @param id given id of {@link Product}
      * @return deleted {@link Product}
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.DELETE,
