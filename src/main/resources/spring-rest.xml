@@ -35,4 +35,8 @@
         <property name="orderItemDao" ref="orderItemDao"/>
         <property name="userDao" ref="userDao"/>
     </bean>
+
+    <!--<bean id="errorRestController" class="com.globallogic.store.rest.ErrorRestController">
+        <property name="messageSource" ref="messageSource"/>
+    </bean>-->
 </beans>

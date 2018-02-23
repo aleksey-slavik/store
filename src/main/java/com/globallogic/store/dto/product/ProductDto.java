@@ -12,14 +12,14 @@ public class ProductDto {
     private long id;
 
     @NotNull(message = "Name of product cannot be null")
-    @Size(max = 30, message = "Name of product must be less than 30 characters")
+    @Size(max = 30, message = "Name of product must be less than {max} characters")
     private String name;
 
     @NotNull(message = "Brand of product cannot be null")
-    @Size(max = 30, message = "Brand of product must be less than 30 characters")
+    @Size(max = 30, message = "Brand of product must be less than {max} characters")
     private String brand;
 
-    @Size(max = 10000, message = "Description of product must be less than 10000 characters")
+    @Size(max = 10000, message = "Description of product must be less than {max} characters")
     private String description;
 
     @Min(value = 0, message = "Price of product must be positive value")

@@ -1,33 +1,51 @@
 package com.globallogic.store.rest;
 
-import com.globallogic.store.dto.error.ValidationErrorDto;
+import com.globallogic.store.domain.error.Error;
+import com.globallogic.store.domain.error.ErrorDetails;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.BindingResult;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @ControllerAdvice
-public class ErrorRestController {
+public class ErrorRestController extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    public ValidationErrorDto processValidationError(MethodArgumentNotValidException exception) {
-        BindingResult result = exception.getBindingResult();
-        List<FieldError> errors = result.getFieldErrors();
-        return processFieldErrors(errors);
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(createError(ex.getBindingResult().getFieldErrors(), request));
     }
 
-    private ValidationErrorDto processFieldErrors(List<FieldError> fieldErrors) {
-        ValidationErrorDto dto = new ValidationErrorDto();
+    private List<Error> createError(List<FieldError> fieldErrors, WebRequest request) {
+        List<Error> errors = new ArrayList<>();
 
-        for (FieldError fieldError: fieldErrors) {
-            dto.addError(fieldError.getField(), fieldError.getDefaultMessage());
+        for (FieldError fieldError : fieldErrors) {
+            Error error = new Error()
+                    .url(request.getDescription(false).substring(4))
+                    .code(createErrorCode(fieldError))
+                    .details(createErrorDetails(fieldError));
+            errors.add(error);
         }
 
-        return dto;
+        return errors;
+    }
+
+    private ErrorDetails createErrorDetails(FieldError error) {
+        return new ErrorDetails()
+                .field(error.getField())
+                .value(error.getRejectedValue())
+                .message(error.getDefaultMessage());
+    }
+
+    private String createErrorCode(FieldError error) {
+        return error.getObjectName() + "." + error.getField() + "." + error.getCode();
     }
 }
