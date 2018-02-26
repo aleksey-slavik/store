@@ -25,6 +25,7 @@ public class ProductRestController {
         this.productDao = productDao;
     }
 
+    @PreAuthorize("hasPermission(hasAccess, 'SUPERVISOR')")
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.GET,
