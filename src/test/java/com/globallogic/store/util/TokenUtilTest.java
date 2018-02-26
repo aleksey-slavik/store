@@ -49,6 +49,7 @@ public class TokenUtilTest {
         ReflectionTestUtils.setField(tokenUtil, "expiration", 3600000L);
         ReflectionTestUtils.setField(tokenUtil, "userIdKey", "userId");
         ReflectionTestUtils.setField(tokenUtil, "userRoleKey", "userRole");
+        ReflectionTestUtils.setField(tokenUtil, "userPermissionKey", "userPermission");
         ReflectionTestUtils.setField(tokenUtil, "userCredentialsKey", "userCredentials");
     }
 
@@ -99,6 +100,18 @@ public class TokenUtilTest {
         AuthenticatedUser user = Workflow.createAdminAuthenticatedUser();
         final String token = generateToken(user);
         assertTrue(user.getAuthorities().containsAll(tokenUtil.getRoleFromToken(token)));
+    }
+
+    /**
+     * Check that role from token is equals to role of user
+     */
+    @Test
+    public void checkPermissionsFromToken() {
+        when(clock.now())
+                .thenReturn(DateUtil.now());
+        AuthenticatedUser user = Workflow.createAdminAuthenticatedUser();
+        final String token = generateToken(user);
+        assertTrue(user.getPermissions().containsAll(tokenUtil.getPermissionsFromToken(token)));
     }
 
     /**

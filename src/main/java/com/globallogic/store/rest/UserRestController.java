@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -65,6 +66,7 @@ public class UserRestController {
      * @throws NotFoundException      throws when user with given id not found
      * @throws EmptyResponseException throws when user list is empty
      */
+    @PreAuthorize("hasPermission(#user, 'ORDER_READ_ALL')")
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<User> getUser(
             @RequestParam(value = "username", required = false) String username,

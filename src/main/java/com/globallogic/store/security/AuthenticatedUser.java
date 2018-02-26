@@ -1,6 +1,7 @@
 package com.globallogic.store.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.globallogic.store.domain.user.PermissionName;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -12,13 +13,15 @@ public class AuthenticatedUser implements UserDetails {
     private final String username;
     private final String password;
     private final Collection<? extends GrantedAuthority> authorities;
+    private final Collection<PermissionName> permissions;
     private final boolean isEnabled;
 
-    public AuthenticatedUser(Long id, String username, String password, Collection<? extends GrantedAuthority> authorities, boolean isEnabled) {
+    public AuthenticatedUser(Long id, String username, String password, Collection<? extends GrantedAuthority> authorities, Collection<PermissionName> permissions, boolean isEnabled) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.authorities = authorities;
+        this.permissions = permissions;
         this.isEnabled = isEnabled;
     }
 
@@ -66,6 +69,10 @@ public class AuthenticatedUser implements UserDetails {
         return id;
     }
 
+    public Collection<PermissionName> getPermissions() {
+        return permissions;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -77,7 +84,8 @@ public class AuthenticatedUser implements UserDetails {
                 id.equals(user.id) &&
                 username.equals(user.username) &&
                 password.equals(user.password) &&
-                authorities.equals(user.authorities);
+                authorities.equals(user.authorities) &&
+                permissions.equals(user.permissions);
     }
 
     @Override
@@ -86,6 +94,7 @@ public class AuthenticatedUser implements UserDetails {
         result = 31 * result + username.hashCode();
         result = 31 * result + password.hashCode();
         result = 31 * result + authorities.hashCode();
+        result = 31 * result + permissions.hashCode();
         result = 31 * result + (isEnabled ? 1 : 0);
         return result;
     }

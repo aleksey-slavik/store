@@ -1,9 +1,7 @@
 package com.globallogic.store;
 
 import com.globallogic.store.domain.product.Product;
-import com.globallogic.store.domain.user.Authority;
-import com.globallogic.store.domain.user.AuthorityName;
-import com.globallogic.store.domain.user.User;
+import com.globallogic.store.domain.user.*;
 import com.globallogic.store.security.AuthenticatedUser;
 import com.globallogic.store.security.AuthenticatedUserFactory;
 
@@ -29,8 +27,14 @@ public class Workflow {
         user.setEmail("test.admin@store.com");
         user.setEnabled(true);
         user.setAuthorities(new HashSet<Authority>() {{
-            add(createCustomerAuthority());
-            add(createAdminAuthority());
+            add(createAuthority(2, AuthorityName.CUSTOMER));
+            add(createAuthority(1, AuthorityName.ADMIN));
+        }});
+        user.setPermissions(new HashSet<Permission>() {{
+            add(createPermission(1, PermissionName.SUPERVISOR));
+            add(createPermission(2, PermissionName.ORDER_READ_ALL));
+            add(createPermission(3, PermissionName.ORDER_UPDATE_ALL));
+            add(createPermission(4, PermissionName.ORDER_DELETE_SAME));
         }});
         return user;
     }
@@ -45,8 +49,9 @@ public class Workflow {
         user.setEmail("test.customer@store.com");
         user.setEnabled(true);
         user.setAuthorities(new HashSet<Authority>() {{
-            add(createCustomerAuthority());
+            add(createAuthority(2, AuthorityName.CUSTOMER));
         }});
+        user.setPermissions(new HashSet<>());
         return user;
     }
 
@@ -78,17 +83,17 @@ public class Workflow {
         return AuthenticatedUserFactory.create(createCustomerUser());
     }
 
-    public static Authority createAdminAuthority() {
+    public static Authority createAuthority(long id, AuthorityName title) {
         Authority authority = new Authority();
         authority.setId(1);
-        authority.setTitle(AuthorityName.ADMIN);
+        authority.setTitle(title);
         return authority;
     }
 
-    public static Authority createCustomerAuthority() {
-        Authority authority = new Authority();
-        authority.setId(2);
-        authority.setTitle(AuthorityName.CUSTOMER);
-        return authority;
+    public static Permission createPermission(long id, PermissionName title) {
+        Permission permission = new Permission();
+        permission.setId(id);
+        permission.setTitle(title);
+        return permission;
     }
 }

@@ -22,6 +22,7 @@
         <!-- Entities -->
         <mapping class="com.globallogic.store.domain.user.User"/>
         <mapping class="com.globallogic.store.domain.user.Authority"/>
+        <mapping class="com.globallogic.store.domain.user.Permission"/>
         <mapping class="com.globallogic.store.domain.product.Product"/>
         <mapping class="com.globallogic.store.domain.order.Bill"/>
         <mapping class="com.globallogic.store.domain.order.Order"/>
