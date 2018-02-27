@@ -8,7 +8,6 @@ import java.util.*;
 public class Error {
 
     private String code;
-    private String url;
     private long timestamp;
     private ErrorDetails details;
 
@@ -21,11 +20,6 @@ public class Error {
         return this;
     }
 
-    public Error url(String url) {
-        this.url = url;
-        return this;
-    }
-
     public Error details(ErrorDetails details) {
         this.details = details;
         return this;
@@ -33,10 +27,6 @@ public class Error {
 
     public String getCode() {
         return code;
-    }
-
-    public String getUrl() {
-        return url;
     }
 
     public long getTimestamp() {

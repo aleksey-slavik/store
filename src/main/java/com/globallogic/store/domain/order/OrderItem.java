@@ -1,5 +1,6 @@
 package com.globallogic.store.domain.order;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.globallogic.store.domain.product.Product;
 
 import javax.persistence.*;
@@ -17,6 +18,7 @@ public class OrderItem implements Serializable {
     @EmbeddedId
     private OrderItemId primaryKey;
 
+    @JsonIgnore
     @MapsId("orderId")
     @JoinColumn(name = "order_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)

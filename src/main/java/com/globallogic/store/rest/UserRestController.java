@@ -130,7 +130,7 @@ public class UserRestController {
         criteria.criteria("username", user.getUsername());
         User checkUser = userDao.getEntity(criteria);
 
-        if (checkUser != null) {
+        if (checkUser == null) {
             throw new NotAcceptableException();
         }
     }

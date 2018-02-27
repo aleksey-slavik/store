@@ -1,6 +1,8 @@
 package com.globallogic.store.rest;
 
 import com.globallogic.store.dao.GenericDao;
+import com.globallogic.store.dao.SearchCriteria;
+import com.globallogic.store.domain.order.Status;
 import com.globallogic.store.domain.user.User;
 import com.globallogic.store.exception.EmptyResponseException;
 import com.globallogic.store.exception.NotAcceptableException;
@@ -82,25 +84,25 @@ public class OrderRestController {
                                  @RequestParam(value = "size", defaultValue = "5") int size,
                                  @RequestParam(value = "sort", defaultValue = "id") String sort,
                                  @RequestParam(value = "order", defaultValue = "asc") String order) {
-        return orderDao.entityList((page - 1) * size, size, sort, order);
+        return orderDao.getEntityList(new SearchCriteria());
     }
 
     @RequestMapping(value = "/customers/{username}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Order findOrderByUsername(final @PathVariable String username) {
-        /*final User user = userDao.getEntity(new HashMap<String, Object>() {{
-            put(usernameKey, username);
-        }});
+        SearchCriteria userCriteria = new SearchCriteria();
+        userCriteria.criteria(usernameKey, username);
+        final User user = userDao.getEntity(userCriteria);
 
         try {
-            return orderDao.getEntity(new HashMap<String, Object>() {{
-                put(ownerKey, user);
-                //put(statusKey, Status.OPENED);
-            }});
+            SearchCriteria orderCriteria = new SearchCriteria();
+            orderCriteria.criteria(ownerKey, user);
+            orderCriteria.criteria(statusKey, Status.OPENED);
+            return orderDao.getEntity(orderCriteria);
         } catch (NoResultException e) {
-            //return orderDao.createEntity(new Order(user));
-            return null;
-        }*/
-        return null;
+            Order order = new Order();
+            order.setUser(user);
+            return orderDao.createEntity(order);
+        }
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -120,17 +122,17 @@ public class OrderRestController {
                                                     @RequestParam(value = "size", defaultValue = "5") int size,
                                                     @RequestParam(value = "sort", defaultValue = "id") String sort,
                                                     @RequestParam(value = "order", defaultValue = "asc") String orderBy) {
-        /*final Order order = getOrderById(id);
-        List<OrderItem> items = orderItemDao.getEntityList(new HashMap<String, Object>() {{
-            put(orderKey, order);
-        }}, (page - 1) * size, size, sort, orderBy);
+        final Order order = getOrderById(id);
+        SearchCriteria criteria = new SearchCriteria();
+        criteria.criteria(orderKey, order);
+
+        List<OrderItem> items = orderItemDao.getEntityList(criteria);
 
         if (items == null || items.isEmpty()) {
             throw new EmptyResponseException();
         }
 
-        return items;*/
-        return null;
+        return items;
     }
 
     @RequestMapping(value = "/{id}/items/{itemId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -194,7 +196,7 @@ public class OrderRestController {
      */
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public Order createOrder(@RequestBody Order order) {
-        //order.checkTotalCost();
+        order.checkTotalCost();
         return orderDao.createEntity(order);
     }
 
@@ -208,7 +210,7 @@ public class OrderRestController {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public Order updateOrder(@PathVariable Long id, @RequestBody Order order) {
         order.setId(id);
-        //order.checkTotalCost();
+        order.checkTotalCost();
 
         for (OrderItem item : order.getItems()) {
             item.setOrder(order);
@@ -231,7 +233,7 @@ public class OrderRestController {
 
     private void checkOrderTotalCount(Long id) {
         Order order = orderDao.getEntityByKey(id);
-        //order.checkTotalCost();
+        order.checkTotalCost();
         orderDao.updateEntity(order);
     }
 }

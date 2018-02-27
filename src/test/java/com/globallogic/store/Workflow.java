@@ -32,8 +32,8 @@ public class Workflow {
         }});
         user.setPermissions(new HashSet<Permission>() {{
             add(createPermission(1, PermissionName.SUPERVISOR));
-            add(createPermission(2, PermissionName.ORDER_READ_ALL));
-            add(createPermission(3, PermissionName.ORDER_UPDATE_ALL));
+            add(createPermission(2, PermissionName.ORDER_READ_SAME));
+            add(createPermission(3, PermissionName.ORDER_UPDATE_SAME));
             add(createPermission(4, PermissionName.ORDER_DELETE_SAME));
         }});
         return user;

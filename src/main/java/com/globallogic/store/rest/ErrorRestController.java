@@ -29,7 +29,6 @@ public class ErrorRestController extends ResponseEntityExceptionHandler {
 
         for (FieldError fieldError : fieldErrors) {
             Error error = new Error()
-                    .url(request.getDescription(false).substring(4))
                     .code(createErrorCode(fieldError))
                     .details(createErrorDetails(fieldError));
             errors.add(error);

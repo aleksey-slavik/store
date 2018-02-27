@@ -88,13 +88,21 @@ function fillUserList(data) {
  * @param item given data
  */
 function fillUser(item) {
+    $('input').filter(':checkbox').prop('checked',false);
+
     $('#id').val(item.id);
     $('#firstName').val(item.firstName);
     $('#lastName').val(item.lastName);
     $('#username').val(item.username);
     $('#password').val(item.password);
     $('#email').val(item.email);
-    $('#role').val(item.role);
+
+    $.each(item.authorities, function (index, item) {
+        document.getElementById('role_' + item.title.toLowerCase()).checked = true;
+    });
+    $.each(item.permissions, function (index, item) {
+        document.getElementById('permission_' + item.title.toLowerCase()).checked = true;
+    });
 }
 
 /**
@@ -111,8 +119,39 @@ function userItemToJSON() {
         "username": $('#username').val(),
         "password": $('#password').val(),
         "email": $('#email').val(),
-        "role": $('#role').val()
+        "authorities": parseAuthority(),
+        "permissions": parsePermissions()
     });
+}
+
+function parseAuthority() {
+    var jsonObj = [];
+
+    $('#roles input:checkbox:checked').each(function () {
+        var id = $(this).val();
+        var title = $(this).attr("title");
+        var item = {};
+        item["id"] = id;
+        item["title"] = title;
+        jsonObj.push(item);
+    });
+
+    return jsonObj;
+}
+
+function parsePermissions() {
+    var jsonObj = [];
+
+    $('#permissions input:checkbox:checked').each(function () {
+        var id = $(this).val();
+        var title = $(this).attr("title");
+        var item = {};
+        item["id"] = id;
+        item["title"] = title;
+        jsonObj.push(item);
+    });
+
+    return jsonObj;
 }
 
 /**
