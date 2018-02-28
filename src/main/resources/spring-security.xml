@@ -1,30 +1,12 @@
 <beans:beans xmlns="http://www.springframework.org/schema/security"
              xmlns:beans="http://www.springframework.org/schema/beans"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xmlns:tx="http://www.springframework.org/schema/tx"
-             xmlns:aop="http://www.springframework.org/schema/aop"
              xsi:schemaLocation="http://www.springframework.org/schema/beans
-	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-	http://www.springframework.org/schema/security
-	http://www.springframework.org/schema/security/spring-security-4.0.xsd
-	http://www.springframework.org/schema/tx
-	http://www.springframework.org/schema/tx/spring-tx.xsd
-	http://www.springframework.org/schema/aop
-	http://www.springframework.org/schema/aop/spring-aop.xsd">
+                http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+	            http://www.springframework.org/schema/security
+	            http://www.springframework.org/schema/security/spring-security-4.2.xsd">
 
-    <beans:import resource="spring-dao.xml"/>
-
-    <global-method-security pre-post-annotations="enabled">
-        <expression-handler ref="expressionHandler"/>
-    </global-method-security>
-
-    <!-- <http pattern="/api/auth" security="none"/>-->
-
-    <!-- <http pattern="/api/**" entry-point-ref="tokenAuthenticationEntryPoint" create-session="stateless">
-         <csrf disabled="true"/>
-        &lt;!&ndash; <custom-filter before="FORM_LOGIN_FILTER" ref="tokenAuthenticationFilter"/>&ndash;&gt;
-         <intercept-url pattern="/api/products/**" method="GET" access="permitAll()"/>
-     </http>-->
+    <global-method-security pre-post-annotations="enabled"/>
 
     <http use-expressions="true">
         <!-- interceptors -->
@@ -58,67 +40,4 @@
         <authentication-provider user-service-ref="loginUserService"/>
     </authentication-manager>
 
-    <!--<beans:bean id="tokenAuthenticationFilter" class="com.globallogic.store.security.core.TokenAuthenticationFilter">
-        <beans:property name="authenticationManager" ref="authenticationManager"/>
-        <beans:property name="authenticationSuccessHandler" ref="tokenAuthenticationSuccessHandler"/>
-        <beans:property name="tokenUtil" ref="tokenUtil"/>
-    </beans:bean>
-
-    <beans:bean id="tokenAuthenticationEntryPoint"
-                class="com.globallogic.store.security.core.TokenAuthenticationEntryPoint"/>
-
-    <beans:bean id="tokenAuthenticationSuccessHandler"
-                class="com.globallogic.store.security.core.TokenAuthenticationSuccessHandler"/>-->
-
-    <beans:bean id="tokenUtil" class="com.globallogic.store.security.jwt.TokenUtil"/>
-
-    <beans:bean id="loginUserService" class="com.globallogic.store.security.LoginUserService">
-        <beans:property name="userDao" ref="userDao"/>
-    </beans:bean>
-
-    <beans:bean id="registerUserService" class="com.globallogic.store.security.RegisterUserService">
-        <beans:property name="authenticationManager" ref="authenticationManager"/>
-        <beans:property name="userDetailsService" ref="loginUserService"/>
-    </beans:bean>
-
-    <beans:bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <beans:property name="driverClassName" value="org.postgresql.Driver"/>
-        <beans:property name="url" value="jdbc:postgresql://localhost:5432/store"/>
-        <beans:property name="username" value="root"/>
-        <beans:property name="password" value="root"/>
-    </beans:bean>
-
-    <beans:bean id="sessionFactory"
-                class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
-        <beans:property name="dataSource" ref="dataSource"/>
-        <beans:property name="configLocation" value="classpath:hibernate.cfg.xml"/>
-    </beans:bean>
-
-    <beans:bean id="transactionManager"
-                class="org.springframework.orm.hibernate5.HibernateTransactionManager">
-        <beans:property name="sessionFactory" ref="sessionFactory"/>
-    </beans:bean>
-
-    <tx:advice id="txAdvice">
-        <tx:attributes>
-            <tx:method name="get*" read-only="true"/>
-            <tx:method name="find*" read-only="true"/>
-            <tx:method name="*"/>
-        </tx:attributes>
-    </tx:advice>
-
-    <aop:aspectj-autoproxy/>
-
-    <aop:config proxy-target-class="true">
-        <aop:pointcut id="userServicePointCut"
-                      expression="execution(* com.globallogic.store.security.core.*Service.*(..))"/>
-        <aop:advisor advice-ref="txAdvice" pointcut-ref="userServicePointCut"/>
-    </aop:config>
-
-    <!-- ACL -->
-    <beans:bean id="expressionHandler" class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
-        <beans:property name="permissionEvaluator" ref="permissionEvaluator"/>
-    </beans:bean>
-
-    <beans:bean id="permissionEvaluator" class="com.globallogic.store.security.acl.AccessPermissionEvaluator"/>
 </beans:beans>

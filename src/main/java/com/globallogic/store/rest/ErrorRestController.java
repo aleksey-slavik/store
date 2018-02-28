@@ -21,10 +21,10 @@ public class ErrorRestController extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(createError(ex.getBindingResult().getFieldErrors(), request));
+                .body(createError(ex.getBindingResult().getFieldErrors()));
     }
 
-    private List<Error> createError(List<FieldError> fieldErrors, WebRequest request) {
+    private List<Error> createError(List<FieldError> fieldErrors) {
         List<Error> errors = new ArrayList<>();
 
         for (FieldError fieldError : fieldErrors) {

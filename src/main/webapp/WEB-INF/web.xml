@@ -12,10 +12,7 @@
         <param-name>contextConfigLocation</param-name>
         <param-value>
             classpath:spring-security.xml,
-            classpath:spring-root.xml,
-            classpath:spring-rest.xml,
-            classpath:spring-web-controller.xml,
-            classpath:spring-dao.xml
+            classpath:spring-root.xml
         </param-value>
     </context-param>
 
@@ -31,10 +28,7 @@
             <param-name>contextConfigLocation</param-name>
             <param-value>
                 classpath:spring-security.xml,
-                classpath:spring-root.xml,
-                classpath:spring-rest.xml,
-                classpath:spring-web-controller.xml,
-                classpath:spring-dao.xml
+                classpath:spring-root.xml
             </param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
@@ -54,16 +48,5 @@
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
-    </filter-mapping>
-
-    <!-- JWT Security -->
-    <filter>
-        <filter-name>tokenAuthenticationFilter</filter-name>
-        <filter-class>com.globallogic.store.security.core.TokenAuthenticationFilter</filter-class>
-    </filter>
-
-    <filter-mapping>
-        <filter-name>tokenAuthenticationFilter</filter-name>
-        <url-pattern>/api/**</url-pattern>
     </filter-mapping>
 </web-app>
