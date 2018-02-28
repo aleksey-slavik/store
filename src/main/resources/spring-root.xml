@@ -3,8 +3,10 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
        http://www.springframework.org/schema/context
@@ -14,7 +16,9 @@
        http://www.springframework.org/schema/tx
        http://www.springframework.org/schema/tx/spring-tx.xsd
        http://www.springframework.org/schema/aop
-       http://www.springframework.org/schema/aop/spring-aop.xsd">
+       http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/util
+       http://www.springframework.org/schema/util/spring-util.xsd">
 
     <context:component-scan base-package="com.globallogic.store"/>
 
@@ -175,17 +179,19 @@
         <aop:advisor advice-ref="txAdvice" pointcut-ref="userServicePointCut"/>
     </aop:config>
 
-    <!--<bean id="expressionHandler" class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
+    <!-- Permission handler -->
+    <bean id="expressionHandler" class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
         <property name="permissionEvaluator" ref="permissionEvaluator"/>
     </bean>
 
     <bean id="permissionEvaluator" class="com.globallogic.store.security.acl.AccessPermissionEvaluator"/>
 
+    <!-- Access Control List Config -->
     <bean id="aclCache" class="org.springframework.security.acls.domain.EhCacheBasedAclCache">
         <constructor-arg>
             <bean class="org.springframework.cache.ehcache.EhCacheFactoryBean">
                 <property name="cacheManager">
-                    <bean class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"/>
+                    <bean class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" p:shared="true"/>
                 </property>
                 <property name="cacheName" value="aclCache"/>
             </bean>
@@ -224,13 +230,13 @@
         <constructor-arg>
             <list>
                 <bean class="org.springframework.security.core.authority.SimpleGrantedAuthority">
-                    <constructor-arg value="ROLE_ADMIN"/>
+                    <constructor-arg value="ADMIN"/>
                 </bean>
                 <bean class="org.springframework.security.core.authority.SimpleGrantedAuthority">
-                    <constructor-arg value="ROLE_ADMIN "/>
+                    <constructor-arg value="ADMIN"/>
                 </bean>
                 <bean class="org.springframework.security.core.authority.SimpleGrantedAuthority">
-                    <constructor-arg value="ROLE_ADMIN "/>
+                    <constructor-arg value="ADMIN"/>
                 </bean>
             </list>
         </constructor-arg>
@@ -240,5 +246,135 @@
         <constructor-arg ref="dataSource"/>
         <constructor-arg ref="lookupStrategy"/>
         <constructor-arg ref="aclCache"/>
-    </bean>-->
+    </bean>
+
+    <bean id="customAccessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
+        <constructor-arg>
+            <list>
+                <ref bean="aclReadOrderVoter"/>
+                <ref bean="aclUpdateOrderVoter"/>
+                <ref bean="aclDeleteOrderVoter"/>
+
+                <ref bean="aclReadUserVoter"/>
+                <ref bean="aclUpdateUserVoter"/>
+                <ref bean="aclDeleteUserVoter"/>
+
+                <ref bean="aclCreateProductVoter"/>
+                <ref bean="aclReadProductVoter"/>
+                <ref bean="aclUpdateProductVoter"/>
+                <ref bean="aclDeleteProductVoter"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <!-- ACL Voters -->
+    <bean id="aclDeleteOrderVoter" class="org.springframework.security.acls.AclEntryVoter">
+        <constructor-arg ref="aclService"/>
+        <constructor-arg value="ACL_ORDER_DELETE"/>
+        <constructor-arg>
+            <list>
+                <util:constant static-field="org.springframework.security.acls.domain.BasePermission.DELETE"/>
+            </list>
+        </constructor-arg>
+        <property name="processDomainObjectClass" value="com.globallogic.store.domain.order.Order"/>
+    </bean>
+
+    <bean id="aclUpdateOrderVoter" class="org.springframework.security.acls.AclEntryVoter">
+        <constructor-arg ref="aclService"/>
+        <constructor-arg value="ACL_ORDER_UPDATE"/>
+        <constructor-arg>
+            <list>
+                <util:constant static-field="org.springframework.security.acls.domain.BasePermission.WRITE"/>
+            </list>
+        </constructor-arg>
+        <property name="processDomainObjectClass" value="com.globallogic.store.domain.order.Order"/>
+    </bean>
+
+    <bean id="aclReadOrderVoter" class="org.springframework.security.acls.AclEntryVoter">
+        <constructor-arg ref="aclService"/>
+        <constructor-arg value="ACL_ORDER_READ"/>
+        <constructor-arg>
+            <list>
+                <util:constant static-field="org.springframework.security.acls.domain.BasePermission.READ"/>
+            </list>
+        </constructor-arg>
+        <property name="processDomainObjectClass" value="com.globallogic.store.domain.order.Order"/>
+    </bean>
+
+    <bean id="aclDeleteUserVoter" class="org.springframework.security.acls.AclEntryVoter">
+        <constructor-arg ref="aclService"/>
+        <constructor-arg value="ACL_USER_DELETE"/>
+        <constructor-arg>
+            <list>
+                <util:constant static-field="org.springframework.security.acls.domain.BasePermission.DELETE"/>
+            </list>
+        </constructor-arg>
+        <property name="processDomainObjectClass" value="com.globallogic.store.domain.user.User"/>
+    </bean>
+
+    <bean id="aclUpdateUserVoter" class="org.springframework.security.acls.AclEntryVoter">
+        <constructor-arg ref="aclService"/>
+        <constructor-arg value="ACL_USER_UPDATE"/>
+        <constructor-arg>
+            <list>
+                <util:constant static-field="org.springframework.security.acls.domain.BasePermission.WRITE"/>
+            </list>
+        </constructor-arg>
+        <property name="processDomainObjectClass" value="com.globallogic.store.domain.user.User"/>
+    </bean>
+
+    <bean id="aclReadUserVoter" class="org.springframework.security.acls.AclEntryVoter">
+        <constructor-arg ref="aclService"/>
+        <constructor-arg value="ACL_USER_READ"/>
+        <constructor-arg>
+            <list>
+                <util:constant static-field="org.springframework.security.acls.domain.BasePermission.READ"/>
+            </list>
+        </constructor-arg>
+        <property name="processDomainObjectClass" value="com.globallogic.store.domain.user.User"/>
+    </bean>
+
+    <bean id="aclDeleteProductVoter" class="org.springframework.security.acls.AclEntryVoter">
+        <constructor-arg ref="aclService"/>
+        <constructor-arg value="ACL_PRODUCT_DELETE"/>
+        <constructor-arg>
+            <list>
+                <util:constant static-field="org.springframework.security.acls.domain.BasePermission.DELETE"/>
+            </list>
+        </constructor-arg>
+        <property name="processDomainObjectClass" value="com.globallogic.store.domain.product.Product"/>
+    </bean>
+
+    <bean id="aclUpdateProductVoter" class="org.springframework.security.acls.AclEntryVoter">
+        <constructor-arg ref="aclService"/>
+        <constructor-arg value="ACL_PRODUCT_UPDATE"/>
+        <constructor-arg>
+            <list>
+                <util:constant static-field="org.springframework.security.acls.domain.BasePermission.WRITE"/>
+            </list>
+        </constructor-arg>
+        <property name="processDomainObjectClass" value="com.globallogic.store.domain.product.Product"/>
+    </bean>
+
+    <bean id="aclReadProductVoter" class="org.springframework.security.acls.AclEntryVoter">
+        <constructor-arg ref="aclService"/>
+        <constructor-arg value="ACL_PRODUCT_UPDATE"/>
+        <constructor-arg>
+            <list>
+                <util:constant static-field="org.springframework.security.acls.domain.BasePermission.READ"/>
+            </list>
+        </constructor-arg>
+        <property name="processDomainObjectClass" value="com.globallogic.store.domain.product.Product"/>
+    </bean>
+
+    <bean id="aclCreateProductVoter" class="org.springframework.security.acls.AclEntryVoter">
+        <constructor-arg ref="aclService"/>
+        <constructor-arg value="ACL_PRODUCT_CREATE"/>
+        <constructor-arg>
+            <list>
+                <util:constant static-field="org.springframework.security.acls.domain.BasePermission.CREATE"/>
+            </list>
+        </constructor-arg>
+        <property name="processDomainObjectClass" value="com.globallogic.store.domain.product.Product"/>
+    </bean>
 </beans>
