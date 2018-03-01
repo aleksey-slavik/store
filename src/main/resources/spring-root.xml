@@ -267,6 +267,10 @@
         </constructor-arg>
     </bean>
 
+    <bean id="aclSecurityUtil" class="com.globallogic.store.security.acl.AclSecurityUtil">
+        <property name="mutableAclService" ref="aclService"/>
+    </bean>
+
     <!-- ACL Voters -->
     <bean id="aclDeleteOrderVoter" class="org.springframework.security.acls.AclEntryVoter">
         <constructor-arg ref="aclService"/>

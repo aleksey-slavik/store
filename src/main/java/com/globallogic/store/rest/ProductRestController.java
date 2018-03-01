@@ -5,10 +5,13 @@ import com.globallogic.store.dao.SearchCriteria;
 import com.globallogic.store.dto.product.ProductDto;
 import com.globallogic.store.dto.product.ProductPreviewDto;
 import com.globallogic.store.domain.product.Product;
+import com.globallogic.store.security.acl.AclSecurityUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -18,6 +21,9 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/products")
 public class ProductRestController {
+
+    @Autowired
+    private AclSecurityUtil aclSecurityUtil;
 
     private GenericDao<Product> productDao;
 
@@ -31,6 +37,7 @@ public class ProductRestController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getProductById(@PathVariable long id) {
         Product product = productDao.getEntityByKey(id);
+        aclSecurityUtil.addPermission(product, BasePermission.READ, Product.class);
 
         if (product == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
