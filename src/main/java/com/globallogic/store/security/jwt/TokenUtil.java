@@ -1,6 +1,5 @@
 package com.globallogic.store.security.jwt;
 
-import com.globallogic.store.domain.user.PermissionName;
 import com.globallogic.store.security.AuthenticatedUser;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.DefaultClock;
@@ -79,11 +78,6 @@ public class TokenUtil {
         return Arrays.stream(authorityNames).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 
-    public Collection<PermissionName> getPermissionsFromToken(String token) {
-        String[] permissionNames = ((String) getClaimsFromToken(token).get(userPermissionKey)).split(",");
-        return Arrays.stream(permissionNames).map(PermissionName::valueOf).collect(Collectors.toList());
-    }
-
     /**
      * Parse credentials from given token
      *
@@ -121,7 +115,6 @@ public class TokenUtil {
                     getUsernameFromToken(token),
                     getCredentialsFromToken(token),
                     getRoleFromToken(token),
-                    getPermissionsFromToken(token),
                     true
             );
         } catch (JwtException e) {
@@ -136,7 +129,6 @@ public class TokenUtil {
         Claims claims = Jwts.claims();
         claims.put(userIdKey, user.getId());
         claims.put(userRoleKey, createAuthorityList(user.getAuthorities()));
-        claims.put(userPermissionKey, createPermissionList(user.getPermissions()));
         claims.put(userCredentialsKey, user.getPassword());
         claims.setSubject(user.getUsername());
         claims.setIssuedAt(created);
@@ -193,18 +185,6 @@ public class TokenUtil {
 
         for (GrantedAuthority authority : authorities) {
             builder.append(authority.getAuthority());
-            builder.append(",");
-        }
-
-        builder.deleteCharAt(builder.lastIndexOf(","));
-        return builder.toString();
-    }
-
-    private String createPermissionList(Collection<PermissionName> permissions) {
-        StringBuilder builder = new StringBuilder();
-
-        for (PermissionName permission : permissions) {
-            builder.append(permission.name());
             builder.append(",");
         }
 

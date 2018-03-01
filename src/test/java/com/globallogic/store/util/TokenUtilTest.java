@@ -106,18 +106,6 @@ public class TokenUtilTest {
      * Check that role from token is equals to role of user
      */
     @Test
-    public void checkPermissionsFromToken() {
-        when(clock.now())
-                .thenReturn(DateUtil.now());
-        AuthenticatedUser user = Workflow.createAdminAuthenticatedUser();
-        final String token = generateToken(user);
-        assertTrue(user.getPermissions().containsAll(tokenUtil.getPermissionsFromToken(token)));
-    }
-
-    /**
-     * Check that role from token is equals to role of user
-     */
-    @Test
     public void checkCredentialsFromToken() {
         when(clock.now())
                 .thenReturn(DateUtil.now());

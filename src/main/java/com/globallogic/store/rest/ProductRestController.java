@@ -35,7 +35,7 @@ public class ProductRestController {
         if (product == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         } else {
-            return ResponseEntity.ok().body(product);
+            return ResponseEntity.ok().body(new ProductDto(product));
         }
     }
 

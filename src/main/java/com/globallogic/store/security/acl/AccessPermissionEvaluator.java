@@ -1,6 +1,5 @@
 package com.globallogic.store.security.acl;
 
-import com.globallogic.store.domain.user.PermissionName;
 import com.globallogic.store.security.AuthenticatedUser;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
@@ -16,9 +15,9 @@ public class AccessPermissionEvaluator implements PermissionEvaluator {
         if (authentication != null && authentication.getPrincipal() instanceof AuthenticatedUser && permission instanceof String) {
             AuthenticatedUser user = (AuthenticatedUser) authentication.getPrincipal();
 
-            if (user.getPermissions().contains(PermissionName.valueOf(permission.toString()))) {
+            /*if (user.getPermissions().contains(PermissionName.valueOf(permission.toString()))) {
                 hasPermission = true;
-            }
+            }*/
         }
 
         return hasPermission;

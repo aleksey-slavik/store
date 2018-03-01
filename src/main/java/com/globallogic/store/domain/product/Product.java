@@ -29,20 +29,6 @@ public class Product implements Serializable {
     @Column(name = "price", nullable = false)
     private double price;
 
-    public Product() {}
-
-    public Product(long id, String name, String brand, double price) {
-        this.id = id;
-        this.name = name;
-        this.brand = brand;
-        this.price = price;
-    }
-
-    public Product(long id, String name, String brand, String description, double price) {
-        this(id, name, brand, price);
-        this.description = description;
-    }
-
     public long getId() {
         return id;
     }
@@ -59,14 +45,6 @@ public class Product implements Serializable {
         this.name = name;
     }
 
-    public String getBrand() {
-        return brand;
-    }
-
-    public void setBrand(String brand) {
-        this.brand = brand;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -81,5 +59,13 @@ public class Product implements Serializable {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
     }
 }

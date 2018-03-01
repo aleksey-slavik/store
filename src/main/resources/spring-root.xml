@@ -180,11 +180,11 @@
     </aop:config>
 
     <!-- Permission handler -->
-    <bean id="expressionHandler" class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
+    <!--<bean id="expressionHandler" class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
         <property name="permissionEvaluator" ref="permissionEvaluator"/>
     </bean>
 
-    <bean id="permissionEvaluator" class="com.globallogic.store.security.acl.AccessPermissionEvaluator"/>
+    <bean id="permissionEvaluator" class="com.globallogic.store.security.acl.AccessPermissionEvaluator"/>-->
 
     <!-- Access Control List Config -->
     <bean id="aclCache" class="org.springframework.security.acls.domain.EhCacheBasedAclCache">

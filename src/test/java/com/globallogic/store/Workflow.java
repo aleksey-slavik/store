@@ -30,12 +30,6 @@ public class Workflow {
             add(createAuthority(2, AuthorityName.CUSTOMER));
             add(createAuthority(1, AuthorityName.ADMIN));
         }});
-        user.setPermissions(new HashSet<Permission>() {{
-            add(createPermission(1, PermissionName.SUPERVISOR));
-            add(createPermission(2, PermissionName.ORDER_READ_SAME));
-            add(createPermission(3, PermissionName.ORDER_UPDATE_SAME));
-            add(createPermission(4, PermissionName.ORDER_DELETE_SAME));
-        }});
         return user;
     }
 
@@ -51,7 +45,6 @@ public class Workflow {
         user.setAuthorities(new HashSet<Authority>() {{
             add(createAuthority(2, AuthorityName.CUSTOMER));
         }});
-        user.setPermissions(new HashSet<>());
         return user;
     }
 
@@ -59,7 +52,7 @@ public class Workflow {
         Product product = new Product();
         product.setId(id);
         product.setName("Dummy");
-        product.setBrand("Dummy");
+        //product.setBrand("Dummy");
         product.setDescription("Dummy product item for tests");
         product.setPrice(9999.99);
         return product;
@@ -88,12 +81,5 @@ public class Workflow {
         authority.setId(1);
         authority.setTitle(title);
         return authority;
-    }
-
-    public static Permission createPermission(long id, PermissionName title) {
-        Permission permission = new Permission();
-        permission.setId(id);
-        permission.setTitle(title);
-        return permission;
     }
 }

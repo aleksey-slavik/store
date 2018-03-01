@@ -16,7 +16,7 @@ public class ProductDto {
     private String name;
 
     @NotNull(message = "Brand of product cannot be null")
-    @Size(max = 30, message = "Brand of product must be less than {max} characters")
+    @Size(max = 100, message = "Brand of product must be less than {max} characters")
     private String brand;
 
     @Size(max = 10000, message = "Description of product must be less than {max} characters")
@@ -25,15 +25,13 @@ public class ProductDto {
     @Min(value = 0, message = "Price of product must be positive value")
     private double price;
 
-    public ProductDto() {}
+    private long modify;
 
-    public ProductDto(long id, String name, String brand, String description, double price) {
-        this.id = id;
-        this.name = name;
-        this.brand = brand;
-        this.description = description;
-        this.price = price;
-    }
+    @NotNull(message = "Owner of product cannot be null")
+    @Size(max = 30, message = "Username of owner of product must be less than {max} characters")
+    private String owner;
+
+    public ProductDto() {}
 
     public ProductDto(Product product) {
         this.id = product.getId();
@@ -85,11 +83,6 @@ public class ProductDto {
 
     @JsonIgnore
     public Product getProduct() {
-        return new Product(
-                getId(),
-                getName(),
-                getBrand(),
-                getDescription(),
-                getPrice());
+        return new Product();
     }
 }
