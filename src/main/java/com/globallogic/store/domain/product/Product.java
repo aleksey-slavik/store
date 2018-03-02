@@ -1,6 +1,6 @@
 package com.globallogic.store.domain.product;
 
-import com.globallogic.store.domain.SecuredObject;
+import com.globallogic.store.domain.Identifiable;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -12,7 +12,7 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "product", schema = "public")
-public class Product implements Serializable, SecuredObject {
+public class Product implements Serializable, Identifiable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

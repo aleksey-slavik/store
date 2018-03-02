@@ -1,6 +1,6 @@
 package com.globallogic.store.security.acl;
 
-import com.globallogic.store.domain.SecuredObject;
+import com.globallogic.store.domain.Identifiable;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -23,13 +23,13 @@ public class AclSecurityUtil {
         this.mutableAclService = mutableAclService;
     }
 
-    public void addPermission(SecuredObject securedObject, Permission permission, Class clazz) {
-        addPermission(securedObject, getUsername(), permission, clazz);
+    public void addPermission(Identifiable identifiable, Permission permission, Class clazz) {
+        addPermission(identifiable, getUsername(), permission, clazz);
     }
 
-    public void addPermission(SecuredObject securedObject, String sid, Permission permission, Class clazz) {
+    public void addPermission(Identifiable identifiable, String sid, Permission permission, Class clazz) {
         MutableAcl acl;
-        ObjectIdentity oid = new ObjectIdentityImpl(clazz.getCanonicalName(), securedObject.getId());
+        ObjectIdentity oid = new ObjectIdentityImpl(clazz.getCanonicalName(), identifiable.getId());
         SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
         Transaction transaction = null;
 
@@ -53,8 +53,8 @@ public class AclSecurityUtil {
         }
     }
 
-    public void deletePermission(SecuredObject securedObject, String sid, Permission permission, Class clazz) {
-        ObjectIdentity oid = new ObjectIdentityImpl(clazz.getCanonicalName(), securedObject.getId());
+    public void deletePermission(Identifiable identifiable, String sid, Permission permission, Class clazz) {
+        ObjectIdentity oid = new ObjectIdentityImpl(clazz.getCanonicalName(), identifiable.getId());
         MutableAcl acl = (MutableAcl) mutableAclService.readAclById(oid);
         List<AccessControlEntry> entries = acl.getEntries();
 
