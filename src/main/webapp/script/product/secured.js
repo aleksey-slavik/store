@@ -31,6 +31,11 @@ $('#buttonDelete').click(function () {
     return false;
 });
 
+$('#buttonShare').click(function () {
+    shareProduct();
+    return false;
+});
+
 /**
  * Register listener for list item
  */
@@ -217,6 +222,19 @@ function deleteProduct() {
         function () {
             findAllProducts();
             clearProductForm();
+        }
+    )
+}
+
+function shareProduct() {
+    var itemId = $('#id').val();
+    var targerUser = $('#share').val();
+
+    createItem(
+        "http://localhost:8080/api/products/" + itemId + "/share/" + targerUser,
+        productItemToJSON(),
+        function () {
+            alert('Permissions for update item with id=' + itemId + ' were successfully issued to user ' + targerUser);
         }
     )
 }

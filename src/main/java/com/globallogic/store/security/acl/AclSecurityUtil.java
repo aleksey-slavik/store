@@ -24,10 +24,10 @@ public class AclSecurityUtil {
     }
 
     public void addPermission(SecuredObject securedObject, Permission permission, Class clazz) {
-        addPermission(securedObject, new PrincipalSid(getUsername()), permission, clazz);
+        addPermission(securedObject, getUsername(), permission, clazz);
     }
 
-    public void addPermission(SecuredObject securedObject, Sid sid, Permission permission, Class clazz) {
+    public void addPermission(SecuredObject securedObject, String sid, Permission permission, Class clazz) {
         MutableAcl acl;
         ObjectIdentity oid = new ObjectIdentityImpl(clazz.getCanonicalName(), securedObject.getId());
         SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
@@ -42,7 +42,7 @@ public class AclSecurityUtil {
                 acl = mutableAclService.createAcl(oid);
             }
 
-            acl.insertAce(acl.getEntries().size(), permission, sid, true);
+            acl.insertAce(acl.getEntries().size(), permission, new PrincipalSid(sid), true);
             mutableAclService.updateAcl(acl);
 
             transaction.commit();
@@ -53,13 +53,13 @@ public class AclSecurityUtil {
         }
     }
 
-    public void deletePermission(SecuredObject securedObject, Sid sid, Permission permission, Class clazz) {
+    public void deletePermission(SecuredObject securedObject, String sid, Permission permission, Class clazz) {
         ObjectIdentity oid = new ObjectIdentityImpl(clazz.getCanonicalName(), securedObject.getId());
         MutableAcl acl = (MutableAcl) mutableAclService.readAclById(oid);
         List<AccessControlEntry> entries = acl.getEntries();
 
         for (int i = 0; i < entries.size(); i++) {
-            if (entries.get(i).getSid().equals(sid) && entries.get(i).getPermission().equals(permission)) {
+            if (entries.get(i).getSid().equals(new PrincipalSid(sid)) && entries.get(i).getPermission().equals(permission)) {
                 acl.deleteAce(i);
             }
         }

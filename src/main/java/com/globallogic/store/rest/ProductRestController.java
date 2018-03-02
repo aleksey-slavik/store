@@ -2,11 +2,11 @@ package com.globallogic.store.rest;
 
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.dao.SearchCriteria;
+import com.globallogic.store.domain.error.Error;
 import com.globallogic.store.dto.product.ProductDto;
 import com.globallogic.store.dto.product.ProductPreviewDto;
 import com.globallogic.store.domain.product.Product;
 import com.globallogic.store.security.acl.AclSecurityUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,15 +14,20 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
+import javax.validation.*;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "/api/products")
 public class ProductRestController {
 
-    @Autowired
+    private Validator validator;
+
+    public ProductRestController() {
+        ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
+    }
+
     private AclSecurityUtil aclSecurityUtil;
 
     private GenericDao<Product> productDao;
@@ -31,13 +36,16 @@ public class ProductRestController {
         this.productDao = productDao;
     }
 
+    public void setAclSecurityUtil(AclSecurityUtil aclSecurityUtil) {
+        this.aclSecurityUtil = aclSecurityUtil;
+    }
+
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getProductById(@PathVariable long id) {
         Product product = productDao.getEntityByKey(id);
-        aclSecurityUtil.addPermission(product, BasePermission.READ, Product.class);
 
         if (product == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -94,13 +102,42 @@ public class ProductRestController {
      * @param product given {@link Product}
      * @return created {@link Product}
      */
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createProduct(@Valid @RequestBody ProductDto product) {
-        Product created = productDao.createEntity(product.getProduct());
-        return ResponseEntity.ok().body(created);
+    public ResponseEntity<?> createProduct(@RequestBody ProductDto product) {
+        Set<ConstraintViolation<ProductDto>> violations = validator.validate(product);
+
+        if (!violations.isEmpty()) {
+            List<Error> errors = new ArrayList<>();
+
+            for (ConstraintViolation<ProductDto> violation : violations) {
+                Error error = new Error();
+                String object = violation.getRootBeanClass().getSimpleName();
+                String field = violation.getPropertyPath().toString();
+                String code = violation.getConstraintDescriptor().getAnnotation().annotationType().getSimpleName();
+                error.code(object + "." + field + "." + code);
+                error.details(violation.getConstraintDescriptor().getAttributes());
+                errors.add(error);
+            }
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+        } else {
+            Product created = productDao.createEntity(product.getProduct());
+            return ResponseEntity.ok().body(created);
+        }
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(
+            value = "/{id}/share/{username}",
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> sharePermissions(@PathVariable long id, @PathVariable String username, @RequestBody Product product) {
+        if (id == product.getId())
+            aclSecurityUtil.addPermission(product, username, BasePermission.WRITE, Product.class);
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -110,12 +147,12 @@ public class ProductRestController {
      * @param product updated {@link Product} data
      * @return updated {@link Product}
      */
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') || hasPermission(#product, 'write')")
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateProduct(@Valid @RequestBody ProductDto product, @PathVariable Long id) {
+    public ResponseEntity<?> updateProduct(@RequestBody ProductDto product, @PathVariable Long id) {
         product.setId(id);
         Product updated = productDao.updateEntity(product.getProduct());
         return ResponseEntity.ok(updated);

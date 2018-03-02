@@ -9,7 +9,7 @@ public class Error {
 
     private String code;
     private long timestamp;
-    private ErrorDetails details;
+    private Map<String, Object> details;
 
     public Error() {
         this.timestamp = System.currentTimeMillis();
@@ -20,7 +20,7 @@ public class Error {
         return this;
     }
 
-    public Error details(ErrorDetails details) {
+    public Error details(Map<String, Object> details) {
         this.details = details;
         return this;
     }
@@ -33,7 +33,7 @@ public class Error {
         return timestamp;
     }
 
-    public ErrorDetails getDetails() {
+    public Map<String, Object> getDetails() {
         return details;
     }
 }

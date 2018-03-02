@@ -1,47 +1,67 @@
 package com.globallogic.store.rest;
 
 import com.globallogic.store.domain.error.Error;
-import com.globallogic.store.domain.error.ErrorDetails;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.*;
 
-@ControllerAdvice
-public class ErrorRestController extends ResponseEntityExceptionHandler {
+@RestControllerAdvice
+public class ErrorRestController {
 
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    @ExceptionHandler({ConstraintViolationException.class})
+    public ResponseEntity<Object> handleMethodArgumentNotValid(ConstraintViolationException ex) {
+        System.out.println(ex.getConstraintViolations());
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(createError(ex.getBindingResult().getFieldErrors()));
+                .body(null);
     }
 
-    private List<Error> createError(List<FieldError> fieldErrors) {
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+        System.out.println(ex);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(null);
+    }
+
+    private List<Error> createError(Class entityClass, List<FieldError> fieldErrors) {
         List<Error> errors = new ArrayList<>();
 
         for (FieldError fieldError : fieldErrors) {
+            try {
+                createErrorDetails(entityClass.getDeclaredField(fieldError.getField()).getDeclaredAnnotations());
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            }
+
             Error error = new Error()
-                    .code(createErrorCode(fieldError))
-                    .details(createErrorDetails(fieldError));
+                    .code(createErrorCode(fieldError));
             errors.add(error);
         }
 
         return errors;
     }
 
-    private ErrorDetails createErrorDetails(FieldError error) {
-        return new ErrorDetails()
-                .field(error.getField())
-                .value(error.getRejectedValue())
-                .message(error.getDefaultMessage());
+    private Map<String, Object> createErrorDetails(Annotation[] annotations) {
+        Map<String, Object> details = new HashMap<>();
+
+        for (Annotation annotation : annotations) {
+            System.out.println(annotation);
+            for (Method method : annotation.annotationType().getDeclaredMethods()) {
+                System.out.println(method.getName());
+            }
+        }
+
+        System.out.println();
+        return details;
     }
 
     private String createErrorCode(FieldError error) {

@@ -25,12 +25,6 @@ public class ProductDto {
     @Min(value = 0, message = "Price of product must be positive value")
     private double price;
 
-    private long modify;
-
-    @NotNull(message = "Owner of product cannot be null")
-    @Size(max = 30, message = "Username of owner of product must be less than {max} characters")
-    private String owner;
-
     public ProductDto() {}
 
     public ProductDto(Product product) {

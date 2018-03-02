@@ -15,7 +15,7 @@
 </script>
 
 
-<sec:authorize access="hasAuthority('ADMIN')">
+<sec:authorize access="hasAuthority('ADMIN') || hasAuthority('MODERATOR')">
     <div class="container">
         <div class="leftArea">
             <div class="header" align="center">
@@ -48,6 +48,11 @@
             <div class="rightArea">
                 <label>Description:</label>
                 <textarea id="description" name="description"></textarea>
+                <sec:authorize access="hasAuthority('ADMIN')">
+                    <label>Share permissions:</label>
+                    <input id="share" name="share" type="text"/>
+                    <button id="buttonShare">Share</button>
+                </sec:authorize>
             </div>
         </form>
     </div>
