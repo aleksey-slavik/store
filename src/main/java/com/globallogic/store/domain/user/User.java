@@ -1,5 +1,7 @@
 package com.globallogic.store.domain.user;
 
+import com.globallogic.store.domain.Identifiable;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -7,7 +9,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "user", schema = "public")
-public class User implements Serializable {
+public class User implements Serializable, Identifiable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

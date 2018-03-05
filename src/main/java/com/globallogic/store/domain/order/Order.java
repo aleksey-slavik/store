@@ -1,6 +1,7 @@
 package com.globallogic.store.domain.order;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.globallogic.store.domain.Identifiable;
 import com.globallogic.store.domain.product.Product;
 import com.globallogic.store.domain.user.User;
 
@@ -16,7 +17,7 @@ import java.util.List;
  */
 @Entity
 @Table(name = "order", schema = "public")
-public class Order implements Serializable {
+public class Order implements Serializable, Identifiable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
