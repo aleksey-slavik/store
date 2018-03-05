@@ -1,12 +1,12 @@
-package com.globallogic.store.rest;
+package com.globallogic.store.rest.controller;
 
 import com.globallogic.store.assembler.product.ProductAssembler;
 import com.globallogic.store.assembler.product.ProductPreviewAssembler;
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.dao.SearchCriteria;
-import com.globallogic.store.domain.error.Error;
 import com.globallogic.store.dto.product.ProductDto;
 import com.globallogic.store.domain.product.Product;
+import com.globallogic.store.rest.validation.RestValidator;
 import com.globallogic.store.security.acl.AclSecurityUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,14 +15,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.*;
 import java.util.*;
 
 @RestController
 @RequestMapping(value = "/api/products")
 public class ProductRestController {
-
-    private Validator validator;
 
     private AclSecurityUtil aclSecurityUtil;
 
@@ -32,9 +29,11 @@ public class ProductRestController {
 
     private ProductAssembler productAssembler;
 
-    public ProductRestController(AclSecurityUtil aclSecurityUtil, GenericDao<Product> productDao, ProductPreviewAssembler previewAssembler, ProductAssembler productAssembler) {
-        ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
-        this.validator = validatorFactory.getValidator();
+    public ProductRestController(
+            AclSecurityUtil aclSecurityUtil,
+            GenericDao<Product> productDao,
+            ProductPreviewAssembler previewAssembler,
+            ProductAssembler productAssembler) {
         this.aclSecurityUtil = aclSecurityUtil;
         this.productDao = productDao;
         this.previewAssembler = previewAssembler;
@@ -108,26 +107,10 @@ public class ProductRestController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createProduct(@RequestBody ProductDto product) {
-        Set<ConstraintViolation<ProductDto>> violations = validator.validate(product);
-
-        if (!violations.isEmpty()) {
-            List<Error> errors = new ArrayList<>();
-
-            for (ConstraintViolation<ProductDto> violation : violations) {
-                Error error = new Error();
-                String object = violation.getRootBeanClass().getSimpleName();
-                String field = violation.getPropertyPath().toString();
-                String code = violation.getConstraintDescriptor().getAnnotation().annotationType().getSimpleName();
-                error.code(object + "." + field + "." + code);
-                error.details(violation.getConstraintDescriptor().getAttributes());
-                errors.add(error);
-            }
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
-        } else {
+        return new RestValidator<ProductDto>().validate(product, () -> {
             Product created = productDao.createEntity(productAssembler.toResource(product));
             return ResponseEntity.ok().body(created);
-        }
+        });
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -154,9 +137,11 @@ public class ProductRestController {
             method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateProduct(@RequestBody ProductDto product, @PathVariable Long id) {
-        product.setProductId(id);
-        Product updated = productDao.updateEntity(productAssembler.toResource(product));
-        return ResponseEntity.ok(updated);
+        return new RestValidator<ProductDto>().validate(product, () -> {
+            product.setProductId(id);
+            Product updated = productDao.updateEntity(productAssembler.toResource(product));
+            return ResponseEntity.ok(updated);
+        });
     }
 
     /**

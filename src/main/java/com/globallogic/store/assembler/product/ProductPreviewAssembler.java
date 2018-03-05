@@ -2,7 +2,7 @@ package com.globallogic.store.assembler.product;
 
 import com.globallogic.store.domain.product.Product;
 import com.globallogic.store.dto.product.ProductPreviewDto;
-import com.globallogic.store.rest.ProductRestController;
+import com.globallogic.store.rest.controller.ProductRestController;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 
 public class ProductPreviewAssembler extends ResourceAssemblerSupport<Product, ProductPreviewDto> {

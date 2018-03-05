@@ -116,18 +116,18 @@
     </bean>
 
     <!-- Spring Rest Beans -->
-    <bean id="userRestController" class="com.globallogic.store.rest.UserRestController">
+    <bean id="userRestController" class="com.globallogic.store.rest.controller.UserRestController">
         <property name="userDao" ref="userDao"/>
     </bean>
 
-    <bean id="productRestController" class="com.globallogic.store.rest.ProductRestController">
+    <bean id="productRestController" class="com.globallogic.store.rest.controller.ProductRestController">
         <constructor-arg name="productDao" ref="productDao"/>
         <constructor-arg name="aclSecurityUtil" ref="aclSecurityUtil"/>
         <constructor-arg name="previewAssembler" ref="productPreviewAssembler"/>
         <constructor-arg name="productAssembler" ref="productAssembler"/>
     </bean>
 
-    <bean id="orderRestController" class="com.globallogic.store.rest.OrderRestController">
+    <bean id="orderRestController" class="com.globallogic.store.rest.controller.OrderRestController">
         <property name="orderDao" ref="orderDao"/>
         <property name="orderItemDao" ref="orderItemDao"/>
         <property name="userDao" ref="userDao"/>

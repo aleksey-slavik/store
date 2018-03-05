@@ -1,4 +1,4 @@
-package com.globallogic.store.rest;
+package com.globallogic.store.rest.controller;
 
 import com.globallogic.store.security.AuthenticatedUser;
 import com.globallogic.store.security.dto.AuthenticationRequest;
@@ -21,23 +21,27 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping(value = "/api")
-public class AuthenticationController {
+@RequestMapping(value = "/api/auth")
+public class JWTAuthenticationController {
 
     @Value("${jwt.header}")
     private String header;
 
-    @Autowired
     private TokenUtil tokenUtil;
 
-    @Autowired
     private AuthenticationManager authenticationManager;
 
-    @Autowired
     private UserDetailsService userDetailsService;
 
-    @RequestMapping(value = "/auth", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) {
+    @Autowired
+    public JWTAuthenticationController(TokenUtil tokenUtil, AuthenticationManager authenticationManager, UserDetailsService userDetailsService) {
+        this.tokenUtil = tokenUtil;
+        this.authenticationManager = authenticationManager;
+        this.userDetailsService = userDetailsService;
+    }
+
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> createJWTToken(@RequestBody AuthenticationRequest authenticationRequest) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken( authenticationRequest.getUsername(), authenticationRequest.getPassword());
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -46,8 +50,8 @@ public class AuthenticationController {
         return ResponseEntity.ok(new AuthenticationResponse(token));
     }
 
-    @RequestMapping(value = "/auth", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> refreshAuthenticationToken(HttpServletRequest request) {
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> refreshJWTToken(HttpServletRequest request) {
         String token = request.getHeader(header);
         String username = tokenUtil.getUsernameFromToken(token);
         AuthenticatedUser user = (AuthenticatedUser) userDetailsService.loadUserByUsername(username);
