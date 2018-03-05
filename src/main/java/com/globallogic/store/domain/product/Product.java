@@ -1,6 +1,7 @@
 package com.globallogic.store.domain.product;
 
 import com.globallogic.store.domain.Identifiable;
+import com.globallogic.store.domain.user.User;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -30,6 +31,10 @@ public class Product implements Serializable, Identifiable {
 
     @Column(name = "price", nullable = false)
     private double price;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "owner_id")
+    private User owner;
 
     public long getId() {
         return id;
@@ -69,5 +74,13 @@ public class Product implements Serializable, Identifiable {
 
     public void setBrand(String brand) {
         this.brand = brand;
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 }

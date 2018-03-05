@@ -1,15 +1,14 @@
 package com.globallogic.store.dto.product;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.globallogic.store.domain.product.Product;
+import org.springframework.hateoas.ResourceSupport;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public class ProductDto {
+public class ProductDto extends ResourceSupport {
 
-    private long id;
+    private long productId;
 
     @NotNull(message = "Name of product cannot be null")
     @Size(max = 30, message = "Name of product must be less than {max} characters")
@@ -25,22 +24,19 @@ public class ProductDto {
     @Min(value = 0, message = "Price of product must be positive value")
     private double price;
 
-    public ProductDto() {}
+    @NotNull(message = "Owner id cannot be null")
+    private long ownerId;
 
-    public ProductDto(Product product) {
-        this.id = product.getId();
-        this.name = product.getName();
-        this.brand = product.getBrand();
-        this.description = product.getDescription();
-        this.price = product.getPrice();
+    @NotNull(message = "Owner username cannot be null")
+    @Size(max = 30, message = "Owner username must be less than {max} characters")
+    private String owner;
+
+    public long getProductId() {
+        return productId;
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
+    public void setProductId(long productId) {
+        this.productId = productId;
     }
 
     public String getName() {
@@ -75,8 +71,19 @@ public class ProductDto {
         this.price = price;
     }
 
-    @JsonIgnore
-    public Product getProduct() {
-        return new Product();
+    public long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(long ownerId) {
+        this.ownerId = ownerId;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }

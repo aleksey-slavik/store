@@ -121,8 +121,10 @@
     </bean>
 
     <bean id="productRestController" class="com.globallogic.store.rest.ProductRestController">
-        <property name="productDao" ref="productDao"/>
-        <property name="aclSecurityUtil" ref="aclSecurityUtil"/>
+        <constructor-arg name="productDao" ref="productDao"/>
+        <constructor-arg name="aclSecurityUtil" ref="aclSecurityUtil"/>
+        <constructor-arg name="previewAssembler" ref="productPreviewAssembler"/>
+        <constructor-arg name="productAssembler" ref="productAssembler"/>
     </bean>
 
     <bean id="orderRestController" class="com.globallogic.store.rest.OrderRestController">
@@ -130,6 +132,10 @@
         <property name="orderItemDao" ref="orderItemDao"/>
         <property name="userDao" ref="userDao"/>
     </bean>
+
+    <!-- DTO Assemblers -->
+    <bean id="productPreviewAssembler" class="com.globallogic.store.assembler.product.ProductPreviewAssembler"/>
+    <bean id="productAssembler" class="com.globallogic.store.assembler.product.ProductAssembler"/>
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.postgresql.Driver"/>

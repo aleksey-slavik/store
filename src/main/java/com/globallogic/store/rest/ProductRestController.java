@@ -1,10 +1,11 @@
 package com.globallogic.store.rest;
 
+import com.globallogic.store.assembler.product.ProductAssembler;
+import com.globallogic.store.assembler.product.ProductPreviewAssembler;
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.dao.SearchCriteria;
 import com.globallogic.store.domain.error.Error;
 import com.globallogic.store.dto.product.ProductDto;
-import com.globallogic.store.dto.product.ProductPreviewDto;
 import com.globallogic.store.domain.product.Product;
 import com.globallogic.store.security.acl.AclSecurityUtil;
 import org.springframework.http.HttpStatus;
@@ -23,21 +24,21 @@ public class ProductRestController {
 
     private Validator validator;
 
-    public ProductRestController() {
-        ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
-        validator = validatorFactory.getValidator();
-    }
-
     private AclSecurityUtil aclSecurityUtil;
 
     private GenericDao<Product> productDao;
 
-    public void setProductDao(GenericDao<Product> productDao) {
-        this.productDao = productDao;
-    }
+    private ProductPreviewAssembler previewAssembler;
 
-    public void setAclSecurityUtil(AclSecurityUtil aclSecurityUtil) {
+    private ProductAssembler productAssembler;
+
+    public ProductRestController(AclSecurityUtil aclSecurityUtil, GenericDao<Product> productDao, ProductPreviewAssembler previewAssembler, ProductAssembler productAssembler) {
+        ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+        this.validator = validatorFactory.getValidator();
         this.aclSecurityUtil = aclSecurityUtil;
+        this.productDao = productDao;
+        this.previewAssembler = previewAssembler;
+        this.productAssembler = productAssembler;
     }
 
     @RequestMapping(
@@ -50,7 +51,7 @@ public class ProductRestController {
         if (product == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         } else {
-            return ResponseEntity.ok().body(new ProductDto(product));
+            return ResponseEntity.ok().body(productAssembler.toResource(product));
         }
     }
 
@@ -92,7 +93,7 @@ public class ProductRestController {
         if (products == null || products.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else {
-            return ResponseEntity.ok().body(createPreviews(products));
+            return ResponseEntity.ok().body(previewAssembler.toResources(products));
         }
     }
 
@@ -124,7 +125,7 @@ public class ProductRestController {
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
         } else {
-            Product created = productDao.createEntity(product.getProduct());
+            Product created = productDao.createEntity(productAssembler.toResource(product));
             return ResponseEntity.ok().body(created);
         }
     }
@@ -147,14 +148,14 @@ public class ProductRestController {
      * @param product updated {@link Product} data
      * @return updated {@link Product}
      */
-    @PreAuthorize("hasRole('ADMIN') || hasPermission(#product, 'write')")
+    //@PreAuthorize("hasRole('ADMIN') || hasPermission(#product, 'write')")
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateProduct(@RequestBody ProductDto product, @PathVariable Long id) {
-        product.setId(id);
-        Product updated = productDao.updateEntity(product.getProduct());
+        product.setProductId(id);
+        Product updated = productDao.updateEntity(productAssembler.toResource(product));
         return ResponseEntity.ok(updated);
     }
 
@@ -172,15 +173,5 @@ public class ProductRestController {
     public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
         Product deleted = productDao.deleteEntity(id);
         return ResponseEntity.ok(deleted);
-    }
-
-    private List<ProductPreviewDto> createPreviews(List<Product> originals) {
-        List<ProductPreviewDto> previews = new ArrayList<>();
-
-        for (Product product : originals) {
-            previews.add(new ProductPreviewDto(product));
-        }
-
-        return previews;
     }
 }

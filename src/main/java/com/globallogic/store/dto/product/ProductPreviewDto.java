@@ -1,39 +1,20 @@
 package com.globallogic.store.dto.product;
 
-import com.globallogic.store.domain.product.Product;
+import org.springframework.hateoas.ResourceSupport;
 
-public class ProductPreviewDto {
+public class ProductPreviewDto extends ResourceSupport {
 
-    private long id;
+    private long productId;
     private String name;
     private String brand;
     private double price;
 
-    public ProductPreviewDto() {
+    public long getProductId() {
+        return productId;
     }
 
-    public ProductPreviewDto(long id, String name, String brand, double price) {
-        this.id = id;
-        this.name = name;
-        this.brand = brand;
-        this.price = price;
-    }
-
-    public ProductPreviewDto(Product product) {
-        this(
-                product.getId(),
-                product.getName(),
-                product.getBrand(),
-                product.getPrice()
-        );
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
+    public void setProductId(long productId) {
+        this.productId = productId;
     }
 
     public String getName() {
