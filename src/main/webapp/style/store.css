@@ -3,21 +3,32 @@
     font-size: 18px;
 }
 
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+}
+
 .header {
     padding: 0;
 }
 
 .container {
     display: table;
-    margin: 0 auto;
+    height: 90%;
+    width: 100%;
+    margin: 0;
     border-spacing: 10px 10px;
-    background-color: #ccced1;
-    border-radius: 3px;
 }
 
 .leftArea, .mainArea, .rightArea, .additionalArea {
     display: table-cell;
-    width: 300px;
+    width: 20%;
+}
+
+.centralArea {
+    display: table-cell;
+    width: 80%;
 }
 
 .leftArea-list {
@@ -96,11 +107,9 @@ input, select {
     margin: 0;
 }
 
-#top-panel {
-    border-radius: 3px;
-    margin: 10px;
-    height: 50px;
+.top-panel {
     background-color: #215f93;
+    height: 5%;
 }
 
 #top-panel-search {
@@ -109,7 +118,7 @@ input, select {
     margin-top: 5px;
 }
 
-#top-panel-account {
+.top-panel-account {
     float: right;
     margin-right: 5px;
     margin-top: 5px;
@@ -119,7 +128,7 @@ input, select {
     border-spacing: 10px 10px;
 }
 
-#bottom-panel-link {
+.bottom-panel-link {
     display: flex;
     justify-content: center;
 }
@@ -146,18 +155,24 @@ input, select {
 }
 
 #wrapper {
-    margin: 10px;
+    width: 70%;
     display: grid;
     grid-gap: 10px;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 150px));
+    grid-template-columns: repeat(auto-fill, minmax(350px, 250px));
 }
 
 .box {
-    background-color: #fff;
+    background-color: #ccced1;
     border-radius: 3px;
     padding: 10px;
-    font-size: 150%;
     text-decoration: none;
+}
+
+.leftMenu {
+    margin-left: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 30%;
 }
 
 .box:hover {
@@ -168,7 +183,7 @@ a {
     text-decoration: none;
 }
 
-#modal-form {
+.modal-form {
     display: inline-block;
     padding: 5px 5px 5px 70px;
     width: 650px;
@@ -178,7 +193,7 @@ a {
     vertical-align: middle;
 }
 
-#modal-form input:disabled, #modal-form textarea:disabled {
+.modal-form input:disabled, .modal-form textarea:disabled {
     background: white;
 }
 
@@ -231,4 +246,49 @@ a {
 
 .orderTableRow:hover {
     background-color: #8f8f8f;
+}
+
+#createAd {
+    border-radius: 3px;
+    background-color: #215f93;
+    color: #ffffff;
+    padding: 5px;
+    margin: 0;
+    width: 300px;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+/* The Close Button (x) */
+.close {
+    position: relative;
+    right: 25px;
+    top: 0;
+    color: #000;
+    font-size: 35px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: red;
+    cursor: pointer;
+}
+
+/* Add Zoom Animation */
+.animate {
+    -webkit-animation: animatezoom 0.6s;
+    animation: animatezoom 0.6s
+}
+
+@-webkit-keyframes animatezoom {
+    from {-webkit-transform: scale(0)}
+    to {-webkit-transform: scale(1)}
+}
+
+@keyframes animatezoom {
+    from {transform: scale(0)}
+    to {transform: scale(1)}
 }

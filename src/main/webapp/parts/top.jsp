@@ -1,8 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<div id="top-panel">
-    <div id="top-panel-account">
+<div class="top-panel">
+    <div class="top-panel-account">
         <table>
             <tr>
                 <sec:authorize access="isAuthenticated()">

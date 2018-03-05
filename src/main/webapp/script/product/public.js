@@ -43,7 +43,7 @@ function fillProductInfoList(data) {
     $.each(list, function (index, item) {
         $('#wrapper').append(
             '<div class="box">' +
-            '<a href="#" data-identity="' + item.id + '">' +
+            '<a href="#" data-identity="' + item.productId + '">' +
             '<p>' + item.name + '</p>' +
             '<p>' + item.brand + '</p>' +
             '<p>' + item.price + '</p>' +
@@ -58,7 +58,7 @@ function fillProductInfoList(data) {
  * @param item given data
  */
 function fillProduct(item) {
-    $('#id').val(item.id);
+    $('#productId').val(item.id);
     $('#name').val(item.name);
     $('#brand').val(item.brand);
     $('#description').val(item.description);
@@ -72,7 +72,7 @@ function fillProduct(item) {
  */
 function orderItemToJSON() {
     return JSON.stringify({
-        "id": $('#id').val(),
+        "productId": $('#id').val(),
         "product": currentItem,
         "price": currentItem.price,
         "quantity": $('#quantity').val()
@@ -93,7 +93,7 @@ function clearProductForm() {
  */
 function findAllProducts() {
     getItem(
-        rootURL,
+        rootURL + '?size=20',
         function (data) {
             fillProductInfoList(data);
         },

@@ -122,6 +122,7 @@
 
     <bean id="productRestController" class="com.globallogic.store.rest.controller.ProductRestController">
         <constructor-arg name="productDao" ref="productDao"/>
+        <constructor-arg name="userDao" ref="userDao"/>
         <constructor-arg name="aclSecurityUtil" ref="aclSecurityUtil"/>
         <constructor-arg name="previewAssembler" ref="productPreviewAssembler"/>
         <constructor-arg name="productAssembler" ref="productAssembler"/>

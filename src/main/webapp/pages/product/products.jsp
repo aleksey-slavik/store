@@ -15,7 +15,7 @@
 </script>
 
 
-<sec:authorize access="hasAuthority('ADMIN') || hasAuthority('MODERATOR')">
+<sec:authorize access="hasAuthority('ADMIN')">
     <div class="container">
         <div class="leftArea">
             <div class="header" align="center">
@@ -65,42 +65,55 @@
             src="${pageContext.request.contextPath}/script/product/secured.js"></script>
 </sec:authorize>
 
-<sec:authorize access="!hasAnyAuthority('ADMIN')">
-    <div class="header" align="center">
-        <%@ include file="/parts/search.jsp" %>
-    </div>
-
-    <div id="wrapper">
-    </div>
-
-    <div id="modal-form-container">
-        <form id="modal-form">
-            <div class="mainArea">
-                <input id="id" name="id" type="hidden"/>
-
-                <label>Name:</label>
-                <input id="name" name="name" type="text" disabled/>
-
-                <label>Brand:</label>
-                <input id="brand" name="brand" type="text" disabled/>
-
-                <label>Price:</label>
-                <input id="price" name="price" type="text" disabled/>
-
-                <sec:authorize access="isAuthenticated()">
-                    <label>Quantity:</label>
-                    <input id="quantity" name="quantity" type="number" min="1" value="1"/>
-
-                    <button id="buttonBuy">Add to cart</button>
-                </sec:authorize>
-                <button id="buttonCancel">Cancel</button>
+<sec:authorize access="!hasAuthority('ADMIN')">
+    <div class="container">
+        <div class="leftArea">
+            <div class="header" align="center">
+                <%@ include file="/parts/search.jsp" %>
             </div>
 
-            <div class="rightArea">
-                <label>Description:</label>
-                <textarea id="description" name="description" disabled></textarea>
+            <sec:authorize access="hasAuthority('CUSTOMER') && !hasAuthority('ADMIN')">
+                <div class="header" align="center">
+                    <button id="createAd" type="button">Place own ad on the board</button>
+                </div>
+            </sec:authorize>
+        </div>
+
+        <div class="centralArea">
+            <div id="wrapper">
             </div>
-        </form>
+
+            <div id="modal-form-container">
+                <form class="modal-form animate">
+                    <span id="buttonCancel" class="close" title="Close Modal">&times;</span>
+                    <div class="mainArea">
+                        <input id="id" name="id" type="hidden"/>
+
+                        <label>Name:</label>
+                        <input id="name" name="name" type="text" disabled/>
+
+                        <label>Brand:</label>
+                        <input id="brand" name="brand" type="text" disabled/>
+
+                        <label>Price:</label>
+                        <input id="price" name="price" type="text" disabled/>
+
+                        <sec:authorize access="isAuthenticated()">
+                            <label>Quantity:</label>
+                            <input id="quantity" name="quantity" type="number" min="1" value="1"/>
+
+                            <button id="buttonBuy">Add to cart</button>
+                        </sec:authorize>
+                        <%--<button id="buttonCancel">Cancel</button>--%>
+                    </div>
+
+                    <div class="rightArea">
+                        <label>Description:</label>
+                        <textarea id="description" name="description" disabled></textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     <script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.min.js"></script>

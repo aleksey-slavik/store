@@ -4,6 +4,7 @@ import com.globallogic.store.assembler.product.ProductAssembler;
 import com.globallogic.store.assembler.product.ProductPreviewAssembler;
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.dao.SearchCriteria;
+import com.globallogic.store.domain.user.User;
 import com.globallogic.store.dto.product.ProductDto;
 import com.globallogic.store.domain.product.Product;
 import com.globallogic.store.rest.validation.RestValidator;
@@ -28,21 +29,40 @@ import java.util.*;
 @Api(value = "/api/products", description = "Operations with products")
 public class ProductRestController {
 
+    /**
+     * Access Control List
+     */
     private AclSecurityUtil aclSecurityUtil;
 
+    /**
+     * {@link Product} DAO
+     */
     private GenericDao<Product> productDao;
 
+    /**
+     * {@link User} DAO
+     */
+    private GenericDao<User> userDao;
+
+    /**
+     * Resource assembler to convert {@link Product} to {@link com.globallogic.store.dto.product.ProductPreviewDto}
+     */
     private ProductPreviewAssembler previewAssembler;
 
+    /**
+     * Resource assembler to convert {@link Product} to {@link ProductDto}
+     */
     private ProductAssembler productAssembler;
 
     public ProductRestController(
             AclSecurityUtil aclSecurityUtil,
             GenericDao<Product> productDao,
+            GenericDao<User> userDao,
             ProductPreviewAssembler previewAssembler,
             ProductAssembler productAssembler) {
         this.aclSecurityUtil = aclSecurityUtil;
         this.productDao = productDao;
+        this.userDao = userDao;
         this.previewAssembler = previewAssembler;
         this.productAssembler = productAssembler;
     }
@@ -62,7 +82,7 @@ public class ProductRestController {
         Product product = productDao.getEntityByKey(id);
 
         if (product == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } else {
             return ResponseEntity.ok().body(productAssembler.toResource(product));
         }
@@ -74,6 +94,7 @@ public class ProductRestController {
      * @param name  name of product
      * @param brand brand of product
      * @param price price of product
+     * @param owner username of product owner
      * @param page  page number
      * @param size  count of items per page
      * @param sort  name of sorting column
@@ -88,15 +109,24 @@ public class ProductRestController {
             @ApiParam(value = "name of product") @RequestParam(value = "name", required = false) String[] name,
             @ApiParam(value = "brand of product") @RequestParam(value = "brand", required = false) String[] brand,
             @ApiParam(value = "price of product") @RequestParam(value = "price", required = false) Double[] price,
+            @ApiParam(value = "username of product owner") @RequestParam(value = "owner", required = false) String owner,
             @ApiParam(value = "page number", defaultValue = "1") @RequestParam(value = "page", defaultValue = "1") int page,
             @ApiParam(value = "count of items per page", defaultValue = "5") @RequestParam(value = "size", defaultValue = "5") int size,
             @ApiParam(value = "name of sorting column", defaultValue = "id") @RequestParam(value = "sort", defaultValue = "id") String sort,
             @ApiParam(value = "sorting order", defaultValue = "asc") @RequestParam(value = "order", defaultValue = "asc") String order) {
 
+        User user = null;
+
+        if (owner != null) {
+            SearchCriteria ownerCriteria = new SearchCriteria().criteria("username", owner);
+            user = userDao.getEntity(ownerCriteria);
+        }
+
         SearchCriteria criteria = new SearchCriteria()
                 .criteria("name", (Object[]) name)
                 .criteria("brand", (Object[]) brand)
                 .criteria("price", (Object[]) price)
+                .criteria("owner", user)
                 .offset(page)
                 .limit(size)
                 .sortBy(sort)
@@ -117,41 +147,19 @@ public class ProductRestController {
      * @param product created product object
      * @return created product
      */
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Resource to create a product")
+    @ApiOperation(value = "Resource to create a product",
+            notes = "This can only be done by the authenticated user")
     public ResponseEntity<?> createProduct(
             @ApiParam(value = "created product object", required = true) @RequestBody ProductDto product) {
         return new RestValidator<ProductDto>().validate(product, () -> {
             Product created = productDao.createEntity(productAssembler.toResource(product));
+            aclSecurityUtil.addPermission(created, BasePermission.ADMINISTRATION, Product.class);
             return ResponseEntity.ok().body(productAssembler.toResource(created));
         });
-    }
-
-    /**
-     * Resource to share permissions to other user
-     *
-     * @param id       product id
-     * @param username username of user who will be granted permissions
-     * @param product  shared product object
-     */
-    @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(
-            value = "/{id}/share/{username}",
-            method = RequestMethod.POST,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(
-            value = "Resource to share permissions to other user",
-            notes = "This can only be done by the user with \"administer\" permissions")
-    public ResponseEntity<?> sharePermissions(
-            @ApiParam(value = "product id", required = true) @PathVariable long id,
-            @ApiParam(value = "username of user who will be granted permissions", required = true) @PathVariable String username,
-            @ApiParam(value = "shared product object") @RequestBody Product product) {
-        if (id == product.getId())
-            aclSecurityUtil.addPermission(product, username, BasePermission.WRITE, Product.class);
-        return ResponseEntity.ok().build();
     }
 
     /**
@@ -161,7 +169,7 @@ public class ProductRestController {
      * @param product updated product object
      * @return updated product object
      */
-    //@PreAuthorize("hasRole('ADMIN') || hasPermission(#product, 'write')")
+    @PreAuthorize("hasRole('ADMIN') || hasPermission(#product, 'ADMINISTRATION') || hasPermission(#product, 'WRITE')")
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.PUT,
@@ -185,17 +193,66 @@ public class ProductRestController {
      * @param id product id
      * @return deleted product object
      */
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') || hasPermission(#product, 'ADMINISTRATION')")
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(
             value = "Resource to delete a product by id",
-            notes = "This can only be done by the user with \"delete\" permissions")
+            notes = "This can only be done by the user with \"administration\" permissions")
     public ResponseEntity<?> deleteProduct(
             @ApiParam(value = "product id", required = true) @PathVariable Long id) {
         Product deleted = productDao.deleteEntity(id);
         return ResponseEntity.ok(productAssembler.toResource(deleted));
     }
+
+    /**
+     * Resource to share permissions to other user
+     *
+     * @param id       product id
+     * @param username username of user who will be granted permissions
+     * @param product  shared product object
+     */
+    @PreAuthorize("hasRole('ADMIN') || hasPermission(#product, 'ADMINISTRATION')")
+    @RequestMapping(
+            value = "/{id}/share/{username}",
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(
+            value = "Resource to share permissions to other user",
+            notes = "This can only be done by the user with \"administration\" permissions")
+    public ResponseEntity<?> sharePermissions(
+            @ApiParam(value = "product id", required = true) @PathVariable long id,
+            @ApiParam(value = "username of user who will be granted permissions", required = true) @PathVariable String username,
+            @ApiParam(value = "shared product object") @RequestBody Product product) {
+        if (id == product.getId())
+            aclSecurityUtil.addPermission(product, username, BasePermission.WRITE, Product.class);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Resource to share permissions to other user
+     *
+     * @param id       product id
+     * @param username username of user who will be granted permissions
+     * @param product  shared product object
+     */
+    @PreAuthorize("hasRole('ADMIN') || hasPermission(#product, 'ADMINISTRATION')")
+    @RequestMapping(
+            value = "/{id}/share/{username}",
+            method = RequestMethod.DELETE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(
+            value = "Resource to remove permissions of other user",
+            notes = "This can only be done by the user with \"administration\" permissions")
+    public ResponseEntity<?> removePermissions(
+            @ApiParam(value = "product id", required = true) @PathVariable long id,
+            @ApiParam(value = "username of user of who will be removed permissions", required = true) @PathVariable String username,
+            @ApiParam(value = "shared product object") @RequestBody Product product) {
+        if (id == product.getId())
+            aclSecurityUtil.deletePermission(product, username, BasePermission.WRITE, Product.class);
+        return ResponseEntity.ok().build();
+    }
+
 }
