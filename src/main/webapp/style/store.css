@@ -248,13 +248,13 @@ a {
     background-color: #8f8f8f;
 }
 
-#createAd {
+#addProduct {
     border-radius: 3px;
     background-color: #215f93;
     color: #ffffff;
     padding: 5px;
     margin: 0;
-    width: 300px;
+    width: 340px;
 }
 
 button:hover {

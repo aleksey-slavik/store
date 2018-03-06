@@ -8,6 +8,7 @@ import com.globallogic.store.domain.user.User;
 import com.globallogic.store.dto.product.ProductDto;
 import com.globallogic.store.domain.product.Product;
 import com.globallogic.store.rest.validation.RestValidator;
+import com.globallogic.store.security.AuthenticatedUser;
 import com.globallogic.store.security.acl.AclSecurityUtil;
 import io.swagger.annotations.*;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.acls.domain.BasePermission;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -156,6 +158,8 @@ public class ProductRestController {
     public ResponseEntity<?> createProduct(
             @ApiParam(value = "created product object", required = true) @RequestBody ProductDto product) {
         return new RestValidator<ProductDto>().validate(product, () -> {
+            long id = ((AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
+            product.setOwnerId(id);
             Product created = productDao.createEntity(productAssembler.toResource(product));
             aclSecurityUtil.addPermission(created, BasePermission.ADMINISTRATION, Product.class);
             return ResponseEntity.ok().body(productAssembler.toResource(created));
@@ -169,7 +173,7 @@ public class ProductRestController {
      * @param product updated product object
      * @return updated product object
      */
-    @PreAuthorize("hasRole('ADMIN') || hasPermission(#product, 'ADMINISTRATION') || hasPermission(#product, 'WRITE')")
+    @PreAuthorize("hasRole('ADMIN') || hasPermission(#id, 'com.globallogic.store.domain.product.Product', 'ADMINISTRATION') || hasPermission(#id, 'com.globallogic.store.domain.product.Product', 'WRITE')")
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.PUT,
@@ -193,7 +197,7 @@ public class ProductRestController {
      * @param id product id
      * @return deleted product object
      */
-    @PreAuthorize("hasRole('ADMIN') || hasPermission(#product, 'ADMINISTRATION')")
+    @PreAuthorize("hasRole('ADMIN') || hasPermission(#id, 'com.globallogic.store.domain.product.Product', 'ADMINISTRATION')")
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.DELETE,
@@ -214,9 +218,9 @@ public class ProductRestController {
      * @param username username of user who will be granted permissions
      * @param product  shared product object
      */
-    @PreAuthorize("hasRole('ADMIN') || hasPermission(#product, 'ADMINISTRATION')")
+    @PreAuthorize("hasRole('ADMIN') || hasPermission(#id, 'com.globallogic.store.domain.product.Product', 'ADMINISTRATION')")
     @RequestMapping(
-            value = "/{id}/share/{username}",
+            value = "/{id}/permissions/{username}",
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(
@@ -225,9 +229,9 @@ public class ProductRestController {
     public ResponseEntity<?> sharePermissions(
             @ApiParam(value = "product id", required = true) @PathVariable long id,
             @ApiParam(value = "username of user who will be granted permissions", required = true) @PathVariable String username,
-            @ApiParam(value = "shared product object") @RequestBody Product product) {
-        if (id == product.getId())
-            aclSecurityUtil.addPermission(product, username, BasePermission.WRITE, Product.class);
+            @ApiParam(value = "shared product object") @RequestBody ProductDto product) {
+        if (id == product.getProductId())
+            aclSecurityUtil.addPermission(productAssembler.toResource(product), username, BasePermission.WRITE, Product.class);
         return ResponseEntity.ok().build();
     }
 
@@ -238,9 +242,9 @@ public class ProductRestController {
      * @param username username of user who will be granted permissions
      * @param product  shared product object
      */
-    @PreAuthorize("hasRole('ADMIN') || hasPermission(#product, 'ADMINISTRATION')")
+    @PreAuthorize("hasRole('ADMIN') || hasPermission(#id, 'com.globallogic.store.domain.product.Product', 'ADMINISTRATION')")
     @RequestMapping(
-            value = "/{id}/share/{username}",
+            value = "/{id}/permissions/{username}",
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(
@@ -249,9 +253,9 @@ public class ProductRestController {
     public ResponseEntity<?> removePermissions(
             @ApiParam(value = "product id", required = true) @PathVariable long id,
             @ApiParam(value = "username of user of who will be removed permissions", required = true) @PathVariable String username,
-            @ApiParam(value = "shared product object") @RequestBody Product product) {
-        if (id == product.getId())
-            aclSecurityUtil.deletePermission(product, username, BasePermission.WRITE, Product.class);
+            @ApiParam(value = "shared product object") @RequestBody ProductDto product) {
+        if (id == product.getProductId())
+            aclSecurityUtil.deletePermission(productAssembler.toResource(product), username, BasePermission.WRITE, Product.class);
         return ResponseEntity.ok().build();
     }
 

@@ -74,7 +74,7 @@
 
             <sec:authorize access="hasAuthority('CUSTOMER') && !hasAuthority('ADMIN')">
                 <div class="header" align="center">
-                    <button id="createAd" type="button">Place own ad on the board</button>
+                    <button id="addProduct" type="button">Add product</button>
                 </div>
             </sec:authorize>
         </div>
@@ -85,7 +85,7 @@
 
             <div id="modal-form-container">
                 <form class="modal-form animate">
-                    <span id="buttonCancel" class="close" title="Close Modal">&times;</span>
+                    <%--<span id="buttonCancel" class="close" title="Close Modal">&times;</span>--%>
                     <div class="mainArea">
                         <input id="id" name="id" type="hidden"/>
 
@@ -104,7 +104,8 @@
 
                             <button id="buttonBuy">Add to cart</button>
                         </sec:authorize>
-                        <%--<button id="buttonCancel">Cancel</button>--%>
+                        <button id="buttonCancel">Cancel</button>
+                        <button id="buttonUpdate">Update</button>
                     </div>
 
                     <div class="rightArea">
@@ -121,6 +122,8 @@
     <script type="text/javascript" src="${pageContext.request.contextPath}/script/rest.js"></script>
     <script type="text/javascript"
             src="${pageContext.request.contextPath}/script/product/public.js"></script>
+    <script type="text/javascript"
+            src="${pageContext.request.contextPath}/script/product/secured.js"></script>
 </sec:authorize>
 
 <%@include file="/parts/bottom.jsp" %>

@@ -51,6 +51,7 @@
                 <prop key="/order">order</prop>
                 <prop key="/cart">cart</prop>
                 <prop key="/account">account</prop>
+                <prop key="/account/products">userProducts</prop>
             </props>
         </property>
     </bean>
@@ -66,6 +67,7 @@
     <bean id="order" class="com.globallogic.store.web.order.OrderWebController"/>
     <bean id="cart" class="com.globallogic.store.web.order.CartWebController"/>
     <bean id="account" class="com.globallogic.store.web.user.AccountWebController"/>
+    <bean id="userProducts" class="com.globallogic.store.web.user.UserProductsWebController"/>
 
     <!-- Exceptions Resolver -->
     <!--<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
@@ -248,4 +250,12 @@
     <bean id="aclSecurityUtil" class="com.globallogic.store.security.acl.AclSecurityUtil">
         <property name="mutableAclService" ref="aclService"/>
     </bean>
+
+    <bean id="expressionHandler" class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler"
+          p:permissionEvaluator-ref="permissionEvaluator" />
+
+    <bean id="permissionEvaluator" class="org.springframework.security.acls.AclPermissionEvaluator" >
+        <constructor-arg ref="aclService"/>
+    </bean>
+
 </beans>

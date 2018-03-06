@@ -1,24 +1,14 @@
-package com.globallogic.store.web.product;
+package com.globallogic.store.web.user;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- * Web controller for access to product list.
- *
- * @author oleksii.slavik
- */
-public class ProductWebController extends AbstractController {
-
-    @Value("${view.product}")
-    private String productView;
-
+public class UserProductsWebController extends AbstractController {
     @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        return new ModelAndView(productView);
+        return new ModelAndView("/user/products");
     }
 }
