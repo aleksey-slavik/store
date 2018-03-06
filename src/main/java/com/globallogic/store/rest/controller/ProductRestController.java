@@ -7,7 +7,6 @@ import com.globallogic.store.dao.SearchCriteria;
 import com.globallogic.store.domain.user.User;
 import com.globallogic.store.dto.product.ProductDto;
 import com.globallogic.store.domain.product.Product;
-import com.globallogic.store.rest.validation.RestValidator;
 import com.globallogic.store.security.AuthenticatedUser;
 import com.globallogic.store.security.acl.AclSecurityUtil;
 import io.swagger.annotations.*;
@@ -19,6 +18,7 @@ import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.*;
 
 /**
@@ -84,7 +84,7 @@ public class ProductRestController {
         Product product = productDao.getEntityByKey(id);
 
         if (product == null) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else {
             return ResponseEntity.ok().body(productAssembler.toResource(product));
         }
@@ -149,21 +149,19 @@ public class ProductRestController {
      * @param product created product object
      * @return created product
      */
-    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     @RequestMapping(
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Resource to create a product",
             notes = "This can only be done by the authenticated user")
     public ResponseEntity<?> createProduct(
-            @ApiParam(value = "created product object", required = true) @RequestBody ProductDto product) {
-        return new RestValidator<ProductDto>().validate(product, () -> {
-            long id = ((AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
-            product.setOwnerId(id);
-            Product created = productDao.createEntity(productAssembler.toResource(product));
-            aclSecurityUtil.addPermission(created, BasePermission.ADMINISTRATION, Product.class);
-            return ResponseEntity.ok().body(productAssembler.toResource(created));
-        });
+            @ApiParam(value = "created product object", required = true) @Valid @RequestBody ProductDto product) {
+        long id = ((AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
+        product.setOwnerId(id);
+        Product created = productDao.createEntity(productAssembler.toResource(product));
+        aclSecurityUtil.addPermission(created, BasePermission.ADMINISTRATION, Product.class);
+        return ResponseEntity.ok().body(productAssembler.toResource(created));
     }
 
     /**
@@ -183,12 +181,10 @@ public class ProductRestController {
             notes = "This can only be done by the user with \"write\" permissions")
     public ResponseEntity<?> updateProduct(
             @ApiParam(value = "product id", required = true) @PathVariable Long id,
-            @ApiParam(value = "updated product object", required = true) @RequestBody ProductDto product) {
-        return new RestValidator<ProductDto>().validate(product, () -> {
-            product.setProductId(id);
-            Product updated = productDao.updateEntity(productAssembler.toResource(product));
-            return ResponseEntity.ok(productAssembler.toResource(updated));
-        });
+            @ApiParam(value = "updated product object", required = true) @Valid @RequestBody ProductDto product) {
+        product.setProductId(id);
+        Product updated = productDao.updateEntity(productAssembler.toResource(product));
+        return ResponseEntity.ok(productAssembler.toResource(updated));
     }
 
     /**
@@ -232,7 +228,7 @@ public class ProductRestController {
             @ApiParam(value = "shared product object") @RequestBody ProductDto product) {
         if (id == product.getProductId())
             aclSecurityUtil.addPermission(productAssembler.toResource(product), username, BasePermission.WRITE, Product.class);
-        return ResponseEntity.ok().build();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /**

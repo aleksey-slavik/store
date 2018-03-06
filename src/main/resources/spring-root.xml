@@ -22,6 +22,8 @@
     <!-- support JSR303 annotation if JSR 303 validation present on classpath -->
     <mvc:annotation-driven/>
 
+    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
+
     <!-- JSON Support -->
     <bean name="viewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver"/>
     <bean name="jsonTemplate" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView"/>
@@ -207,7 +209,7 @@
                 <constructor-arg>
                     <list>
                         <bean class="org.springframework.security.core.authority.SimpleGrantedAuthority">
-                            <constructor-arg value="ROLE_ACL_ADMIN"/>
+                            <constructor-arg value="ADMIN"/>
                         </bean>
                     </list>
                 </constructor-arg>

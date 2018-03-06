@@ -1,29 +1,11 @@
-/**
- * Root url path for products rest service
- *
- * @type {string}
- */
-var rootURL = "http://localhost:8080/api/users";
-
-/**
- * Temporary variable for product data
- */
 var currentItem;
-
-//start statement of page when it is loaded
 findAllUserProducts();
 
-/**
- * Register listener for create button
- */
 $('#buttonCreate').click(function () {
     clearUserForm();
     return false;
 });
 
-/**
- * Register listener for save button
- */
 $('#buttonSave').click(function () {
     if ($('#id').val() === '') {
         createUserProduct();
@@ -34,35 +16,25 @@ $('#buttonSave').click(function () {
     return false;
 });
 
-/**
- * Register listener for delete button
- */
 $('#buttonDelete').click(function () {
     deleteUserProduct();
     return false;
 });
 
 $('#buttonShare').click(function () {
-    shareProduct();
+    grantPermission();
     return false;
 });
 
 $('#buttonRemove').click(function () {
+    removePermission();
     return false;
 });
 
-/**
- * Register listener for list item
- */
 $('#itemList').on('click', 'a', function () {
     findUserProductById($(this).data('identity'));
 });
 
-/**
- * Fill list of users using given data
- *
- * @param data given data
- */
 function fillUserProductList(data) {
     var list = data == null ? [] : (data instanceof Array ? data : [data]);
     $('#itemList').find('li').remove();
@@ -71,11 +43,6 @@ function fillUserProductList(data) {
     });
 }
 
-/**
- * Fill user form using given item data
- *
- * @param item given data
- */
 function fillUserProduct(item) {
     $('#id').val(item.productId);
     $('#name').val(item.name);
@@ -86,11 +53,6 @@ function fillUserProduct(item) {
     $('#owner').val(item.owner);
 }
 
-/**
- * Parse user data from form to json format
- *
- * @returns {string}
- */
 function userProductItemToJSON() {
     var itemId = $('#id').val();
     return JSON.stringify({
@@ -104,115 +66,166 @@ function userProductItemToJSON() {
     });
 }
 
-/**
- * Sending GET request to rest service for get all items.
- * Implementation of {@link getItem} method.
- */
 function findAllUserProducts() {
-    getItem(
-        "http://localhost:8080/api/products?owner=" + principal,
+    $.ajax({
+        type: 'GET',
+        url: "http://localhost:8080/api/products?owner=" + principal,
+        async: false,
+        dataType: "json",
 
-        function (data) {
-            fillUserProductList(data)
-        },
-
-        function () {
-            //do nothing
+        success: function (data, textStatus, xhr) {
+            switch (xhr.status) {
+                case 200:
+                    fillUserProductList(data);
+                    break;
+                case 204:
+                    alert("You don't have products");
+                    break;
+            }
         }
-    )
+    });
 }
 
-/**
- * Sending GET request to rest service for get item by given id.
- * Implementation of {@link getItem} method.
- *
- * @param id given id
- */
 function findUserProductById(id) {
-    getItem(
-        'http://localhost:8080/api/products/' + id,
+    $.ajax({
+        type: 'GET',
+        url: 'http://localhost:8080/api/products/' + id,
+        async: false,
+        dataType: "json",
 
-        function (data) {
+        success: function (data) {
             currentItem = data;
             fillUserProduct(currentItem);
             $('#buttonDelete').show();
         },
 
-        function () {
-            //do nothing
+        error: function (xhr, textStatus, errorThrown) {
+            console.log(xhr);
+            console.log(textStatus);
+            console.log(errorThrown);
         }
-    )
+    });
 }
 
-/**
- * Sending POST request to rest service for create item.
- * Implementation of {@link createItem} method.
- */
 function createUserProduct() {
-    createItem(
-        'http://localhost:8080/api/products/',
-        userProductItemToJSON(),
+    $.ajax({
+        type: 'POST',
+        contentType: 'application/json',
+        url: 'http://localhost:8080/api/products/',
+        dataType: "json",
+        data: userProductItemToJSON(),
+        async: false,
 
-        function (data) {
+        success: function (data) {
+            alert("Product " + data.name + " was successfully created");
             findAllUserProducts();
             $('#buttonDelete').show();
             $('#id').val(data.productId);
+        },
+
+        error: function (xhr, textStatus, errorThrown) {
+            alert('Some error thrown during create product!');
+            console.log(xhr);
+            console.log(textStatus);
+            console.log(errorThrown);
         }
-    )
+    });
 }
 
-/**
- * Sending PUT request to rest service for update item.
- * Implementation of {@link updateItem} method.
- */
 function updateUserProduct() {
-    updateItem(
-        'http://localhost:8080/api/products',
-        $('#id').val(),
-        userProductItemToJSON(),
+    var productId = $('#id').val();
 
-        function () {
-            alert('Item with id=' + $('#id').val() + ' successfully updated!');
+    $.ajax({
+        type: 'PUT',
+        contentType: 'application/json',
+        url: 'http://localhost:8080/api/products/' + productId,
+        dataType: "json",
+        data: userProductItemToJSON(),
+        async: false,
+
+        success: function (data) {
+            alert('Product ' + data.name + ' successfully updated!');
+        },
+
+        error: function (xhr, textStatus, errorThrown) {
+            console.log(xhr);
+            console.log(textStatus);
+            console.log(errorThrown);
         }
-    )
+    });
 }
 
-/**
- * Sending DELETE request to rest service for delete item.
- * Implementation of {@link deleteItem} method.
- */
 function deleteUserProduct() {
-    deleteItem(
-        rootURL,
-        $('#id').val(),
+    var productId = $('#id').val();
 
-        function () {
+    $.ajax({
+        type: 'DELETE',
+        url: 'http://localhost:8080/api/products/' + productId,
+        async: false,
+
+        success: function () {
             findAllUserProducts();
             clearUserForm();
+        },
+
+        error: function (xhr, textStatus, errorThrown) {
+            console.log(xhr);
+            console.log(textStatus);
+            console.log(errorThrown);
         }
-    )
+    });
 }
 
-/**
- * Clear form for insert new data
- */
 function clearUserForm() {
     $('#buttonDelete').hide();
     currentItem = {};
     fillUserProduct(currentItem);
 }
 
-function shareProduct() {
-    var itemId = $('#id').val();
+function grantPermission() {
+    var productId = $('#id').val();
     var targetUser = $('#share').val();
-    console.log('http://localhost:8080/api/products/' + itemId + '/permissions/' + targetUser);
-    console.log(userProductItemToJSON());
 
-    createItem(
-        'http://localhost:8080/api/products/' + itemId + '/permissions/' + targetUser,
-        userProductItemToJSON(),
-        function () {
-            alert('Permissions for update item with id=' + itemId + ' were successfully issued to user ' + targetUser);
+    $.ajax({
+        type: 'POST',
+        contentType: 'application/json',
+        url: 'http://localhost:8080/api/products/' + productId + '/permissions/' + targetUser,
+        dataType: 'json',
+        data: userProductItemToJSON(),
+        async: false,
+
+        success: function () {
+            alert('Permissions for update product with id=' + productId + ' were successfully issued to user ' + targetUser);
+        },
+
+        error: function (xhr, textStatus, errorThrown) {
+            console.log(xhr);
+            console.log(textStatus);
+            console.log(errorThrown);
         }
-    )
+    });
+}
+
+function removePermission() {
+    var productId = $('#id').val();
+    var targetUser = $('#share').val();
+
+    $.ajax({
+        type: 'DELETE',
+        contentType: 'application/json',
+        url: 'http://localhost:8080/api/products/' + productId + '/permissions/' + targetUser,
+        dataType: "json",
+        data: userProductItemToJSON(),
+        async: false,
+
+        success: function () {
+            alert('Permissions for update product with id=' + productId + ' were successfully removed to user ' + targetUser);
+        },
+
+        error: function (xhr, textStatus, errorThrown) {
+            console.log(xhr);
+            console.log(textStatus);
+            console.log(errorThrown);
+        }
+    });
 }

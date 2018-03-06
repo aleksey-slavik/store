@@ -32,7 +32,7 @@ $('#buttonDelete').click(function () {
 });
 
 $('#buttonShare').click(function () {
-    shareProduct();
+    grantPermission();
     return false;
 });
 

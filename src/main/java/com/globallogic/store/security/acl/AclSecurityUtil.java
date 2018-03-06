@@ -44,7 +44,6 @@ public class AclSecurityUtil {
 
             acl.insertAce(acl.getEntries().size(), permission, new PrincipalSid(sid), true);
             mutableAclService.updateAcl(acl);
-
             transaction.commit();
         } catch (HibernateException e) {
             if (transaction != null) {
@@ -54,17 +53,34 @@ public class AclSecurityUtil {
     }
 
     public void deletePermission(Identifiable identifiable, String sid, Permission permission, Class clazz) {
-        ObjectIdentity oid = new ObjectIdentityImpl(clazz.getCanonicalName(), identifiable.getId());
-        MutableAcl acl = (MutableAcl) mutableAclService.readAclById(oid);
-        List<AccessControlEntry> entries = acl.getEntries();
+        SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
+        Transaction transaction = null;
 
-        for (int i = 0; i < entries.size(); i++) {
-            if (entries.get(i).getSid().equals(new PrincipalSid(sid)) && entries.get(i).getPermission().equals(permission)) {
-                acl.deleteAce(i);
+        try (Session session = sessionFactory.openSession()) {
+            transaction = session.beginTransaction();
+            ObjectIdentity oid = new ObjectIdentityImpl(clazz.getCanonicalName(), identifiable.getId());
+            MutableAcl acl = (MutableAcl) mutableAclService.readAclById(oid);
+            List<AccessControlEntry> entries = acl.getEntries();
+            PrincipalSid recipient = new PrincipalSid(sid);
+
+            for (int i = 0; i < entries.size(); ) {
+                if (entries.get(i).getSid().equals(recipient) && entries.get(i).getPermission().equals(permission)) {
+                    acl.deleteAce(i);
+                    entries = acl.getEntries();
+                    i = 0;
+                    continue;
+                }
+
+                i++;
+            }
+
+            mutableAclService.updateAcl(acl);
+            transaction.commit();
+        } catch (HibernateException e) {
+            if (transaction != null) {
+                transaction.rollback();
             }
         }
-
-        mutableAclService.updateAcl(acl);
     }
 
     private String getUsername() {
