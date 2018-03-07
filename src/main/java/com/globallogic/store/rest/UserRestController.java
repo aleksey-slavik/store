@@ -1,4 +1,4 @@
-package com.globallogic.store.rest.controller;
+package com.globallogic.store.rest;
 
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.dao.SearchCriteria;

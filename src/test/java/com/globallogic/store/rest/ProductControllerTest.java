@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.globallogic.store.Workflow;
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.domain.product.Product;
-import com.globallogic.store.rest.controller.ProductRestController;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;

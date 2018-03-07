@@ -20,9 +20,15 @@
     <context:component-scan base-package="com.globallogic.store"/>
 
     <!-- support JSR303 annotation if JSR 303 validation present on classpath -->
-    <mvc:annotation-driven/>
+    <mvc:annotation-driven validator="validator"/>
 
-    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
+    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+        <!--<property name="providerClass" value="org.hibernate.validator.HibernateValidator"/>-->
+    </bean>
+
+    <!--<bean class="org.springframework.validation.beanvalidation.MethodValidationPostProcessor">
+        <property name="validator" ref="validator"/>
+    </bean>-->
 
     <!-- JSON Support -->
     <bean name="viewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver"/>
@@ -120,11 +126,11 @@
     </bean>
 
     <!-- Spring Rest Beans -->
-    <bean id="userRestController" class="com.globallogic.store.rest.controller.UserRestController">
+    <bean id="userRestController" class="com.globallogic.store.rest.UserRestController">
         <property name="userDao" ref="userDao"/>
     </bean>
 
-    <bean id="productRestController" class="com.globallogic.store.rest.controller.ProductRestController">
+    <bean id="productRestController" class="com.globallogic.store.rest.ProductRestController">
         <constructor-arg name="productDao" ref="productDao"/>
         <constructor-arg name="userDao" ref="userDao"/>
         <constructor-arg name="aclSecurityUtil" ref="aclSecurityUtil"/>
@@ -132,7 +138,7 @@
         <constructor-arg name="productAssembler" ref="productAssembler"/>
     </bean>
 
-    <bean id="orderRestController" class="com.globallogic.store.rest.controller.OrderRestController">
+    <bean id="orderRestController" class="com.globallogic.store.rest.OrderRestController">
         <property name="orderDao" ref="orderDao"/>
         <property name="orderItemDao" ref="orderItemDao"/>
         <property name="userDao" ref="userDao"/>
@@ -259,5 +265,4 @@
     <bean id="permissionEvaluator" class="org.springframework.security.acls.AclPermissionEvaluator" >
         <constructor-arg ref="aclService"/>
     </bean>
-
 </beans>

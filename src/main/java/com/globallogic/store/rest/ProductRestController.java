@@ -1,4 +1,4 @@
-package com.globallogic.store.rest.controller;
+package com.globallogic.store.rest;
 
 import com.globallogic.store.assembler.product.ProductAssembler;
 import com.globallogic.store.assembler.product.ProductPreviewAssembler;
@@ -149,7 +149,7 @@ public class ProductRestController {
      * @param product created product object
      * @return created product
      */
-    //@PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
