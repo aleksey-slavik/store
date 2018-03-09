@@ -1,234 +1,383 @@
 package com.globallogic.store.rest;
 
+import com.globallogic.store.assembler.order.OrderAssembler;
+import com.globallogic.store.assembler.order.OrderItemAssembler;
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.dao.SearchCriteria;
 import com.globallogic.store.domain.order.Status;
 import com.globallogic.store.domain.user.User;
+import com.globallogic.store.dto.order.OrderDto;
+import com.globallogic.store.dto.order.OrderItemDto;
 import com.globallogic.store.exception.EmptyResponseException;
 import com.globallogic.store.exception.NotAcceptableException;
 import com.globallogic.store.exception.NotFoundException;
 import com.globallogic.store.domain.order.Order;
 import com.globallogic.store.domain.order.OrderItem;
-import org.springframework.beans.factory.annotation.Value;
+import com.globallogic.store.security.AuthenticatedUser;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.NoResultException;
-import java.util.HashMap;
+import javax.validation.Valid;
 import java.util.List;
 
 /**
- * Spring rest controller for {@link Order}.
+ * Rest controller for operations with orders
  *
  * @author oleksii.slavik
  */
 @RestController
 @RequestMapping(value = "/api/orders")
+@Api(value = "/api/orders", description = "Operations with orders")
 public class OrderRestController {
 
-    @Value("${user.username}")
-    private String usernameKey;
-
-    @Value("${order.owner}")
-    private String ownerKey;
-
-    @Value("${order.status}")
-    private String statusKey;
-
-    @Value("${orderItem.order}")
-    private String orderKey;
-
     /**
-     * {@link Order} DAO object for access to database.
+     * {@link Order} DAO
      */
     private GenericDao<Order> orderDao;
 
     /**
-     * {@link OrderItem} DAO object for access to database.
+     * {@link OrderItem} DAO
      */
     private GenericDao<OrderItem> orderItemDao;
 
     /**
-     * {@link User} DAO object for access to database.
+     * {@link User} DAO
      */
     private GenericDao<User> userDao;
 
     /**
-     * Injection of {@link Order} DAO object for access to database.
+     * Resource assembler to convert {@link Order} to {@link OrderDto}
      */
-    public void setOrderDao(GenericDao<Order> orderDao) {
+    private OrderAssembler orderAssembler;
+
+    /**
+     * Resource assembler to convert {@link Order} to {@link OrderItemDto}
+     */
+    private OrderItemAssembler orderItemAssembler;
+
+    public OrderRestController(
+            GenericDao<Order> orderDao,
+            GenericDao<OrderItem> orderItemDao,
+            GenericDao<User> userDao,
+            OrderAssembler orderAssembler,
+            OrderItemAssembler orderItemAssembler) {
         this.orderDao = orderDao;
-    }
-
-    /**
-     * Injection of {@link OrderItem} DAO object for access to database.
-     */
-    public void setOrderItemDao(GenericDao<OrderItem> orderItemDao) {
         this.orderItemDao = orderItemDao;
-    }
-
-    /**
-     * Injection of {@link User} DAO object for access to database.
-     */
-    public void setUserDao(GenericDao<User> userDao) {
         this.userDao = userDao;
+        this.orderAssembler = orderAssembler;
+        this.orderItemAssembler = orderItemAssembler;
     }
 
     /**
-     * Return list of {@link Order} represented as json.
+     * Resource to get a order by id
      *
-     * @return list of {@link Order}
+     * @param id order id
+     * @return order with given id
      */
-    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Order> findOrder(@RequestParam(value = "page", defaultValue = "1") int page,
-                                 @RequestParam(value = "size", defaultValue = "5") int size,
-                                 @RequestParam(value = "sort", defaultValue = "id") String sort,
-                                 @RequestParam(value = "order", defaultValue = "asc") String order) {
-        return orderDao.getEntityList(new SearchCriteria());
-    }
-
-    @RequestMapping(value = "/customers/{username}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Order findOrderByUsername(final @PathVariable String username) {
-        SearchCriteria userCriteria = new SearchCriteria();
-        userCriteria.criteria(usernameKey, username);
-        final User user = userDao.getEntity(userCriteria);
-
-        try {
-            SearchCriteria orderCriteria = new SearchCriteria();
-            orderCriteria.criteria(ownerKey, user);
-            orderCriteria.criteria(statusKey, Status.OPENED);
-            return orderDao.getEntity(orderCriteria);
-        } catch (NoResultException e) {
-            Order order = new Order();
-            order.setUser(user);
-            return orderDao.createEntity(order);
-        }
-    }
-
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Order getOrderById(@PathVariable Long id) {
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(
+            value = "/{id}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(
+            value = "Resource to get a order by id",
+            notes = "This can only be done by the authenticated user, which is a customer of order or have admin role")
+    public ResponseEntity<?> getOrderById(
+            @ApiParam(value = "order id", required = true) @PathVariable long id) {
         Order order = orderDao.getEntityByKey(id);
 
+        if (order == null) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } else {
+            return ResponseEntity.ok().body(orderAssembler.toResource(order));
+        }
+    }
+
+    /**
+     * Resource to get a list of orders
+     *
+     * @param customer username of customer of order
+     * @param status   status of order
+     * @param page     page number
+     * @param size     count of items per page
+     * @param sort     name of sorting column
+     * @param order    sorting order
+     * @return list of orders
+     */
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(
+            value = "Resource to get a list of orders",
+            notes = "This can only be done by the authenticated user, which is a customer of order or have admin role")
+    public ResponseEntity<?> getOrderList(
+            @ApiParam(value = "username of customer of order") @RequestParam(value = "customer", required = false) String customer,
+            @ApiParam(value = "status of order") @RequestParam(value = "status", required = false) Status status,
+            @ApiParam(value = "page number", defaultValue = "1") @RequestParam(value = "page", defaultValue = "1") int page,
+            @ApiParam(value = "count of items per page", defaultValue = "5") @RequestParam(value = "size", defaultValue = "5") int size,
+            @ApiParam(value = "name of sorting column", defaultValue = "id") @RequestParam(value = "sort", defaultValue = "id") String sort,
+            @ApiParam(value = "sorting order", defaultValue = "asc") @RequestParam(value = "order", defaultValue = "asc") String order) {
+        User user = null;
+
+        if (customer != null) {
+            SearchCriteria customerCriteria = new SearchCriteria().criteria("username", customer);
+            user = userDao.getEntity(customerCriteria);
+        }
+
+        SearchCriteria criteria = new SearchCriteria()
+                .criteria("customer", user)
+                .criteria("status", status)
+                .offset(page)
+                .limit(size)
+                .sortBy(sort)
+                .order(order);
+
+        List<Order> orders = orderDao.getEntityList(criteria);
+
+        if (orders == null || orders.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } else {
+            return ResponseEntity.ok().body(orderAssembler.toResources(orders));
+        }
+    }
+
+    /**
+     * Resource to create a order
+     *
+     * @param order created order object
+     * @return created order
+     */
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(
+            value = "Resource to create a order",
+            notes = "This can only be done by the authenticated user, which is a customer of order or have admin role")
+    public Order createOrder(
+            @ApiParam(value = "created order object") @RequestBody OrderDto order) {
+        if (order == null) {
+            order = new OrderDto();
+            AuthenticatedUser principal = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+            order.setCustomerId(principal.getId());
+            order.setCustomer(principal.getUsername());
+            order.setStatus(Status.OPENED);
+            order.setTotalCost(0);
+        }
+
+        return orderDao.createEntity(orderAssembler.toResource(order));
+    }
+
+    /**
+     * Resource to update a order
+     *
+     * @param id    order id
+     * @param order updated order object
+     * @return updated order
+     */
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(
+            value = "/{id}",
+            method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(
+            value = "Resource to update a order",
+            notes = "This can only be done by the authenticated user, which is a customer of order or have admin role")
+    public ResponseEntity<?> updateOrder(
+            @ApiParam(value = "order id", required = true) @PathVariable long id,
+            @ApiParam(value = "updated order object", required = true) @Valid @RequestBody OrderDto order) {
+        if (checkOrder(id) != null) {
+            order.setOrderId(id);
+            order.checkTotalCost();
+            Order updated = orderAssembler.toResource(order);
+            return ResponseEntity.ok().body(orderAssembler.toResource(orderDao.updateEntity(updated)));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+        }
+    }
+
+    /**
+     * Resource to delete a order
+     *
+     * @param id order id
+     * @return deleted order
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(
+            value = "/{id}",
+            method = RequestMethod.DELETE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(
+            value = "Resource to delete a order",
+            notes = "This can only be done by user, which have admin role")
+    public ResponseEntity<?> deleteOrderById(
+            @ApiParam(value = "order id", required = true) @PathVariable long id) {
+        if (checkOrder(id) != null) {
+            Order deleted = orderDao.deleteEntity(id);
+            return ResponseEntity.ok().body(orderAssembler.toResource(deleted));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+        }
+    }
+
+    /**
+     * Resource to get a order item by id
+     *
+     * @param id     order id
+     * @param itemId order item id
+     * @return order item with given id
+     */
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(
+            value = "/{id}/items/{itemId}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(
+            value = "Resource to get a order item by id",
+            notes = "This can only be done by the authenticated user, which is a customer of order or have admin role")
+    public ResponseEntity<?> getItemOfOrderByItemId(
+            @ApiParam(value = "order id", required = true) @PathVariable long id,
+            @ApiParam(value = "order item id", required = true) @PathVariable long itemId) {
+        Order order = checkOrder(id);
+
         if (order != null) {
-            return order;
+            return ResponseEntity.ok().body(null);
         } else {
-            throw new NotFoundException();
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
     }
 
-    @RequestMapping(value = "/{id}/items", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<OrderItem> getItemsOfOrderByOrderId(final @PathVariable Long id,
-                                                    @RequestParam(value = "page", defaultValue = "1") int page,
-                                                    @RequestParam(value = "size", defaultValue = "5") int size,
-                                                    @RequestParam(value = "sort", defaultValue = "id") String sort,
-                                                    @RequestParam(value = "order", defaultValue = "asc") String orderBy) {
-        final Order order = getOrderById(id);
-        SearchCriteria criteria = new SearchCriteria();
-        criteria.criteria(orderKey, order);
+    /**
+     * Resource to get a list of order items
+     *
+     * @param id    order id
+     * @param page  page number
+     * @param size  count of items per page
+     * @param sort  name of sorting column
+     * @param order sorting order
+     * @return list of order items
+     */
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(
+            value = "/{id}/items",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(
+            value = "Resource to get a list of order items",
+            notes = "This can only be done by the authenticated user, which is a customer of order or have admin role")
+    public ResponseEntity<?> getItemsOfOrderByOrderId(
+            @ApiParam(value = "order id", required = true) @PathVariable long id,
+            @ApiParam(value = "page number", defaultValue = "1") @RequestParam(value = "page", defaultValue = "1") int page,
+            @ApiParam(value = "count of items per page", defaultValue = "5") @RequestParam(value = "size", defaultValue = "5") int size,
+            @ApiParam(value = "name of sorting column", defaultValue = "id") @RequestParam(value = "sort", defaultValue = "id") String sort,
+            @ApiParam(value = "sorting order", defaultValue = "asc") @RequestParam(value = "order", defaultValue = "asc") String order) {
+        Order checkOrder = checkOrder(id);
 
-        List<OrderItem> items = orderItemDao.getEntityList(criteria);
-
-        if (items == null || items.isEmpty()) {
-            throw new EmptyResponseException();
-        }
-
-        return items;
-    }
-
-    @RequestMapping(value = "/{id}/items/{itemId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public OrderItem getItemOfOrderByItemId(@PathVariable Long id, @PathVariable Long itemId) {
-        Order order = getOrderById(id);
-        OrderItem orderItem = orderItemDao.getEntityByKey(itemId);
-
-        if (orderItem == null) {
-            throw new NotFoundException();
-        }
-
-        if (orderItem.getOrder().getId() == order.getId()) {
-            return orderItem;
+        if (checkOrder != null) {
+            return ResponseEntity.ok().body(null);
         } else {
-            throw new NotAcceptableException();
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
-    }
-
-    @RequestMapping(value = "/{id}/items", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public OrderItem addOrderItem(@PathVariable Long id, @RequestBody OrderItem orderItem) {
-        Order order = getOrderById(id);
-
-        if (order == null) {
-            throw new NotFoundException();
-        }
-
-        orderItem.setOrder(order);
-        OrderItem createdOrderItem = orderItemDao.createEntity(orderItem);
-        checkOrderTotalCount(id);
-        return createdOrderItem;
-    }
-
-    @RequestMapping(value = "/{id}/items/{itemId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public OrderItem updateOrderItem(@PathVariable Long id, @PathVariable Long itemId, @RequestBody OrderItem orderItem) {
-        Order order = getOrderById(id);
-
-        if (order == null) {
-            throw new NotFoundException();
-        }
-
-        orderItem.setOrder(order);
-        //orderItem.setId(itemId);
-        OrderItem updatedOrderItem = orderItemDao.updateEntity(orderItem);
-        checkOrderTotalCount(id);
-        return updatedOrderItem;
-    }
-
-    @RequestMapping(value = "/{id}/items/{itemId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public OrderItem deleteOrderItem(@PathVariable Long id, @PathVariable Long itemId) {
-        getItemOfOrderByItemId(id, itemId);
-        OrderItem deletedOrderItem = orderItemDao.deleteEntity(itemId);
-        checkOrderTotalCount(id);
-        return deletedOrderItem;
     }
 
     /**
-     * Create given {@link Order}
+     * Resource to append order item to order list
      *
-     * @param order given {@link Order}
-     * @return created {@link Order}
+     * @param id        order id
+     * @param orderItem order item object
+     * @return appended order item
      */
-    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Order createOrder(@RequestBody Order order) {
-        order.checkTotalCost();
-        return orderDao.createEntity(order);
-    }
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(
+            value = "/{id}/items",
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(
+            value = "Resource to append order item to order list",
+            notes = "This can only be done by the authenticated user, which is a customer of order or have admin role")
+    public ResponseEntity<?> addOrderItem(
+            @ApiParam(value = "order id", required = true) @PathVariable long id,
+            @ApiParam(value = "order item object", required = true) @RequestBody OrderItemDto orderItem) {
+        Order checkOrder = checkOrder(id);
 
-    /**
-     * Update {@link Order} item with given id
-     *
-     * @param id    given id of {@link Order}
-     * @param order updated {@link Order} data
-     * @return updated {@link Order}
-     */
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Order updateOrder(@PathVariable Long id, @RequestBody Order order) {
-        order.setId(id);
-        order.checkTotalCost();
-
-        for (OrderItem item : order.getItems()) {
-            item.setOrder(order);
+        if (checkOrder != null) {
+            return ResponseEntity.ok().body(null);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
-
-        return orderDao.updateEntity(order);
     }
 
     /**
-     * Delete {@link Order} item with given id
+     * Resource to update order item in order list
      *
-     * @param id given id of {@link Order}
-     * @return deleted {@link Order}
+     * @param id        order id
+     * @param itemId    order item id
+     * @param orderItem order item object
+     * @return updated order item
      */
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Order deleteOrderById(@PathVariable Long id) {
-        getOrderById(id);
-        return orderDao.deleteEntity(id);
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(
+            value = "/{id}/items/{itemId}",
+            method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(
+            value = "Resource to update order item in order list",
+            notes = "This can only be done by the authenticated user, which is a customer of order or have admin role")
+    public ResponseEntity<?> updateOrderItem(
+            @ApiParam(value = "order id", required = true) @PathVariable long id,
+            @ApiParam(value = "order item id", required = true) @PathVariable long itemId,
+            @ApiParam(value = "order item object", required = true) @RequestBody OrderItem orderItem) {
+        Order checkOrder = checkOrder(id);
+
+        if (checkOrder != null) {
+            return ResponseEntity.ok().body(null);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+        }
+    }
+
+    /**
+     * Resource to delete order item from order list
+     *
+     * @param id     order id
+     * @param itemId order item id
+     * @return deleted order item
+     */
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(
+            value = "/{id}/items/{itemId}",
+            method = RequestMethod.DELETE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(
+            value = "Resource to delete order item from order list",
+            notes = "This can only be done by the authenticated user, which is a customer of order or have admin role")
+    public ResponseEntity<?> deleteOrderItem(
+            @ApiParam(value = "order id", required = true) @PathVariable long id,
+            @ApiParam(value = "order item id", required = true) @PathVariable long itemId) {
+        Order checkOrder = checkOrder(id);
+
+        if (checkOrder != null) {
+            return ResponseEntity.ok().body(null);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+        }
+    }
+
+    private Order checkOrder(long id) {
+        try {
+            return orderDao.getEntityByKey(id);
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     private void checkOrderTotalCount(Long id) {

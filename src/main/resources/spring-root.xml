@@ -141,9 +141,11 @@
     </bean>
 
     <bean id="orderRestController" class="com.globallogic.store.rest.OrderRestController">
-        <property name="orderDao" ref="orderDao"/>
-        <property name="orderItemDao" ref="orderItemDao"/>
-        <property name="userDao" ref="userDao"/>
+        <constructor-arg name="orderDao" ref="orderDao"/>
+        <constructor-arg name="orderItemDao" ref="orderItemDao"/>
+        <constructor-arg name="userDao" ref="userDao"/>
+        <constructor-arg name="orderAssembler" ref="orderAssembler"/>
+        <constructor-arg name="orderItemAssembler" ref="orderItemAssembler"/>
     </bean>
 
     <!-- DTO Assemblers -->
@@ -151,6 +153,8 @@
     <bean id="productAssembler" class="com.globallogic.store.assembler.product.ProductAssembler"/>
     <bean id="userAssembler" class="com.globallogic.store.assembler.user.UserAssembler"/>
     <bean id="authorityAssembler" class="com.globallogic.store.assembler.user.AuthorityAssembler"/>
+    <bean id="orderAssembler" class="com.globallogic.store.assembler.order.OrderAssembler"/>
+    <bean id="orderItemAssembler" class="com.globallogic.store.assembler.order.OrderItemAssembler"/>
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.postgresql.Driver"/>

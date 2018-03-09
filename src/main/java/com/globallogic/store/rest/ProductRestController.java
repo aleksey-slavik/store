@@ -80,7 +80,8 @@ public class ProductRestController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Resource to get a product by id")
-    public ResponseEntity<?> getProductById(@ApiParam(value = "product id", required = true) @PathVariable long id) {
+    public ResponseEntity<?> getProductById(
+            @ApiParam(value = "product id", required = true) @PathVariable long id) {
         Product product = productDao.getEntityByKey(id);
 
         if (product == null) {

@@ -26,7 +26,7 @@ public class Order implements Serializable, Identifiable {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
-    private User user;
+    private User customer;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = OrderItem.class, mappedBy = "order")
     private List<OrderItem> items = new ArrayList<>(0);
@@ -52,12 +52,12 @@ public class Order implements Serializable, Identifiable {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public User getCustomer() {
+        return customer;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setCustomer(User customer) {
+        this.customer = customer;
     }
 
     public List<OrderItem> getItems() {

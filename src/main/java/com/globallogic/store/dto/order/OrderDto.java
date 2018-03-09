@@ -1,21 +1,31 @@
 package com.globallogic.store.dto.order;
 
-public class OrderDto {
+import com.globallogic.store.domain.order.Status;
+import org.springframework.hateoas.ResourceSupport;
 
-    private String user;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
+
+public class OrderDto extends ResourceSupport {
+
     private long orderId;
-    private long billId;
+
+    private String customer;
+
+    private long customerId;
+
+    @Min(value = 0, message = "Created time of order must be positive value")
     private long createdDate;
-    private int totalCost;
-    private boolean isPayed;
 
-    public String getUser() {
-        return user;
-    }
+    @Min(value = 0, message = "Total cost of order must be positive value")
+    private double totalCost;
 
-    public void setUser(String user) {
-        this.user = user;
-    }
+    @NotNull(message = "Status of order cannot be null")
+    private Status status;
+
+    private List<OrderItemDto> items = new ArrayList<>(0);
 
     public long getOrderId() {
         return orderId;
@@ -25,12 +35,20 @@ public class OrderDto {
         this.orderId = orderId;
     }
 
-    public long getBillId() {
-        return billId;
+    public String getCustomer() {
+        return customer;
     }
 
-    public void setBillId(long billId) {
-        this.billId = billId;
+    public void setCustomer(String customer) {
+        this.customer = customer;
+    }
+
+    public long getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(long customerId) {
+        this.customerId = customerId;
     }
 
     public long getCreatedDate() {
@@ -41,19 +59,40 @@ public class OrderDto {
         this.createdDate = createdDate;
     }
 
-    public int getTotalCost() {
+    public double getTotalCost() {
         return totalCost;
     }
 
-    public void setTotalCost(int totalCost) {
+    public void setTotalCost(double totalCost) {
         this.totalCost = totalCost;
     }
 
-    public boolean isPayed() {
-        return isPayed;
+    public Status getStatus() {
+        return status;
     }
 
-    public void setPayed(boolean payed) {
-        isPayed = payed;
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public List<OrderItemDto> getItems() {
+        return items;
+    }
+
+    public void setItems(List<OrderItemDto> items) {
+        this.items = items;
+    }
+
+    /**
+     * Update total cost of current order
+     */
+    public void checkTotalCost() {
+        double cost = 0;
+
+        for (OrderItemDto item : getItems()) {
+            cost += item.getPrice() * item.getQuantity();
+        }
+
+        setTotalCost(cost);
     }
 }

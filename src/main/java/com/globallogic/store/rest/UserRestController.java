@@ -66,13 +66,16 @@ public class UserRestController {
      * Resource to get a user by id
      *
      * @param id given id
-     * @return {@link User} item
+     * @return user with given id
      */
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Resource to get a user by id")
+    @ApiOperation(
+            value = "Resource to get a user by id",
+            notes = "This can only be done by the authenticated user, which is a account owner or have admin role")
     public ResponseEntity<?> getUserById(
             @ApiParam(value = "user id", required = true) @PathVariable long id) {
         User user = userDao.getEntityByKey(id);
@@ -97,10 +100,13 @@ public class UserRestController {
      * @param order     sorting order
      * @return list of users
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Resource to get a list of users")
+    @ApiOperation(
+            value = "Resource to get a list of users",
+            notes = "This can only be done by the authenticated user, which have admin role")
     public ResponseEntity<?> getUserList(
             @ApiParam(value = "username of user") @RequestParam(value = "username", required = false) String[] username,
             @ApiParam(value = "first name of user") @RequestParam(value = "firstName", required = false) String[] firstName,
@@ -136,10 +142,13 @@ public class UserRestController {
      * @param user created user object
      * @return created user
      */
+    @PreAuthorize("isAnonymous() || hasRole('ADMIN')")
     @RequestMapping(
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Resource to create a user")
+    @ApiOperation(
+            value = "Resource to create a user",
+            notes = "This can only be done by the anonymous user or user, which have admin role")
     public ResponseEntity<?> createUser(
             @ApiParam(value = "created user object", required = true) @Valid @RequestBody UserDto user) {
         if (checkUser(user.getUsername()) != null) {

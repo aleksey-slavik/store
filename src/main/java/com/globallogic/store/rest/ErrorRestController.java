@@ -35,12 +35,12 @@ public class ErrorRestController {
         List<Error> errors = new ArrayList<>();
 
         for (ConstraintViolation<?> violation : violations) {
-            Error error = new Error();
             String object = violation.getRootBeanClass().getSimpleName();
             String field = violation.getPropertyPath().toString();
             String code = violation.getConstraintDescriptor().getAnnotation().annotationType().getSimpleName();
-            error.code(object + "." + field + "." + code);
-            error.details(violation.getConstraintDescriptor().getAttributes());
+            Error error = new Error()
+                    .code(object + "." + field + "." + code)
+                    .details(violation.getConstraintDescriptor().getAttributes());
             errors.add(error);
         }
 
