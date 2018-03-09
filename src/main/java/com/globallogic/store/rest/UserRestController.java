@@ -1,9 +1,12 @@
 package com.globallogic.store.rest;
 
+import com.globallogic.store.assembler.user.AuthorityAssembler;
 import com.globallogic.store.assembler.user.UserAssembler;
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.dao.SearchCriteria;
+import com.globallogic.store.domain.user.Authority;
 import com.globallogic.store.domain.user.User;
+import com.globallogic.store.dto.user.AuthorityDto;
 import com.globallogic.store.dto.user.UserDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.NoResultException;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Rest controller for operations with users
@@ -34,15 +38,28 @@ public class UserRestController {
     private GenericDao<User> userDao;
 
     /**
-     * Resource assembler to convert {@link User} to {@link com.globallogic.store.dto.user.UserDto}
+     * {@link Authority} DAO
+     */
+    private GenericDao<Authority> authorityDao;
+
+    /**
+     * Resource assembler to convert {@link User} to {@link UserDto}
      */
     private UserAssembler userAssembler;
+    /**
+     * Resource assembler to convert {@link User} to {@link com.globallogic.store.dto.user.AuthorityDto}
+     */
+    private AuthorityAssembler authorityAssembler;
 
     public UserRestController(
             GenericDao<User> userDao,
-            UserAssembler userAssembler) {
+            GenericDao<Authority> authorityDao,
+            UserAssembler userAssembler,
+            AuthorityAssembler authorityAssembler) {
         this.userDao = userDao;
+        this.authorityDao = authorityDao;
         this.userAssembler = userAssembler;
+        this.authorityAssembler = authorityAssembler;
     }
 
     /**
@@ -125,7 +142,7 @@ public class UserRestController {
     @ApiOperation(value = "Resource to create a user")
     public ResponseEntity<?> createUser(
             @ApiParam(value = "created user object", required = true) @Valid @RequestBody UserDto user) {
-        if (isUserExist(user.getUsername())) {
+        if (checkUser(user.getUsername()) != null) {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         } else {
             User created = userDao.createEntity(userAssembler.toResource(user));
@@ -151,7 +168,7 @@ public class UserRestController {
     public ResponseEntity<?> updateUser(
             @ApiParam(value = "user id", required = true) @PathVariable long id,
             @ApiParam(value = "updated user object", required = true) @Valid @RequestBody UserDto user) {
-        if (isUserExist(id, user.getUsername())) {
+        if (checkUser(id, user.getUsername()) != null) {
             user.setUserId(id);
             User updated = userDao.updateEntity(userAssembler.toResource(user));
             return ResponseEntity.ok().body(userAssembler.toResource(updated));
@@ -176,9 +193,94 @@ public class UserRestController {
             notes = "This can only be done by the authenticated user")
     public ResponseEntity<?> deleteUserById(
             @ApiParam(value = "user id", required = true) @PathVariable long id) {
-        if (isUserExist(id)) {
+        if (checkUser(id) != null) {
             User deleted = userDao.deleteEntity(id);
             return ResponseEntity.ok().body(userAssembler.toResource(deleted));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+        }
+    }
+
+    /**
+     * Resource to get all user authorities
+     *
+     * @param id user id
+     * @return authorities of user with given id
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(
+            value = "/{id}/authorities",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(
+            value = "Resource to get all user authorities",
+            notes = "This can only be done by user with admin role")
+    public ResponseEntity<?> getUserAuthorities(
+            @ApiParam(value = "user id", required = true) @PathVariable long id) {
+        if (checkUser(id) != null) {
+            Set<Authority> authorities = userDao.getEntityByKey(id).getAuthorities();
+            return ResponseEntity.ok().body(authorityAssembler.toResources(authorities));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+        }
+    }
+
+    /**
+     * Resource to append authority to user
+     *
+     * @param id        user id
+     * @param authority authority object
+     * @return granted authority
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(
+            value = "/{id}/authorities",
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(
+            value = "Resource to append authority to user",
+            notes = "This can only be done by user with admin role")
+    public ResponseEntity<?> appendUserAuthority(
+            @ApiParam(value = "user id", required = true) @PathVariable long id,
+            @ApiParam(value = "authority object", required = true) @RequestBody AuthorityDto authority) {
+        User updated = checkUser(id);
+
+        if (updated != null) {
+            SearchCriteria criteria = new SearchCriteria().criteria("title", authority.getTitle());
+            Authority granted = authorityDao.getEntity(criteria);
+            updated.appendAuthority(granted);
+            userDao.updateEntity(updated);
+            return ResponseEntity.ok().body(authorityAssembler.toResource(granted));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+        }
+    }
+
+    /**
+     * Resource to delete authority from user
+     *
+     * @param id     user id
+     * @param authId authority id
+     * @return deleted authority
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(
+            value = "/{id}/authorities/{authId}",
+            method = RequestMethod.DELETE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(
+            value = "Resource to delete authority from user",
+            notes = "This can only be done by user with admin role")
+    public ResponseEntity<?> deleteUserAuthority(
+            @ApiParam(value = "user id", required = true) @PathVariable long id,
+            @ApiParam(value = "authority id", required = true) @PathVariable long authId) {
+        User updated = checkUser(id);
+
+        if (updated != null) {
+            Authority removed = authorityDao.getEntityByKey(authId);
+            updated.removeAuthority(removed);
+            userDao.updateEntity(updated);
+            return ResponseEntity.ok().body(authorityAssembler.toResource(removed));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
@@ -190,14 +292,12 @@ public class UserRestController {
      * @param username username of user
      * @return true is user with given username already exist, false in otherwise
      */
-    private boolean isUserExist(String username) {
+    private User checkUser(String username) {
         try {
-            SearchCriteria criteria = new SearchCriteria()
-                    .criteria("username", username);
-            userDao.getEntity(criteria);
-            return true;
+            SearchCriteria criteria = new SearchCriteria().criteria("username", username);
+            return userDao.getEntity(criteria);
         } catch (NoResultException e) {
-            return false;
+            return null;
         }
     }
 
@@ -207,14 +307,12 @@ public class UserRestController {
      * @param id user id
      * @return true if user with given id already exist, false in otherwise
      */
-    private boolean isUserExist(long id) {
+    private User checkUser(long id) {
         try {
-            SearchCriteria criteria = new SearchCriteria()
-                    .criteria("id", id);
-            userDao.getEntity(criteria);
-            return true;
+            SearchCriteria criteria = new SearchCriteria().criteria("id", id);
+            return userDao.getEntity(criteria);
         } catch (NoResultException e) {
-            return false;
+            return null;
         }
     }
 
@@ -225,15 +323,14 @@ public class UserRestController {
      * @param username username of user
      * @return true if user with given id already exist, false in otherwise
      */
-    private boolean isUserExist(long id, String username) {
+    private User checkUser(long id, String username) {
         try {
             SearchCriteria criteria = new SearchCriteria()
                     .criteria("id", id)
                     .criteria("username", username);
-            userDao.getEntity(criteria);
-            return true;
+            return userDao.getEntity(criteria);
         } catch (NoResultException e) {
-            return false;
+            return null;
         }
     }
 }

@@ -229,7 +229,7 @@ public class ProductRestController {
             @ApiParam(value = "shared product object") @RequestBody ProductDto product) {
         if (id == product.getProductId())
             aclSecurityUtil.addPermission(productAssembler.toResource(product), username, BasePermission.WRITE, Product.class);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     /**

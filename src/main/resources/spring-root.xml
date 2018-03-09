@@ -22,6 +22,7 @@
     <!-- support JSR303 annotation if JSR 303 validation present on classpath -->
     <mvc:annotation-driven validator="validator"/>
 
+    <!-- Bean Validator -->
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
 
     <!-- JSON Support -->
@@ -107,6 +108,10 @@
         <constructor-arg value="com.globallogic.store.domain.user.User"/>
     </bean>
 
+    <bean name="authorityDao" class="com.globallogic.store.dao.GenericDao">
+        <constructor-arg value="com.globallogic.store.domain.user.Authority"/>
+    </bean>
+
     <bean name="productDao" class="com.globallogic.store.dao.GenericDao">
         <constructor-arg value="com.globallogic.store.domain.product.Product"/>
     </bean>
@@ -122,7 +127,9 @@
     <!-- Spring Rest Beans -->
     <bean id="userRestController" class="com.globallogic.store.rest.UserRestController">
         <constructor-arg name="userDao" ref="userDao"/>
+        <constructor-arg name="authorityDao" ref="authorityDao"/>
         <constructor-arg name="userAssembler" ref="userAssembler"/>
+        <constructor-arg name="authorityAssembler" ref="authorityAssembler"/>
     </bean>
 
     <bean id="productRestController" class="com.globallogic.store.rest.ProductRestController">
@@ -143,6 +150,7 @@
     <bean id="productPreviewAssembler" class="com.globallogic.store.assembler.product.ProductPreviewAssembler"/>
     <bean id="productAssembler" class="com.globallogic.store.assembler.product.ProductAssembler"/>
     <bean id="userAssembler" class="com.globallogic.store.assembler.user.UserAssembler"/>
+    <bean id="authorityAssembler" class="com.globallogic.store.assembler.user.AuthorityAssembler"/>
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.postgresql.Driver"/>
@@ -185,7 +193,7 @@
 
     <aop:config proxy-target-class="true">
         <aop:pointcut id="userServicePointCut"
-                      expression="execution(* com.globallogic.store.security.core.*Service.*(..))"/>
+                      expression="execution(* com.globallogic.store.security.*Service.*(..))"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="userServicePointCut"/>
     </aop:config>
 
