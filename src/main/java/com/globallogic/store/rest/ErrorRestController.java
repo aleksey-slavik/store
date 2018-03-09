@@ -12,9 +12,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Api validation exception handler
+ *
+ * @author oleksii.slavik
+ */
 @RestControllerAdvice
 public class ErrorRestController {
 
+    /**
+     * MethodArgumentNotValidException handler
+     *
+     * @param exception thrown exception
+     * @return error details
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleArgumentNotValid(MethodArgumentNotValidException exception) {
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();

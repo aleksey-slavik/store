@@ -22,13 +22,7 @@
     <!-- support JSR303 annotation if JSR 303 validation present on classpath -->
     <mvc:annotation-driven validator="validator"/>
 
-    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
-        <!--<property name="providerClass" value="org.hibernate.validator.HibernateValidator"/>-->
-    </bean>
-
-    <!--<bean class="org.springframework.validation.beanvalidation.MethodValidationPostProcessor">
-        <property name="validator" ref="validator"/>
-    </bean>-->
+    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
 
     <!-- JSON Support -->
     <bean name="viewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver"/>
@@ -127,7 +121,8 @@
 
     <!-- Spring Rest Beans -->
     <bean id="userRestController" class="com.globallogic.store.rest.UserRestController">
-        <property name="userDao" ref="userDao"/>
+        <constructor-arg name="userDao" ref="userDao"/>
+        <constructor-arg name="userAssembler" ref="userAssembler"/>
     </bean>
 
     <bean id="productRestController" class="com.globallogic.store.rest.ProductRestController">
@@ -147,6 +142,7 @@
     <!-- DTO Assemblers -->
     <bean id="productPreviewAssembler" class="com.globallogic.store.assembler.product.ProductPreviewAssembler"/>
     <bean id="productAssembler" class="com.globallogic.store.assembler.product.ProductAssembler"/>
+    <bean id="userAssembler" class="com.globallogic.store.assembler.user.UserAssembler"/>
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.postgresql.Driver"/>

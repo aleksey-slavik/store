@@ -153,7 +153,8 @@ public class ProductRestController {
     @RequestMapping(
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Resource to create a product",
+    @ApiOperation(
+            value = "Resource to create a product",
             notes = "This can only be done by the authenticated user")
     public ResponseEntity<?> createProduct(
             @ApiParam(value = "created product object", required = true) @Valid @RequestBody ProductDto product) {
