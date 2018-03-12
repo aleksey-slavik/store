@@ -13,6 +13,12 @@ public class OrderItemAssembler extends ResourceAssemblerSupport<OrderItem, Orde
 
     @Override
     public OrderItemDto toResource(OrderItem orderItem) {
-        return null;
+        OrderItemDto dto = new OrderItemDto();
+        dto.setProductId(orderItem.getProduct().getId());
+        dto.setName(orderItem.getProduct().getName());
+        dto.setBrand(orderItem.getProduct().getBrand());
+        dto.setPrice(orderItem.getPrice());
+        dto.setQuantity(orderItem.getQuantity());
+        return dto;
     }
 }

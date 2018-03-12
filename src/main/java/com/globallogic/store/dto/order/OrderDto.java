@@ -95,4 +95,14 @@ public class OrderDto extends ResourceSupport {
 
         setTotalCost(cost);
     }
+
+    public OrderItemDto getItemById(long itemId) {
+        for (OrderItemDto itemDto : items) {
+            if (itemDto.getProductId() == itemId) {
+                return itemDto;
+            }
+        }
+
+        return null;
+    }
 }

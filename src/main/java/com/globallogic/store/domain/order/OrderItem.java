@@ -18,7 +18,6 @@ public class OrderItem implements Serializable {
     @EmbeddedId
     private OrderItemId primaryKey;
 
-    @JsonIgnore
     @MapsId("orderId")
     @JoinColumn(name = "order_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)

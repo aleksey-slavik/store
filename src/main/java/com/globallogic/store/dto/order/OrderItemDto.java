@@ -4,21 +4,15 @@ import org.springframework.hateoas.ResourceSupport;
 
 public class OrderItemDto extends ResourceSupport {
 
-    private long orderId;
-
     private long productId;
+
+    private String name;
+
+    private String brand;
 
     private double price;
 
     private int quantity;
-
-    public long getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(long orderId) {
-        this.orderId = orderId;
-    }
 
     public long getProductId() {
         return productId;
@@ -26,6 +20,22 @@ public class OrderItemDto extends ResourceSupport {
 
     public void setProductId(long productId) {
         this.productId = productId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
     }
 
     public double getPrice() {

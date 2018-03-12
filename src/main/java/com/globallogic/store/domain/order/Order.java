@@ -157,4 +157,16 @@ public class Order implements Serializable, Identifiable {
         items.add(newItem);
         checkTotalCost();
     }
+
+    public void updateProduct(Product product, int quantity) {
+        OrderItem newItem = new OrderItem(this, product, quantity);
+        List<OrderItem> items = getItems();
+        int index = items.indexOf(newItem);
+        items.set(index, newItem);
+        checkTotalCost();
+    }
+
+    public void deleteProduct(OrderItem product) {
+        items.remove(product);
+    }
 }

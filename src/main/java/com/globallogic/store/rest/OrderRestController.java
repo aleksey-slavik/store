@@ -5,12 +5,10 @@ import com.globallogic.store.assembler.order.OrderItemAssembler;
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.dao.SearchCriteria;
 import com.globallogic.store.domain.order.Status;
+import com.globallogic.store.domain.product.Product;
 import com.globallogic.store.domain.user.User;
 import com.globallogic.store.dto.order.OrderDto;
 import com.globallogic.store.dto.order.OrderItemDto;
-import com.globallogic.store.exception.EmptyResponseException;
-import com.globallogic.store.exception.NotAcceptableException;
-import com.globallogic.store.exception.NotFoundException;
 import com.globallogic.store.domain.order.Order;
 import com.globallogic.store.domain.order.OrderItem;
 import com.globallogic.store.security.AuthenticatedUser;
@@ -82,7 +80,7 @@ public class OrderRestController {
      * @param id order id
      * @return order with given id
      */
-    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.GET,
@@ -112,7 +110,7 @@ public class OrderRestController {
      * @param order    sorting order
      * @return list of orders
      */
-    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     @RequestMapping(
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -156,7 +154,7 @@ public class OrderRestController {
      * @param order created order object
      * @return created order
      */
-    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     @RequestMapping(
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -184,7 +182,7 @@ public class OrderRestController {
      * @param order updated order object
      * @return updated order
      */
-    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.PUT,
@@ -211,7 +209,7 @@ public class OrderRestController {
      * @param id order id
      * @return deleted order
      */
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.DELETE,
@@ -236,7 +234,7 @@ public class OrderRestController {
      * @param itemId order item id
      * @return order item with given id
      */
-    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     @RequestMapping(
             value = "/{id}/items/{itemId}",
             method = RequestMethod.GET,
@@ -244,15 +242,19 @@ public class OrderRestController {
     @ApiOperation(
             value = "Resource to get a order item by id",
             notes = "This can only be done by the authenticated user, which is a customer of order or have admin role")
-    public ResponseEntity<?> getItemOfOrderByItemId(
+    public ResponseEntity<?> getOrderItemByItemId(
             @ApiParam(value = "order id", required = true) @PathVariable long id,
             @ApiParam(value = "order item id", required = true) @PathVariable long itemId) {
-        Order order = checkOrder(id);
 
-        if (order != null) {
-            return ResponseEntity.ok().body(null);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+        try {
+            SearchCriteria criteria = new SearchCriteria()
+                    .criteria("order", id)
+                    .criteria("product", itemId);
+
+            OrderItem item = orderItemDao.getEntity(criteria);
+            return ResponseEntity.ok().body(orderItemAssembler.toResource(item));
+        } catch (NoResultException e) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
     }
 
@@ -266,7 +268,7 @@ public class OrderRestController {
      * @param order sorting order
      * @return list of order items
      */
-    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     @RequestMapping(
             value = "/{id}/items",
             method = RequestMethod.GET,
@@ -274,18 +276,26 @@ public class OrderRestController {
     @ApiOperation(
             value = "Resource to get a list of order items",
             notes = "This can only be done by the authenticated user, which is a customer of order or have admin role")
-    public ResponseEntity<?> getItemsOfOrderByOrderId(
+    public ResponseEntity<?> getOrderItemsByOrderId(
             @ApiParam(value = "order id", required = true) @PathVariable long id,
             @ApiParam(value = "page number", defaultValue = "1") @RequestParam(value = "page", defaultValue = "1") int page,
             @ApiParam(value = "count of items per page", defaultValue = "5") @RequestParam(value = "size", defaultValue = "5") int size,
-            @ApiParam(value = "name of sorting column", defaultValue = "id") @RequestParam(value = "sort", defaultValue = "id") String sort,
+            @ApiParam(value = "name of sorting column", defaultValue = "product") @RequestParam(value = "sort", defaultValue = "product") String sort,
             @ApiParam(value = "sorting order", defaultValue = "asc") @RequestParam(value = "order", defaultValue = "asc") String order) {
-        Order checkOrder = checkOrder(id);
 
-        if (checkOrder != null) {
-            return ResponseEntity.ok().body(null);
+        SearchCriteria criteria = new SearchCriteria()
+                .criteria("order", id)
+                .offset(page)
+                .limit(size)
+                .sortBy(sort)
+                .order(order);
+
+        List<OrderItem> items = orderItemDao.getEntityList(criteria);
+
+        if (items == null || items.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+            return ResponseEntity.ok().body(orderItemAssembler.toResources(items));
         }
     }
 
@@ -296,7 +306,7 @@ public class OrderRestController {
      * @param orderItem order item object
      * @return appended order item
      */
-    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     @RequestMapping(
             value = "/{id}/items",
             method = RequestMethod.POST,
@@ -306,11 +316,18 @@ public class OrderRestController {
             notes = "This can only be done by the authenticated user, which is a customer of order or have admin role")
     public ResponseEntity<?> addOrderItem(
             @ApiParam(value = "order id", required = true) @PathVariable long id,
-            @ApiParam(value = "order item object", required = true) @RequestBody OrderItemDto orderItem) {
-        Order checkOrder = checkOrder(id);
+            @ApiParam(value = "order item object", required = true) @Valid @RequestBody OrderItemDto orderItem) {
+        Order order = checkOrder(id);
 
-        if (checkOrder != null) {
-            return ResponseEntity.ok().body(null);
+        if (order != null) {
+            Product product = new Product();
+            product.setId(orderItem.getProductId());
+            product.setName(orderItem.getName());
+            product.setBrand(orderItem.getBrand());
+            product.setPrice(orderItem.getPrice());
+            order.addProduct(product, orderItem.getQuantity());
+            orderDao.updateEntity(order);
+            return ResponseEntity.ok().body(orderItem);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
@@ -324,7 +341,7 @@ public class OrderRestController {
      * @param orderItem order item object
      * @return updated order item
      */
-    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     @RequestMapping(
             value = "/{id}/items/{itemId}",
             method = RequestMethod.PUT,
@@ -335,11 +352,18 @@ public class OrderRestController {
     public ResponseEntity<?> updateOrderItem(
             @ApiParam(value = "order id", required = true) @PathVariable long id,
             @ApiParam(value = "order item id", required = true) @PathVariable long itemId,
-            @ApiParam(value = "order item object", required = true) @RequestBody OrderItem orderItem) {
-        Order checkOrder = checkOrder(id);
+            @ApiParam(value = "order item object", required = true) @Valid @RequestBody OrderItemDto orderItem) {
+        Order order = checkOrder(id);
 
-        if (checkOrder != null) {
-            return ResponseEntity.ok().body(null);
+        if (order != null) {
+            Product product = new Product();
+            product.setId(orderItem.getProductId());
+            product.setName(orderItem.getName());
+            product.setBrand(orderItem.getBrand());
+            product.setPrice(orderItem.getPrice());
+            order.updateProduct(product, orderItem.getQuantity());
+            orderDao.updateEntity(order);
+            return ResponseEntity.ok().body(orderItem);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
@@ -352,7 +376,7 @@ public class OrderRestController {
      * @param itemId order item id
      * @return deleted order item
      */
-    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     @RequestMapping(
             value = "/{id}/items/{itemId}",
             method = RequestMethod.DELETE,
@@ -363,10 +387,17 @@ public class OrderRestController {
     public ResponseEntity<?> deleteOrderItem(
             @ApiParam(value = "order id", required = true) @PathVariable long id,
             @ApiParam(value = "order item id", required = true) @PathVariable long itemId) {
-        Order checkOrder = checkOrder(id);
+        Order order = checkOrder(id);
 
-        if (checkOrder != null) {
-            return ResponseEntity.ok().body(null);
+        if (order != null) {
+            SearchCriteria criteria = new SearchCriteria()
+                    .criteria("order", id)
+                    .criteria("product", itemId);
+
+            OrderItem item = orderItemDao.getEntity(criteria);
+            order.deleteProduct(item);
+            orderDao.updateEntity(order);
+            return ResponseEntity.ok().body(item);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
