@@ -1,7 +1,9 @@
 package com.globallogic.store.dto.order;
 
+import com.globallogic.store.domain.order.Order;
 import com.globallogic.store.domain.order.OrderItem;
 import com.globallogic.store.domain.order.Status;
+import com.globallogic.store.domain.user.User;
 import org.springframework.hateoas.ResourceSupport;
 
 import javax.validation.constraints.Min;
@@ -84,29 +86,25 @@ public class OrderDto extends ResourceSupport {
         this.items = items;
     }
 
-    /**
-     * Update total cost of current order
-     */
-    public void checkTotalCost() {
-        double cost = 0;
+    public Order toOrigin() {
+        Order order = new Order();
+        order.setId(orderId);
+        User user = new User();
+        user.setId(customerId);
+        user.setUsername(customer);
+        order.setCustomer(user);
+        order.setTotalCost(totalCost);
+        order.setCreatedDate(createdDate);
+        order.setStatus(status);
+        List<OrderItem> items = new ArrayList<>();
 
-        for (OrderItemDto item : getItems()) {
-            cost += item.getPrice() * item.getQuantity();
+        for (OrderItemDto itemDto : getItems()) {
+            OrderItem item = itemDto.toOrigin(order);
+            items.add(item);
         }
 
-        setTotalCost(cost);
-    }
-
-    public void appendItem(OrderItemDto item) {
-        this.items.add(item);
-    }
-
-    public void updateItem(OrderItemDto item) {
-        int index = items.indexOf(item);
-        this.items.set(index, item);
-    }
-
-    public void removeItem(OrderItemDto item) {
-        this.items.remove(item);
+        order.setItems(items);
+        order.checkTotalCost();
+        return order;
     }
 }

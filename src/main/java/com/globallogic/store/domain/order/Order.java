@@ -1,8 +1,6 @@
 package com.globallogic.store.domain.order;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.globallogic.store.domain.Identifiable;
-import com.globallogic.store.domain.product.Product;
 import com.globallogic.store.domain.user.User;
 
 import javax.persistence.*;
@@ -104,7 +102,7 @@ public class Order implements Serializable, Identifiable {
      * Clear list of items of current order
      */
     public void clear() {
-        this.items.clear();
+        items.clear();
         checkTotalCost();
     }
 
@@ -121,45 +119,19 @@ public class Order implements Serializable, Identifiable {
         setTotalCost(cost);
     }
 
-    /**
-     * Add {@link Product} to current order.
-     * Check that same {@link Product} already exist in current order.
-     *
-     * @param product given {@link Product}
-     * @param quantity given quantity of {@link Product}
-     */
-    public void addProduct(Product product, int quantity) {
-        OrderItem newItem = new OrderItem(this, product, quantity);
-        List<OrderItem> items = getItems();
-
-        if (items.contains(newItem)) {
-            int index = items.indexOf(newItem);
-            OrderItem item = items.get(index);
-
-            if (quantity > 0 && item.getPrice() == product.getPrice()) {
-                quantity += item.getQuantity();
-                item.setQuantity(quantity);
-                checkTotalCost();
-                return;
-            }
-        }
-
-        items.add(newItem);
+    public void appendItem(OrderItem item) {
+        items.add(item);
         checkTotalCost();
     }
 
-    public void updateProduct(Product product, int quantity) {
-        OrderItem newItem = new OrderItem(this, product, quantity);
-        List<OrderItem> items = getItems();
-        int index = items.indexOf(newItem);
-        items.set(index, newItem);
+    public void updateItem(OrderItem item) {
+        int index = items.indexOf(item);
+        items.set(index, item);
         checkTotalCost();
     }
 
-    public void deleteProduct(OrderItem product) {
-        List<OrderItem> items = getItems();
-        items.remove(product);
-        setItems(items);
+    public void deleteItem(OrderItem item) {
+        items.remove(item);
         checkTotalCost();
     }
 }

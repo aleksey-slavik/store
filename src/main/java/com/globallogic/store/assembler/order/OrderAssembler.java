@@ -30,27 +30,4 @@ public class OrderAssembler extends ResourceAssemblerSupport<Order, OrderDto> {
         dto.setTotalCost(order.getTotalCost());
         return dto;
     }
-
-    public Order toResource(OrderDto dto) {
-        Order order = new Order();
-        order.setId(dto.getOrderId());
-        User customer = new User();
-        customer.setId(dto.getCustomerId());
-        customer.setUsername(dto.getCustomer());
-        order.setCustomer(customer);
-        order.setTotalCost(dto.getTotalCost());
-        order.setCreatedDate(dto.getCreatedDate());
-        order.setStatus(dto.getStatus());
-        List<OrderItem> items = new ArrayList<>();
-        OrderItemAssembler assembler = new OrderItemAssembler();
-
-        for (OrderItemDto itemDto : dto.getItems()) {
-            OrderItem item = assembler.toResource(itemDto);
-            item.setOrder(order);
-            items.add(item);
-        }
-
-        order.setItems(items);
-        return null;
-    }
 }

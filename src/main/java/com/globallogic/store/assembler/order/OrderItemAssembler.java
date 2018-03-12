@@ -22,16 +22,4 @@ public class OrderItemAssembler extends ResourceAssemblerSupport<OrderItem, Orde
         dto.setQuantity(orderItem.getQuantity());
         return dto;
     }
-
-    public OrderItem toResource(OrderItemDto dto) {
-        OrderItem item = new OrderItem();
-        Product product = new Product();
-        product.setId(dto.getProductId());
-        product.setName(dto.getName());
-        product.setBrand(dto.getBrand());
-        item.setProduct(product);
-        item.setPrice(dto.getPrice());
-        item.setQuantity(dto.getQuantity());
-        return item;
-    }
 }
