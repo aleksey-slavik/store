@@ -1,11 +1,12 @@
 package com.globallogic.store.rest;
 
-import com.globallogic.store.assembler.user.UserAssembler;
+import com.globallogic.store.converter.user.AuthorityConverter;
+import com.globallogic.store.converter.user.UserConverter;
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.dao.SearchCriteria;
 import com.globallogic.store.domain.user.Authority;
 import com.globallogic.store.domain.user.User;
-import com.globallogic.store.dto.user.AuthorityDto;
+import com.globallogic.store.dto.user.AuthorityDTO;
 import com.globallogic.store.dto.user.UserDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,27 +33,34 @@ import java.util.List;
 public class UserRestController {
 
     /**
-     * {@link User} DAO
+     * user DAO
      */
     private GenericDao<User> userDao;
 
     /**
-     * {@link Authority} DAO
+     * user authority DAO
      */
     private GenericDao<Authority> authorityDao;
 
     /**
-     * Resource assembler to convert {@link User} to {@link UserDTO}
+     * user converter
      */
-    private UserAssembler userAssembler;
+    private UserConverter userConverter;
+
+    /**
+     * authority converter
+     */
+    private AuthorityConverter authorityConverter;
 
     public UserRestController(
             GenericDao<User> userDao,
             GenericDao<Authority> authorityDao,
-            UserAssembler userAssembler) {
+            UserConverter userConverter,
+            AuthorityConverter authorityConverter) {
         this.userDao = userDao;
         this.authorityDao = authorityDao;
-        this.userAssembler = userAssembler;
+        this.userConverter = userConverter;
+        this.authorityConverter = authorityConverter;
     }
 
     /**
@@ -76,7 +84,7 @@ public class UserRestController {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else {
-            return ResponseEntity.ok().body(userAssembler.toResource(user));
+            return ResponseEntity.ok().body(userConverter.toResource(user));
         }
     }
 
@@ -125,7 +133,7 @@ public class UserRestController {
         if (users == null || users.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else {
-            return ResponseEntity.ok().body(userAssembler.toResources(users));
+            return ResponseEntity.ok().body(userConverter.toResources(users));
         }
     }
 
@@ -147,8 +155,8 @@ public class UserRestController {
         if (checkUser(user.getUsername()) != null) {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         } else {
-            User created = userDao.createEntity(userAssembler.toResource(user));
-            return ResponseEntity.ok().body(userAssembler.toResource(created));
+            User created = userDao.createEntity(userConverter.toOrigin(user));
+            return ResponseEntity.ok().body(userConverter.toResource(created));
         }
     }
 
@@ -172,8 +180,8 @@ public class UserRestController {
             @ApiParam(value = "updated user object", required = true) @Valid @RequestBody UserDTO user) {
         if (checkUser(id, user.getUsername()) != null) {
             user.setUserId(id);
-            User updated = userDao.updateEntity(userAssembler.toResource(user));
-            return ResponseEntity.ok().body(userAssembler.toResource(updated));
+            User updated = userDao.updateEntity(userConverter.toOrigin(user));
+            return ResponseEntity.ok().body(userConverter.toResource(updated));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
@@ -197,7 +205,7 @@ public class UserRestController {
             @ApiParam(value = "user id", required = true) @PathVariable long id) {
         if (checkUser(id) != null) {
             User deleted = userDao.deleteEntityByKey(id);
-            return ResponseEntity.ok().body(userAssembler.toResource(deleted));
+            return ResponseEntity.ok().body(userConverter.toResource(deleted));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
@@ -222,7 +230,7 @@ public class UserRestController {
         if (checkUser(id) != null) {
             List<Authority> authorities =  new ArrayList<>();
             authorities.addAll(userDao.getEntityByKey(id).getAuthorities());
-            return ResponseEntity.ok().body(new AuthorityDto().toResources(authorities));
+            return ResponseEntity.ok().body(authorityConverter.toResources(authorities));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
@@ -245,7 +253,7 @@ public class UserRestController {
             notes = "This can only be done by user with admin role")
     public ResponseEntity<?> appendUserAuthority(
             @ApiParam(value = "user id", required = true) @PathVariable long id,
-            @ApiParam(value = "authority object", required = true) @RequestBody AuthorityDto authority) {
+            @ApiParam(value = "authority object", required = true) @RequestBody AuthorityDTO authority) {
         User updated = checkUser(id);
 
         if (updated != null) {
@@ -253,7 +261,7 @@ public class UserRestController {
             Authority granted = authorityDao.getEntity(criteria);
             updated.appendAuthority(granted);
             userDao.updateEntity(updated);
-            return ResponseEntity.ok().body(authorityAssembler.toResource(granted));
+            return ResponseEntity.ok().body(authorityConverter.toResource(granted));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
@@ -283,7 +291,7 @@ public class UserRestController {
             Authority removed = authorityDao.getEntityByKey(authId);
             updated.removeAuthority(removed);
             userDao.updateEntity(updated);
-            return ResponseEntity.ok().body(authorityAssembler.toResource(removed));
+            return ResponseEntity.ok().body(authorityConverter.toResource(removed));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
