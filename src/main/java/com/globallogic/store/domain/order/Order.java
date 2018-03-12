@@ -28,7 +28,7 @@ public class Order implements Serializable, Identifiable {
     @JoinColumn(name = "user_id")
     private User customer;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = OrderItem.class, mappedBy = "order")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = OrderItem.class, orphanRemoval = true, mappedBy = "order")
     private List<OrderItem> items = new ArrayList<>(0);
 
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -104,18 +104,8 @@ public class Order implements Serializable, Identifiable {
      * Clear list of items of current order
      */
     public void clear() {
-        getItems().clear();
+        this.items.clear();
         checkTotalCost();
-    }
-
-    /**
-     * Check is empty list of items of current order
-     *
-     * @return true, if list id not empty, false, in otherwise
-     */
-    @JsonIgnore
-    public boolean isEmpty() {
-        return items.isEmpty();
     }
 
     /**
@@ -167,6 +157,9 @@ public class Order implements Serializable, Identifiable {
     }
 
     public void deleteProduct(OrderItem product) {
+        List<OrderItem> items = getItems();
         items.remove(product);
+        setItems(items);
+        checkTotalCost();
     }
 }

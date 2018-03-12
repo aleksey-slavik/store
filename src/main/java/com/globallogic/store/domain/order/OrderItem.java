@@ -18,6 +18,7 @@ public class OrderItem implements Serializable {
     @EmbeddedId
     private OrderItemId primaryKey;
 
+    @JsonIgnore
     @MapsId("orderId")
     @JoinColumn(name = "order_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
@@ -67,7 +68,7 @@ public class OrderItem implements Serializable {
 
     public void setProduct(Product product) {
         this.product = product;
-        getPrimaryKey().setOrderId(product.getId());
+        getPrimaryKey().setProductId(product.getId());
     }
 
     public double getPrice() {
@@ -91,13 +92,13 @@ public class OrderItem implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        OrderItem that = (OrderItem) o;
+        OrderItem item = (OrderItem) o;
 
-        return getPrimaryKey() != null ? getPrimaryKey().equals(that.getPrimaryKey()) : that.getPrimaryKey() == null;
+        return primaryKey != null ? primaryKey.equals(item.primaryKey) : item.primaryKey == null;
     }
 
     @Override
     public int hashCode() {
-        return getPrimaryKey() != null ? getPrimaryKey().hashCode() : 0;
+        return primaryKey != null ? primaryKey.hashCode() : 0;
     }
 }

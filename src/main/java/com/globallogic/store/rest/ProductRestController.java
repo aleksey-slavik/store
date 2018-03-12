@@ -205,7 +205,7 @@ public class ProductRestController {
             notes = "This can only be done by the user with \"administration\" permissions")
     public ResponseEntity<?> deleteProduct(
             @ApiParam(value = "product id", required = true) @PathVariable Long id) {
-        Product deleted = productDao.deleteEntity(id);
+        Product deleted = productDao.deleteEntityByKey(id);
         return ResponseEntity.ok(productAssembler.toResource(deleted));
     }
 

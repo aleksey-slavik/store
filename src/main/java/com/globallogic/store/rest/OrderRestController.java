@@ -18,7 +18,6 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -220,7 +219,7 @@ public class OrderRestController {
     public ResponseEntity<?> deleteOrderById(
             @ApiParam(value = "order id", required = true) @PathVariable long id) {
         if (checkOrder(id) != null) {
-            Order deleted = orderDao.deleteEntity(id);
+            Order deleted = orderDao.deleteEntityByKey(id);
             return ResponseEntity.ok().body(orderAssembler.toResource(deleted));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
@@ -317,7 +316,7 @@ public class OrderRestController {
     public ResponseEntity<?> addOrderItem(
             @ApiParam(value = "order id", required = true) @PathVariable long id,
             @ApiParam(value = "order item object", required = true) @Valid @RequestBody OrderItemDto orderItem) {
-        Order order = checkOrder(id);
+        Order order = orderDao.getEntityByKey(id);
 
         if (order != null) {
             Product product = new Product();
@@ -357,7 +356,7 @@ public class OrderRestController {
 
         if (order != null) {
             Product product = new Product();
-            product.setId(orderItem.getProductId());
+            product.setId(itemId);
             product.setName(orderItem.getName());
             product.setBrand(orderItem.getBrand());
             product.setPrice(orderItem.getPrice());
@@ -397,7 +396,34 @@ public class OrderRestController {
             OrderItem item = orderItemDao.getEntity(criteria);
             order.deleteProduct(item);
             orderDao.updateEntity(order);
-            return ResponseEntity.ok().body(item);
+            return ResponseEntity.ok().body(orderItemAssembler.toResource(item));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+        }
+    }
+
+    /**
+     * Resource to delete all order items from order list
+     *
+     * @param id     order id
+     * @return cleared order
+     */
+    //@PreAuthorize("isAuthenticated()")
+    @RequestMapping(
+            value = "/{id}/items",
+            method = RequestMethod.DELETE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(
+            value = "Resource to delete all order items from order list",
+            notes = "This can only be done by the authenticated user, which is a customer of order or have admin role")
+    public ResponseEntity<?> deleteAllOrderItem(
+            @ApiParam(value = "order id", required = true) @PathVariable long id) {
+        Order order = checkOrder(id);
+
+        if (order != null) {
+            order.clear();
+            orderDao.updateEntity(order);
+            return ResponseEntity.ok().body(orderAssembler.toResource(order));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
@@ -409,11 +435,5 @@ public class OrderRestController {
         } catch (NoResultException e) {
             return null;
         }
-    }
-
-    private void checkOrderTotalCount(Long id) {
-        Order order = orderDao.getEntityByKey(id);
-        order.checkTotalCost();
-        orderDao.updateEntity(order);
     }
 }

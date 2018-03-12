@@ -1,6 +1,7 @@
 package com.globallogic.store.assembler.order;
 
 import com.globallogic.store.domain.order.OrderItem;
+import com.globallogic.store.domain.product.Product;
 import com.globallogic.store.dto.order.OrderItemDto;
 import com.globallogic.store.rest.OrderRestController;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
@@ -20,5 +21,17 @@ public class OrderItemAssembler extends ResourceAssemblerSupport<OrderItem, Orde
         dto.setPrice(orderItem.getPrice());
         dto.setQuantity(orderItem.getQuantity());
         return dto;
+    }
+
+    public OrderItem toResource(OrderItemDto dto) {
+        OrderItem item = new OrderItem();
+        Product product = new Product();
+        product.setId(dto.getProductId());
+        product.setName(dto.getName());
+        product.setBrand(dto.getBrand());
+        item.setProduct(product);
+        item.setPrice(dto.getPrice());
+        item.setQuantity(dto.getQuantity());
+        return item;
     }
 }

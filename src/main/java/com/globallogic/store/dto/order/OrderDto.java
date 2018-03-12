@@ -1,5 +1,6 @@
 package com.globallogic.store.dto.order;
 
+import com.globallogic.store.domain.order.OrderItem;
 import com.globallogic.store.domain.order.Status;
 import org.springframework.hateoas.ResourceSupport;
 
@@ -96,13 +97,16 @@ public class OrderDto extends ResourceSupport {
         setTotalCost(cost);
     }
 
-    public OrderItemDto getItemById(long itemId) {
-        for (OrderItemDto itemDto : items) {
-            if (itemDto.getProductId() == itemId) {
-                return itemDto;
-            }
-        }
+    public void appendItem(OrderItemDto item) {
+        this.items.add(item);
+    }
 
-        return null;
+    public void updateItem(OrderItemDto item) {
+        int index = items.indexOf(item);
+        this.items.set(index, item);
+    }
+
+    public void removeItem(OrderItemDto item) {
+        this.items.remove(item);
     }
 }

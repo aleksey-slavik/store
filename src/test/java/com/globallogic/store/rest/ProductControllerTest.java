@@ -192,7 +192,7 @@ public class ProductControllerTest {
     public void checkDeleteProductByIdTest() throws Exception {
         Product product = Workflow.createDummyProduct(DUMMY_ID);
 
-        when(productDao.deleteEntity(DUMMY_ID))
+        when(productDao.deleteEntityByKey(DUMMY_ID))
                 .thenReturn(product);
 
         ResultActions actual = mvc.perform(delete(URL_PATH_GET_BY_ID, DUMMY_ID)
@@ -201,7 +201,7 @@ public class ProductControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
         assertProduct(product, actual);
-        verify(productDao, times(1)).deleteEntity(DUMMY_ID);
+        verify(productDao, times(1)).deleteEntityByKey(DUMMY_ID);
         verifyNoMoreInteractions(productDao);
     }
 

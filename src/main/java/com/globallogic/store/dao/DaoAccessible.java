@@ -21,5 +21,5 @@ public interface DaoAccessible<E, K> {
 
     E updateEntity(E entity);
 
-    E deleteEntity(K id);
+    E deleteEntityByKey(K id);
 }

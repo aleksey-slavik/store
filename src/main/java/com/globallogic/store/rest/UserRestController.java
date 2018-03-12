@@ -203,7 +203,7 @@ public class UserRestController {
     public ResponseEntity<?> deleteUserById(
             @ApiParam(value = "user id", required = true) @PathVariable long id) {
         if (checkUser(id) != null) {
-            User deleted = userDao.deleteEntity(id);
+            User deleted = userDao.deleteEntityByKey(id);
             return ResponseEntity.ok().body(userAssembler.toResource(deleted));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
@@ -241,7 +241,7 @@ public class UserRestController {
      * @param authority authority object
      * @return granted authority
      */
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(
             value = "/{id}/authorities",
             method = RequestMethod.POST,
@@ -272,7 +272,7 @@ public class UserRestController {
      * @param authId authority id
      * @return deleted authority
      */
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(
             value = "/{id}/authorities/{authId}",
             method = RequestMethod.DELETE,
