@@ -2,30 +2,30 @@ package com.globallogic.store.assembler.product;
 
 import com.globallogic.store.domain.product.Product;
 import com.globallogic.store.domain.user.User;
-import com.globallogic.store.dto.product.ProductDto;
+import com.globallogic.store.dto.product.ProductDTO;
 import com.globallogic.store.rest.ProductRestController;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 
-public class ProductAssembler extends ResourceAssemblerSupport<Product, ProductDto> {
+public class ProductAssembler extends ResourceAssemblerSupport<Product, ProductDTO> {
 
     public ProductAssembler() {
-        super(ProductRestController.class, ProductDto.class);
+        super(ProductRestController.class, ProductDTO.class);
     }
 
     @Override
-    public ProductDto toResource(Product product) {
-        ProductDto dto = createResourceWithId(product.getId(), product);
-        dto.setProductId(product.getId());
-        dto.setName(product.getName());
-        dto.setBrand(product.getBrand());
-        dto.setDescription(product.getDescription());
-        dto.setPrice(product.getPrice());
-        dto.setOwnerId(product.getOwner().getId());
-        dto.setOwner(product.getOwner().getUsername());
+    public ProductDTO toResource(Product origin) {
+        ProductDTO dto = createResourceWithId(origin.getId(), origin);
+        dto.setProductId(origin.getId());
+        dto.setName(origin.getName());
+        dto.setBrand(origin.getBrand());
+        dto.setDescription(origin.getDescription());
+        dto.setPrice(origin.getPrice());
+        dto.setOwnerId(origin.getOwner().getId());
+        dto.setOwner(origin.getOwner().getUsername());
         return dto;
     }
 
-    public Product toResource(ProductDto dto) {
+    public Product toResource(ProductDTO dto) {
         Product product = new Product();
         product.setId(dto.getProductId());
         product.setName(dto.getName());

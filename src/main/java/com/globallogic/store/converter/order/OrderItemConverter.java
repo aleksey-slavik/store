@@ -1,14 +1,16 @@
-package com.globallogic.store.assembler.order;
+package com.globallogic.store.converter.order;
 
+import com.globallogic.store.converter.Convertible;
 import com.globallogic.store.domain.order.OrderItem;
 import com.globallogic.store.dto.order.OrderItemDTO;
-import com.globallogic.store.rest.OrderRestController;
-import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 
-public class OrderItemAssembler extends ResourceAssemblerSupport<OrderItem, OrderItemDTO> {
-
-    public OrderItemAssembler() {
-        super(OrderRestController.class, OrderItemDTO.class);
+/**
+ * Created by oleksii.slavik on 3/12/2018.
+ */
+public class OrderItemConverter implements Convertible<OrderItem, OrderItemDTO> {
+    @Override
+    public OrderItem toOrigin(OrderItemDTO dto) {
+        return null;
     }
 
     @Override

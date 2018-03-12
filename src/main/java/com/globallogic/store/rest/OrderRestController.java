@@ -6,8 +6,8 @@ import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.dao.SearchCriteria;
 import com.globallogic.store.domain.order.Status;
 import com.globallogic.store.domain.user.User;
-import com.globallogic.store.dto.order.OrderDto;
-import com.globallogic.store.dto.order.OrderItemDto;
+import com.globallogic.store.dto.order.OrderDTO;
+import com.globallogic.store.dto.order.OrderItemDTO;
 import com.globallogic.store.domain.order.Order;
 import com.globallogic.store.domain.order.OrderItem;
 import com.globallogic.store.security.AuthenticatedUser;
@@ -51,12 +51,12 @@ public class OrderRestController {
     private GenericDao<User> userDao;
 
     /**
-     * Resource assembler to convert {@link Order} to {@link OrderDto}
+     * Resource assembler to convert {@link Order} to {@link OrderDTO}
      */
     private OrderAssembler orderAssembler;
 
     /**
-     * Resource assembler to convert {@link Order} to {@link OrderItemDto}
+     * Resource assembler to convert {@link Order} to {@link OrderItemDTO}
      */
     private OrderItemAssembler orderItemAssembler;
 
@@ -161,9 +161,9 @@ public class OrderRestController {
             value = "Resource to create a order",
             notes = "This can only be done by the authenticated user, which is a customer of order or have admin role")
     public ResponseEntity<?> createOrder(
-            @ApiParam(value = "created order object") @RequestBody OrderDto order) {
+            @ApiParam(value = "created order object") @RequestBody OrderDTO order) {
         if (order == null) {
-            order = new OrderDto();
+            order = new OrderDTO();
             AuthenticatedUser principal = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
             order.setCustomerId(principal.getId());
             order.setCustomer(principal.getUsername());
@@ -192,7 +192,7 @@ public class OrderRestController {
             notes = "This can only be done by the authenticated user, which is a customer of order or have admin role")
     public ResponseEntity<?> updateOrder(
             @ApiParam(value = "order id", required = true) @PathVariable long id,
-            @ApiParam(value = "updated order object", required = true) @Valid @RequestBody OrderDto order) {
+            @ApiParam(value = "updated order object", required = true) @Valid @RequestBody OrderDTO order) {
         order.setOrderId(id);
         Order updated = orderDao.updateEntity(order.toOrigin());
         return ResponseEntity.ok().body(orderAssembler.toResource(updated));
@@ -307,7 +307,7 @@ public class OrderRestController {
             notes = "This can only be done by the authenticated user, which is a customer of order or have admin role")
     public ResponseEntity<?> addOrderItem(
             @ApiParam(value = "order id", required = true) @PathVariable long id,
-            @ApiParam(value = "order item object", required = true) @Valid @RequestBody OrderItemDto orderItem) {
+            @ApiParam(value = "order item object", required = true) @Valid @RequestBody OrderItemDTO orderItem) {
         Order order = orderDao.getEntityByKey(id);
 
         if (order != null) {
@@ -338,7 +338,7 @@ public class OrderRestController {
     public ResponseEntity<?> updateOrderItem(
             @ApiParam(value = "order id", required = true) @PathVariable long id,
             @ApiParam(value = "order item id", required = true) @PathVariable long itemId,
-            @ApiParam(value = "order item object", required = true) @Valid @RequestBody OrderItemDto orderItem) {
+            @ApiParam(value = "order item object", required = true) @Valid @RequestBody OrderItemDTO orderItem) {
         Order order = orderDao.getEntityByKey(id);
 
         if (order != null) {

@@ -5,8 +5,9 @@ import com.globallogic.store.assembler.product.ProductPreviewAssembler;
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.dao.SearchCriteria;
 import com.globallogic.store.domain.user.User;
-import com.globallogic.store.dto.product.ProductDto;
+import com.globallogic.store.dto.product.ProductDTO;
 import com.globallogic.store.domain.product.Product;
+import com.globallogic.store.dto.product.ProductPreviewDTO;
 import com.globallogic.store.security.AuthenticatedUser;
 import com.globallogic.store.security.acl.AclSecurityUtil;
 import io.swagger.annotations.*;
@@ -47,12 +48,12 @@ public class ProductRestController {
     private GenericDao<User> userDao;
 
     /**
-     * Resource assembler to convert {@link Product} to {@link com.globallogic.store.dto.product.ProductPreviewDto}
+     * Resource assembler to convert {@link Product} to {@link ProductPreviewDTO}
      */
     private ProductPreviewAssembler previewAssembler;
 
     /**
-     * Resource assembler to convert {@link Product} to {@link ProductDto}
+     * Resource assembler to convert {@link Product} to {@link ProductDTO}
      */
     private ProductAssembler productAssembler;
 
@@ -158,7 +159,7 @@ public class ProductRestController {
             value = "Resource to create a product",
             notes = "This can only be done by the authenticated user")
     public ResponseEntity<?> createProduct(
-            @ApiParam(value = "created product object", required = true) @Valid @RequestBody ProductDto product) {
+            @ApiParam(value = "created product object", required = true) @Valid @RequestBody ProductDTO product) {
         long id = ((AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
         product.setOwnerId(id);
         Product created = productDao.createEntity(productAssembler.toResource(product));
@@ -183,7 +184,7 @@ public class ProductRestController {
             notes = "This can only be done by the user with \"write\" permissions")
     public ResponseEntity<?> updateProduct(
             @ApiParam(value = "product id", required = true) @PathVariable Long id,
-            @ApiParam(value = "updated product object", required = true) @Valid @RequestBody ProductDto product) {
+            @ApiParam(value = "updated product object", required = true) @Valid @RequestBody ProductDTO product) {
         product.setProductId(id);
         Product updated = productDao.updateEntity(productAssembler.toResource(product));
         return ResponseEntity.ok(productAssembler.toResource(updated));
@@ -227,7 +228,7 @@ public class ProductRestController {
     public ResponseEntity<?> sharePermissions(
             @ApiParam(value = "product id", required = true) @PathVariable long id,
             @ApiParam(value = "username of user who will be granted permissions", required = true) @PathVariable String username,
-            @ApiParam(value = "shared product object") @RequestBody ProductDto product) {
+            @ApiParam(value = "shared product object") @RequestBody ProductDTO product) {
         if (id == product.getProductId())
             aclSecurityUtil.addPermission(productAssembler.toResource(product), username, BasePermission.WRITE, Product.class);
         return ResponseEntity.ok().build();
@@ -251,7 +252,7 @@ public class ProductRestController {
     public ResponseEntity<?> removePermissions(
             @ApiParam(value = "product id", required = true) @PathVariable long id,
             @ApiParam(value = "username of user of who will be removed permissions", required = true) @PathVariable String username,
-            @ApiParam(value = "shared product object") @RequestBody ProductDto product) {
+            @ApiParam(value = "shared product object") @RequestBody ProductDTO product) {
         if (id == product.getProductId())
             aclSecurityUtil.deletePermission(productAssembler.toResource(product), username, BasePermission.WRITE, Product.class);
         return ResponseEntity.ok().build();

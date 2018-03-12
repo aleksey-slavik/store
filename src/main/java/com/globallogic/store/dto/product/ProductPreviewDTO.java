@@ -2,7 +2,7 @@ package com.globallogic.store.dto.product;
 
 import org.springframework.hateoas.ResourceSupport;
 
-public class ProductPreviewDto extends ResourceSupport {
+public class ProductPreviewDTO extends ResourceSupport {
 
     private long productId;
     private String name;

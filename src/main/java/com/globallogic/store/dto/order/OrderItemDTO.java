@@ -5,7 +5,7 @@ import com.globallogic.store.domain.order.OrderItem;
 import com.globallogic.store.domain.product.Product;
 import org.springframework.hateoas.ResourceSupport;
 
-public class OrderItemDto extends ResourceSupport {
+public class OrderItemDTO extends ResourceSupport {
 
     private long productId;
 

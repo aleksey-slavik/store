@@ -1,19 +1,19 @@
 package com.globallogic.store.assembler.user;
 
 import com.globallogic.store.domain.user.User;
-import com.globallogic.store.dto.user.UserDto;
+import com.globallogic.store.dto.user.UserDTO;
 import com.globallogic.store.rest.UserRestController;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 
-public class UserAssembler extends ResourceAssemblerSupport<User, UserDto> {
+public class UserAssembler extends ResourceAssemblerSupport<User, UserDTO> {
 
     public UserAssembler() {
-        super(UserRestController.class, UserDto.class);
+        super(UserRestController.class, UserDTO.class);
     }
 
     @Override
-    public UserDto toResource(User user) {
-        UserDto dto = createResourceWithId(user.getId(), user);
+    public UserDTO toResource(User user) {
+        UserDTO dto = createResourceWithId(user.getId(), user);
         dto.setUserId(user.getId());
         dto.setUsername(user.getUsername());
         dto.setPassword(user.getPassword());
@@ -24,7 +24,7 @@ public class UserAssembler extends ResourceAssemblerSupport<User, UserDto> {
         return dto;
     }
 
-    public User toResource(UserDto dto) {
+    public User toResource(UserDTO dto) {
         User user = new User();
         user.setId(dto.getUserId());
         user.setUsername(dto.getUsername());

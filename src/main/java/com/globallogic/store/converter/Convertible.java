@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface Convertible<E, D> {
 
-    E toOrigin();
+    E toOrigin(D dto);
 
     D toResource(E origin);
 

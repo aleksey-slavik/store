@@ -1,30 +1,30 @@
 package com.globallogic.store.assembler.order;
 
 import com.globallogic.store.domain.order.Order;
-import com.globallogic.store.dto.order.OrderDto;
-import com.globallogic.store.dto.order.OrderItemDto;
+import com.globallogic.store.dto.order.OrderDTO;
+import com.globallogic.store.dto.order.OrderItemDTO;
 import com.globallogic.store.rest.OrderRestController;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 
 import java.util.List;
 
-public class OrderAssembler extends ResourceAssemblerSupport<Order, OrderDto> {
+public class OrderAssembler extends ResourceAssemblerSupport<Order, OrderDTO> {
 
     public OrderAssembler() {
-        super(OrderRestController.class, OrderDto.class);
+        super(OrderRestController.class, OrderDTO.class);
     }
 
     @Override
-    public OrderDto toResource(Order order) {
-        OrderDto dto = new OrderDto();
-        dto.setCreatedDate(order.getCreatedDate());
-        dto.setCustomer(order.getCustomer().getUsername());
-        dto.setCustomerId(order.getCustomer().getId());
-        dto.setOrderId(order.getId());
-        dto.setStatus(order.getStatus());
-        List<OrderItemDto> items = new OrderItemAssembler().toResources(order.getItems());
+    public OrderDTO toResource(Order origin) {
+        OrderDTO dto = new OrderDTO();
+        dto.setCreatedDate(origin.getCreatedDate());
+        dto.setCustomer(origin.getCustomer().getUsername());
+        dto.setCustomerId(origin.getCustomer().getId());
+        dto.setOrderId(origin.getId());
+        dto.setStatus(origin.getStatus());
+        List<OrderItemDTO> items = new OrderItemAssembler().toResources(origin.getItems());
         dto.setItems(items);
-        dto.setTotalCost(order.getTotalCost());
+        dto.setTotalCost(origin.getTotalCost());
         return dto;
     }
 }

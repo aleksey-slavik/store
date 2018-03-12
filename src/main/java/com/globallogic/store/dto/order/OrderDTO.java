@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrderDto extends ResourceSupport {
+public class OrderDTO extends ResourceSupport {
 
     private long orderId;
 
@@ -28,7 +28,7 @@ public class OrderDto extends ResourceSupport {
     @NotNull(message = "Status of order cannot be null")
     private Status status;
 
-    private List<OrderItemDto> items = new ArrayList<>(0);
+    private List<OrderItemDTO> items = new ArrayList<>(0);
 
     public long getOrderId() {
         return orderId;
@@ -78,11 +78,11 @@ public class OrderDto extends ResourceSupport {
         this.status = status;
     }
 
-    public List<OrderItemDto> getItems() {
+    public List<OrderItemDTO> getItems() {
         return items;
     }
 
-    public void setItems(List<OrderItemDto> items) {
+    public void setItems(List<OrderItemDTO> items) {
         this.items = items;
     }
 
@@ -98,7 +98,7 @@ public class OrderDto extends ResourceSupport {
         order.setStatus(status);
         List<OrderItem> items = new ArrayList<>();
 
-        for (OrderItemDto itemDto : getItems()) {
+        for (OrderItemDTO itemDto : getItems()) {
             OrderItem item = itemDto.toOrigin(order);
             items.add(item);
         }

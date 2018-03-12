@@ -1,13 +1,12 @@
 package com.globallogic.store.rest;
 
-import com.globallogic.store.assembler.user.AuthorityAssembler;
 import com.globallogic.store.assembler.user.UserAssembler;
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.dao.SearchCriteria;
 import com.globallogic.store.domain.user.Authority;
 import com.globallogic.store.domain.user.User;
 import com.globallogic.store.dto.user.AuthorityDto;
-import com.globallogic.store.dto.user.UserDto;
+import com.globallogic.store.dto.user.UserDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -21,7 +20,6 @@ import javax.persistence.NoResultException;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Rest controller for operations with users
@@ -44,7 +42,7 @@ public class UserRestController {
     private GenericDao<Authority> authorityDao;
 
     /**
-     * Resource assembler to convert {@link User} to {@link UserDto}
+     * Resource assembler to convert {@link User} to {@link UserDTO}
      */
     private UserAssembler userAssembler;
 
@@ -145,7 +143,7 @@ public class UserRestController {
             value = "Resource to create a user",
             notes = "This can only be done by the anonymous user or user, which have admin role")
     public ResponseEntity<?> createUser(
-            @ApiParam(value = "created user object", required = true) @Valid @RequestBody UserDto user) {
+            @ApiParam(value = "created user object", required = true) @Valid @RequestBody UserDTO user) {
         if (checkUser(user.getUsername()) != null) {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         } else {
@@ -171,7 +169,7 @@ public class UserRestController {
             notes = "This can only be done by the authenticated user")
     public ResponseEntity<?> updateUser(
             @ApiParam(value = "user id", required = true) @PathVariable long id,
-            @ApiParam(value = "updated user object", required = true) @Valid @RequestBody UserDto user) {
+            @ApiParam(value = "updated user object", required = true) @Valid @RequestBody UserDTO user) {
         if (checkUser(id, user.getUsername()) != null) {
             user.setUserId(id);
             User updated = userDao.updateEntity(userAssembler.toResource(user));

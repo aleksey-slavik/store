@@ -6,7 +6,7 @@ import org.springframework.hateoas.ResourceSupport;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public class UserDto extends ResourceSupport {
+public class UserDTO {
 
     private long userId;
 
