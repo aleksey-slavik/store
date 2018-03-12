@@ -1,14 +1,11 @@
 package com.globallogic.store.assembler.order;
 
 import com.globallogic.store.domain.order.Order;
-import com.globallogic.store.domain.order.OrderItem;
-import com.globallogic.store.domain.user.User;
 import com.globallogic.store.dto.order.OrderDto;
 import com.globallogic.store.dto.order.OrderItemDto;
 import com.globallogic.store.rest.OrderRestController;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class OrderAssembler extends ResourceAssemblerSupport<Order, OrderDto> {

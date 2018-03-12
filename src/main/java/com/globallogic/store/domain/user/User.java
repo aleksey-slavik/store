@@ -38,21 +38,6 @@ public class User implements Serializable, Identifiable {
     @JoinTable(name = "user_role", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "role_id")})
     private Set<Authority> authorities = new HashSet<>();
 
-    public User() {}
-
-    public User(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public User(String username, String password, String email, String firstName, String lastName, boolean enabled) {
-        this(enabled);
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-    }
-
     public long getId() {
         return id;
     }

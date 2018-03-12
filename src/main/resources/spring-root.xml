@@ -129,7 +129,6 @@
         <constructor-arg name="userDao" ref="userDao"/>
         <constructor-arg name="authorityDao" ref="authorityDao"/>
         <constructor-arg name="userAssembler" ref="userAssembler"/>
-        <constructor-arg name="authorityAssembler" ref="authorityAssembler"/>
     </bean>
 
     <bean id="productRestController" class="com.globallogic.store.rest.ProductRestController">
@@ -152,7 +151,7 @@
     <bean id="productPreviewAssembler" class="com.globallogic.store.assembler.product.ProductPreviewAssembler"/>
     <bean id="productAssembler" class="com.globallogic.store.assembler.product.ProductAssembler"/>
     <bean id="userAssembler" class="com.globallogic.store.assembler.user.UserAssembler"/>
-    <bean id="authorityAssembler" class="com.globallogic.store.assembler.user.AuthorityAssembler"/>
+    <!--<bean id="authorityAssembler" class="com.globallogic.store.assembler.user.AuthorityAssembler"/>-->
     <bean id="orderAssembler" class="com.globallogic.store.assembler.order.OrderAssembler"/>
     <bean id="orderItemAssembler" class="com.globallogic.store.assembler.order.OrderItemAssembler"/>
 

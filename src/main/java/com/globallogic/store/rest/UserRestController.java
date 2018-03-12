@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.NoResultException;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -46,20 +47,14 @@ public class UserRestController {
      * Resource assembler to convert {@link User} to {@link UserDto}
      */
     private UserAssembler userAssembler;
-    /**
-     * Resource assembler to convert {@link User} to {@link com.globallogic.store.dto.user.AuthorityDto}
-     */
-    private AuthorityAssembler authorityAssembler;
 
     public UserRestController(
             GenericDao<User> userDao,
             GenericDao<Authority> authorityDao,
-            UserAssembler userAssembler,
-            AuthorityAssembler authorityAssembler) {
+            UserAssembler userAssembler) {
         this.userDao = userDao;
         this.authorityDao = authorityDao;
         this.userAssembler = userAssembler;
-        this.authorityAssembler = authorityAssembler;
     }
 
     /**
@@ -227,8 +222,9 @@ public class UserRestController {
     public ResponseEntity<?> getUserAuthorities(
             @ApiParam(value = "user id", required = true) @PathVariable long id) {
         if (checkUser(id) != null) {
-            Set<Authority> authorities = userDao.getEntityByKey(id).getAuthorities();
-            return ResponseEntity.ok().body(authorityAssembler.toResources(authorities));
+            List<Authority> authorities =  new ArrayList<>();
+            authorities.addAll(userDao.getEntityByKey(id).getAuthorities());
+            return ResponseEntity.ok().body(new AuthorityDto().toResources(authorities));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }

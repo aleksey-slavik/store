@@ -119,17 +119,32 @@ public class Order implements Serializable, Identifiable {
         setTotalCost(cost);
     }
 
+    /**
+     * Add new order item to current order
+     *
+     * @param item new order item
+     */
     public void appendItem(OrderItem item) {
         items.add(item);
         checkTotalCost();
     }
 
+    /**
+     * Update order item in current order
+     *
+     * @param item updated order item
+     */
     public void updateItem(OrderItem item) {
         int index = items.indexOf(item);
         items.set(index, item);
         checkTotalCost();
     }
 
+    /**
+     * Delete order item from current order
+     *
+     * @param item deleted order item
+     */
     public void deleteItem(OrderItem item) {
         items.remove(item);
         checkTotalCost();

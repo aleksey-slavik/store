@@ -14,7 +14,7 @@ public class AuthorityAssembler extends ResourceAssemblerSupport<Authority, Auth
     @Override
     public AuthorityDto toResource(Authority authority) {
         AuthorityDto dto = new AuthorityDto();
-        dto.setAuthorityId(authority.getId());
+        dto.setId(authority.getId());
         dto.setTitle(authority.getTitle());
         return dto;
     }
