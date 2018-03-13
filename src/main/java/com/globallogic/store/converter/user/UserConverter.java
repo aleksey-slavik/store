@@ -9,7 +9,7 @@ public class UserConverter implements Convertible<User, UserDTO> {
     @Override
     public User toOrigin(UserDTO dto) {
         User user = new User();
-        user.setId(dto.getUserId());
+        user.setId(dto.getId());
         user.setUsername(dto.getUsername());
         user.setPassword(dto.getPassword());
         user.setFirstName(dto.getFirstName());
@@ -22,7 +22,7 @@ public class UserConverter implements Convertible<User, UserDTO> {
     @Override
     public UserDTO toResource(User origin) {
         UserDTO dto = new UserDTO();
-        dto.setUserId(origin.getId());
+        dto.setId(origin.getId());
         dto.setUsername(origin.getUsername());
         dto.setPassword(origin.getPassword());
         dto.setFirstName(origin.getFirstName());
