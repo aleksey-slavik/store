@@ -1,4 +1,4 @@
-package com.globallogic.store.dao;
+package com.globallogic.store.dao.query;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -7,13 +7,12 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
 /**
- * Implementation of {@link Queryable} interface.
  * Consist logic of the query to the database.
  *
  * @param <T> type of data
  * @author oleksii.slavik
  */
-public class TemplateGenericDao<T> {
+public class GenericQuery<T> {
 
     /**
      * Process of given query.

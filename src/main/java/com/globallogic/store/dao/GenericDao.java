@@ -1,5 +1,8 @@
 package com.globallogic.store.dao;
 
+import com.globallogic.store.dao.criteria.SearchCriteria;
+import com.globallogic.store.dao.query.GenericQuery;
+
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -30,11 +33,11 @@ public class GenericDao<E> implements DaoAccessible<E, Long> {
     }
 
     public E getEntityByKey(final Long id) {
-        return new TemplateGenericDao<E>().processQuery(session -> session.get(entityClass, id));
+        return new GenericQuery<E>().processQuery(session -> session.get(entityClass, id));
     }
 
     public E getEntity(final SearchCriteria criteria) {
-        return new TemplateGenericDao<E>().processQuery(session -> {
+        return new GenericQuery<E>().processQuery(session -> {
             CriteriaBuilder builder = session.getCriteriaBuilder();
             CriteriaQuery<E> query = builder.createQuery(entityClass);
             Root<E> root = query.from(entityClass);
@@ -46,7 +49,7 @@ public class GenericDao<E> implements DaoAccessible<E, Long> {
     }
 
     public List<E> getEntityList(final SearchCriteria criteria) {
-        return new TemplateGenericDao<List<E>>().processQuery(session -> {
+        return new GenericQuery<List<E>>().processQuery(session -> {
             CriteriaBuilder builder = session.getCriteriaBuilder();
             CriteriaQuery<E> selectQuery = builder.createQuery(entityClass);
             Root<E> root = selectQuery.from(entityClass);
@@ -68,21 +71,21 @@ public class GenericDao<E> implements DaoAccessible<E, Long> {
     }
 
     public E createEntity(final E entity) {
-        return new TemplateGenericDao<E>().processQuery(session -> {
+        return new GenericQuery<E>().processQuery(session -> {
             session.save(entity);
             return entity;
         });
     }
 
     public E updateEntity(final E entity) {
-        return new TemplateGenericDao<E>().processQuery(session -> {
+        return new GenericQuery<E>().processQuery(session -> {
             session.update(entity);
             return entity;
         });
     }
 
     public E deleteEntityByKey(final Long id) {
-        return new TemplateGenericDao<E>().processQuery(session -> {
+        return new GenericQuery<E>().processQuery(session -> {
             E entity = session.get(entityClass, id);
             session.delete(entity);
             return entity;

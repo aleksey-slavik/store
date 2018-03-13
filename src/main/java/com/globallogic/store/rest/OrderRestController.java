@@ -3,7 +3,7 @@ package com.globallogic.store.rest;
 import com.globallogic.store.converter.order.OrderConverter;
 import com.globallogic.store.converter.order.OrderItemConverter;
 import com.globallogic.store.dao.GenericDao;
-import com.globallogic.store.dao.SearchCriteria;
+import com.globallogic.store.dao.criteria.SearchCriteria;
 import com.globallogic.store.domain.order.Status;
 import com.globallogic.store.domain.user.User;
 import com.globallogic.store.dto.order.OrderDTO;

@@ -1,4 +1,4 @@
-package com.globallogic.store.dao;
+package com.globallogic.store.dao.query;
 
 import org.hibernate.Session;
 

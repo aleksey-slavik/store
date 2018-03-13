@@ -1,7 +1,7 @@
 package com.globallogic.store.security;
 
 import com.globallogic.store.dao.GenericDao;
-import com.globallogic.store.dao.SearchCriteria;
+import com.globallogic.store.dao.criteria.SearchCriteria;
 import com.globallogic.store.domain.user.Authority;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

@@ -3,7 +3,7 @@ package com.globallogic.store.rest;
 import com.globallogic.store.converter.user.AuthorityConverter;
 import com.globallogic.store.converter.user.UserConverter;
 import com.globallogic.store.dao.GenericDao;
-import com.globallogic.store.dao.SearchCriteria;
+import com.globallogic.store.dao.criteria.SearchCriteria;
 import com.globallogic.store.domain.user.Authority;
 import com.globallogic.store.domain.user.AuthorityName;
 import com.globallogic.store.domain.user.User;

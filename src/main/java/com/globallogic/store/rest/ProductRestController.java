@@ -3,7 +3,7 @@ package com.globallogic.store.rest;
 import com.globallogic.store.converter.product.ProductConverter;
 import com.globallogic.store.converter.product.ProductPreviewConverter;
 import com.globallogic.store.dao.GenericDao;
-import com.globallogic.store.dao.SearchCriteria;
+import com.globallogic.store.dao.criteria.SearchCriteria;
 import com.globallogic.store.domain.user.User;
 import com.globallogic.store.dto.product.ProductDTO;
 import com.globallogic.store.domain.product.Product;
