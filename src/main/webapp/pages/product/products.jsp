@@ -9,123 +9,25 @@
     <%@ include file="/parts/header.jsp" %>
 </head>
 <body>
-<%@ include file="/parts/top.jsp" %>
+
 <script>
     var principal = "${pageContext.request.remoteUser}"
 </script>
 
+<%@ include file="/parts/top.jsp" %>
 
 <sec:authorize access="hasAuthority('ADMIN')">
-    <div class="container">
-        <div class="leftArea">
-            <div class="header" align="center">
-                <%@ include file="/parts/search.jsp" %>
-            </div>
-            <div class="leftArea-list">
-                <ul id="itemList"></ul>
-            </div>
-        </div>
-
-        <form id="itemForm">
-            <div class="mainArea">
-                <label>Id:</label>
-                <input id="id" name="id" type="text" disabled/>
-
-                <label>Name:</label>
-                <input id="name" name="name" type="text"/>
-
-                <label>Brand:</label>
-                <input id="brand" name="brand" type="text"/>
-
-                <label>Price:</label>
-                <input id="price" name="price" type="text"/>
-
-                <button id="buttonCreate">Clear</button>
-                <button id="buttonSave">Save</button>
-                <button id="buttonDelete">Delete</button>
-            </div>
-
-            <div class="rightArea">
-                <label>Description:</label>
-                <textarea id="description" name="description"></textarea>
-                <sec:authorize access="hasAuthority('ADMIN')">
-                    <label>Share permissions:</label>
-                    <input id="share" name="share" type="text"/>
-                    <button id="buttonShare">Share</button>
-                </sec:authorize>
-            </div>
-        </form>
-    </div>
-    <script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.min.js"></script>
-    <script type="text/javascript" src="${pageContext.request.contextPath}/script/search.js"></script>
-    <script type="text/javascript" src="${pageContext.request.contextPath}/script/rest.js"></script>
-    <script type="text/javascript"
-            src="${pageContext.request.contextPath}/script/product/public.js"></script>
-    <script type="text/javascript"
-            src="${pageContext.request.contextPath}/script/product/secured.js"></script>
+    <%@ include file="admin.jsp" %>
 </sec:authorize>
 
 <sec:authorize access="!hasAuthority('ADMIN')">
-    <div class="container">
-        <div class="leftArea">
-            <div class="header" align="center">
-                <%@ include file="/parts/search.jsp" %>
-            </div>
-
-            <sec:authorize access="hasAuthority('CUSTOMER') && !hasAuthority('ADMIN')">
-                <div class="header" align="center">
-                    <button id="addProduct" type="button">Add product</button>
-                </div>
-            </sec:authorize>
-        </div>
-
-        <div class="centralArea">
-            <div id="wrapper">
-            </div>
-
-            <div id="modal-form-container">
-                <form class="modal-form animate">
-                    <%--<span id="buttonCancel" class="close" title="Close Modal">&times;</span>--%>
-                    <div class="mainArea">
-                        <input id="id" name="id" type="hidden"/>
-
-                        <label>Name:</label>
-                        <input id="name" name="name" type="text" disabled/>
-
-                        <label>Brand:</label>
-                        <input id="brand" name="brand" type="text" disabled/>
-
-                        <label>Price:</label>
-                        <input id="price" name="price" type="text" disabled/>
-
-                        <sec:authorize access="isAuthenticated()">
-                            <label>Quantity:</label>
-                            <input id="quantity" name="quantity" type="number" min="1" value="1"/>
-
-                            <button id="buttonBuy">Add to cart</button>
-                        </sec:authorize>
-                        <button id="buttonCancel">Cancel</button>
-                        <button id="buttonUpdate">Update</button>
-                    </div>
-
-                    <div class="rightArea">
-                        <label>Description:</label>
-                        <textarea id="description" name="description" disabled></textarea>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.min.js"></script>
-    <script type="text/javascript" src="${pageContext.request.contextPath}/script/search.js"></script>
-    <script type="text/javascript" src="${pageContext.request.contextPath}/script/rest.js"></script>
-    <script type="text/javascript"
-            src="${pageContext.request.contextPath}/script/product/public.js"></script>
-    <script type="text/javascript"
-            src="${pageContext.request.contextPath}/script/product/secured.js"></script>
+    <%@ include file="customer.jsp" %>
 </sec:authorize>
 
 <%@include file="/parts/bottom.jsp" %>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.min.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/script/product/products.js"></script>
+
 </body>
 </html>
