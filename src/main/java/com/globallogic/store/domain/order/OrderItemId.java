@@ -4,36 +4,47 @@ import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 /**
- * Composite id for {@link com.globallogic.store.domain.order.OrderItem} table
+ * Composite id for order items
  *
  * @author oleksii.slavik
  */
 @Embeddable
 public class OrderItemId implements Serializable {
 
+    /**
+     * order id
+     */
     private long orderId;
+
+    /**
+     * product id
+     */
     private long productId;
 
-    public OrderItemId() {
-    }
-
-    public OrderItemId(long orderId, long productId) {
-        this.orderId = orderId;
-        this.productId = productId;
-    }
-
+    /**
+     * @return order id
+     */
     public long getOrderId() {
         return orderId;
     }
 
+    /**
+     * @param orderId order id
+     */
     public void setOrderId(long orderId) {
         this.orderId = orderId;
     }
 
+    /**
+     * @return product id
+     */
     public long getProductId() {
         return productId;
     }
 
+    /**
+     * @param productId product id
+     */
     public void setProductId(long productId) {
         this.productId = productId;
     }

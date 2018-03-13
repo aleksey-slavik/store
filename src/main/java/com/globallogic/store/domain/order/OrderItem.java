@@ -1,13 +1,12 @@
 package com.globallogic.store.domain.order;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.globallogic.store.domain.product.Product;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 /**
- * Simple JavaBean domain object that represents a item of {@link Order}
+ * Domain object that represents a order item entity
  *
  * @author oleksii.slavik
  */
@@ -15,64 +14,108 @@ import java.io.Serializable;
 @Table(name = "order_item", schema = "public")
 public class OrderItem implements Serializable {
 
+    /**
+     * composite order item id
+     */
     @EmbeddedId
     private OrderItemId primaryKey;
 
-    @JsonIgnore
+    /**
+     * order object
+     */
     @MapsId("orderId")
     @JoinColumn(name = "order_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Order order;
 
+    /**
+     * product object
+     */
     @MapsId("productId")
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Product product;
 
+    /**
+     * price of one item
+     */
     @Column(name = "price")
     private double price;
 
+    /**
+     * count of items
+     */
     @Column(name = "quantity")
     private int quantity;
 
+    /**
+     * @return composite order item id
+     */
     public OrderItemId getPrimaryKey() {
         return primaryKey;
     }
 
+    /**
+     * @param primaryKey composite order item id
+     */
     public void setPrimaryKey(OrderItemId primaryKey) {
         this.primaryKey = primaryKey;
     }
 
+    /**
+     * @return order object
+     */
     public Order getOrder() {
         return order;
     }
 
+    /**
+     * @param order order object
+     */
     public void setOrder(Order order) {
         this.order = order;
         getPrimaryKey().setOrderId(order.getId());
     }
 
+    /**
+     * @return product object
+     */
     public Product getProduct() {
         return product;
     }
 
+    /**
+     * @param product product object
+     */
     public void setProduct(Product product) {
         this.product = product;
         getPrimaryKey().setProductId(product.getId());
     }
 
+    /**
+     * @return price of one item
+     */
     public double getPrice() {
         return price;
     }
 
+    /**
+     * @param price price of one item
+     */
     public void setPrice(double price) {
         this.price = price;
     }
 
+    /**
+     * @return count of items
+     */
     public int getQuantity() {
         return quantity;
     }
 
+    /**
+     * @param quantity count of items
+     */
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
