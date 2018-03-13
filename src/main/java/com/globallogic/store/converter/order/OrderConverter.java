@@ -7,17 +7,19 @@ import com.globallogic.store.domain.user.User;
 import com.globallogic.store.dto.order.OrderDTO;
 import com.globallogic.store.dto.order.OrderItemDTO;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by oleksii.slavik on 3/12/2018.
+ * Converter for converting {@link Order} objects to {@link OrderDTO} objects and back
+ *
+ * @author oleksii.slavik
  */
 public class OrderConverter implements Convertible<Order, OrderDTO> {
+
     @Override
     public Order toOrigin(OrderDTO dto) {
         Order order = new Order();
-        order.setId(dto.getOrderId());
+        order.setId(dto.getId());
         User user = new User();
         user.setId(dto.getCustomerId());
         user.setUsername(dto.getCustomer());
@@ -25,13 +27,7 @@ public class OrderConverter implements Convertible<Order, OrderDTO> {
         order.setTotalCost(dto.getTotalCost());
         order.setCreatedDate(dto.getCreatedDate());
         order.setStatus(dto.getStatus());
-        List<OrderItem> items = new ArrayList<>();
-
-        for (OrderItemDTO itemDto : dto.getItems()) {
-            OrderItem item = new OrderItemConverter().toOrigin(itemDto);
-            items.add(item);
-        }
-
+        List<OrderItem> items = new OrderItemConverter().toOrigins(dto.getItems());
         order.setItems(items);
         order.checkTotalCost();
         return order;
@@ -43,7 +39,7 @@ public class OrderConverter implements Convertible<Order, OrderDTO> {
         dto.setCreatedDate(origin.getCreatedDate());
         dto.setCustomer(origin.getCustomer().getUsername());
         dto.setCustomerId(origin.getCustomer().getId());
-        dto.setOrderId(origin.getId());
+        dto.setId(origin.getId());
         dto.setStatus(origin.getStatus());
         List<OrderItemDTO> items = new OrderItemConverter().toResources(origin.getItems());
         dto.setItems(items);

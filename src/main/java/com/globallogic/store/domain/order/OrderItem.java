@@ -35,16 +35,6 @@ public class OrderItem implements Serializable {
     @Column(name = "quantity")
     private int quantity;
 
-    public OrderItem() {}
-
-    public OrderItem(Order order, Product product, int quantity) {
-        this.primaryKey = new OrderItemId(order.getId(), product.getId());
-        this.order = order;
-        this.product = product;
-        this.price = product.getPrice();
-        this.quantity = quantity;
-    }
-
     public OrderItemId getPrimaryKey() {
         return primaryKey;
     }

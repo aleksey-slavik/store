@@ -43,4 +43,20 @@ public interface Convertible<E, D> {
 
         return resources;
     }
+
+    /**
+     * Convert list of data transfer objects to list of entities
+     *
+     * @param dtos list of data transfer objects
+     * @return list of entities
+     */
+    default List<E> toOrigins(List<D> dtos) {
+        List<E> origins = new ArrayList<>();
+
+        for (D dto : dtos) {
+            origins.add(toOrigin(dto));
+        }
+
+        return origins;
+    }
 }

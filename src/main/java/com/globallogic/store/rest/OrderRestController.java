@@ -51,12 +51,12 @@ public class OrderRestController {
     private GenericDao<User> userDao;
 
     /**
-     * Resource assembler to convert {@link Order} to {@link OrderDTO}
+     * order converter
      */
     private OrderConverter orderConverter;
 
     /**
-     * Resource assembler to convert {@link Order} to {@link OrderItemDTO}
+     * order item converter
      */
     private OrderItemConverter orderItemConverter;
 
@@ -123,6 +123,7 @@ public class OrderRestController {
             @ApiParam(value = "count of items per page", defaultValue = "5") @RequestParam(value = "size", defaultValue = "5") int size,
             @ApiParam(value = "name of sorting column", defaultValue = "id") @RequestParam(value = "sort", defaultValue = "id") String sort,
             @ApiParam(value = "sorting order", defaultValue = "asc") @RequestParam(value = "order", defaultValue = "asc") String order) {
+
         User user = null;
 
         if (customer != null) {
@@ -162,6 +163,7 @@ public class OrderRestController {
             notes = "This can only be done by the authenticated user, which is a customer of order or have admin role")
     public ResponseEntity<?> createOrder(
             @ApiParam(value = "created order object") @RequestBody OrderDTO order) {
+
         if (order == null) {
             order = new OrderDTO();
             AuthenticatedUser principal = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
@@ -171,8 +173,12 @@ public class OrderRestController {
             order.setTotalCost(0);
         }
 
-        Order created = orderDao.createEntity(orderConverter.toOrigin(order));
-        return ResponseEntity.ok().body(created);
+        try {
+            Order created = orderDao.createEntity(orderConverter.toOrigin(order));
+            return ResponseEntity.ok().body(created);
+        } catch (Throwable e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
     /**
@@ -193,9 +199,14 @@ public class OrderRestController {
     public ResponseEntity<?> updateOrder(
             @ApiParam(value = "order id", required = true) @PathVariable long id,
             @ApiParam(value = "updated order object", required = true) @Valid @RequestBody OrderDTO order) {
-        order.setOrderId(id);
-        Order updated = orderDao.updateEntity(orderConverter.toOrigin(order));
-        return ResponseEntity.ok().body(orderConverter.toResource(updated));
+
+        try {
+            order.setId(id);
+            Order updated = orderDao.updateEntity(orderConverter.toOrigin(order));
+            return ResponseEntity.ok().body(orderConverter.toResource(updated));
+        } catch (Throwable e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
     /**
@@ -214,8 +225,13 @@ public class OrderRestController {
             notes = "This can only be done by user, which have admin role")
     public ResponseEntity<?> deleteOrderById(
             @ApiParam(value = "order id", required = true) @PathVariable long id) {
-        Order deleted = orderDao.deleteEntityByKey(id);
-        return ResponseEntity.ok().body(orderConverter.toResource(deleted));
+
+        try {
+            Order deleted = orderDao.deleteEntityByKey(id);
+            return ResponseEntity.ok().body(orderConverter.toResource(deleted));
+        } catch (Throwable e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
     /**
@@ -308,14 +324,14 @@ public class OrderRestController {
     public ResponseEntity<?> addOrderItem(
             @ApiParam(value = "order id", required = true) @PathVariable long id,
             @ApiParam(value = "order item object", required = true) @Valid @RequestBody OrderItemDTO orderItem) {
-        Order order = orderDao.getEntityByKey(id);
 
-        if (order != null) {
+        try {
+            Order order = orderDao.getEntityByKey(id);
             order.appendItem(orderItemConverter.toOrigin(orderItem));
             orderDao.updateEntity(order);
             return ResponseEntity.ok().body(orderItem);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+        } catch (Throwable e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
@@ -339,15 +355,15 @@ public class OrderRestController {
             @ApiParam(value = "order id", required = true) @PathVariable long id,
             @ApiParam(value = "order item id", required = true) @PathVariable long itemId,
             @ApiParam(value = "order item object", required = true) @Valid @RequestBody OrderItemDTO orderItem) {
-        Order order = orderDao.getEntityByKey(id);
 
-        if (order != null) {
+        try {
+            Order order = orderDao.getEntityByKey(id);
             orderItem.setProductId(itemId);
             order.updateItem(orderItemConverter.toOrigin(orderItem));
             orderDao.updateEntity(order);
             return ResponseEntity.ok().body(orderItem);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+        } catch (Throwable e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
@@ -369,9 +385,10 @@ public class OrderRestController {
     public ResponseEntity<?> deleteOrderItem(
             @ApiParam(value = "order id", required = true) @PathVariable long id,
             @ApiParam(value = "order item id", required = true) @PathVariable long itemId) {
-        Order order = orderDao.getEntityByKey(id);
 
-        if (order != null) {
+        try {
+            Order order = orderDao.getEntityByKey(id);
+
             SearchCriteria criteria = new SearchCriteria()
                     .criteria("order", id)
                     .criteria("product", itemId);
@@ -380,8 +397,8 @@ public class OrderRestController {
             order.deleteItem(item);
             orderDao.updateEntity(order);
             return ResponseEntity.ok().body(orderItemConverter.toResource(item));
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+        } catch (Throwable e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
@@ -401,14 +418,14 @@ public class OrderRestController {
             notes = "This can only be done by the authenticated user, which is a customer of order or have admin role")
     public ResponseEntity<?> deleteAllOrderItem(
             @ApiParam(value = "order id", required = true) @PathVariable long id) {
-        Order order = orderDao.getEntityByKey(id);
 
-        if (order != null) {
+        try {
+            Order order = orderDao.getEntityByKey(id);
             order.clear();
             orderDao.updateEntity(order);
             return ResponseEntity.ok().body(orderConverter.toResource(order));
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+        } catch (Throwable e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 }

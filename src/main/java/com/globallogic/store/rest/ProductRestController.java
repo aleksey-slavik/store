@@ -32,7 +32,7 @@ import java.util.*;
 public class ProductRestController {
 
     /**
-     * Access Control List
+     * access control list
      */
     private AclSecurityUtil aclSecurityUtil;
 
