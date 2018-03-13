@@ -15,6 +15,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -68,7 +69,7 @@ public class UserRestController {
      * @param id given id
      * @return user with given id
      */
-    //@PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.GET,
@@ -100,7 +101,7 @@ public class UserRestController {
      * @param order     sorting order
      * @return list of users
      */
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -142,7 +143,7 @@ public class UserRestController {
      * @param user created user object
      * @return created user
      */
-    //@PreAuthorize("isAnonymous() || hasRole('ADMIN')")
+    @PreAuthorize("isAnonymous() || hasRole('ADMIN')")
     @RequestMapping(
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -151,6 +152,7 @@ public class UserRestController {
             notes = "This can only be done by the anonymous user or user, which have admin role")
     public ResponseEntity<?> createUser(
             @ApiParam(value = "created user object", required = true) @Valid @RequestBody UserDTO user) {
+
         try {
             User created = userDao.createEntity(userConverter.toOrigin(user));
             SearchCriteria criteria = new SearchCriteria().criteria("title", AuthorityName.CUSTOMER);
@@ -171,7 +173,7 @@ public class UserRestController {
      * @param user updated user object
      * @return updated user
      */
-    //@PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.PUT,
@@ -182,6 +184,7 @@ public class UserRestController {
     public ResponseEntity<?> updateUser(
             @ApiParam(value = "user id", required = true) @PathVariable long id,
             @ApiParam(value = "updated user object", required = true) @Valid @RequestBody UserDTO user) {
+
         try {
             user.setId(id);
             User updated = userDao.updateEntity(userConverter.toOrigin(user));
@@ -189,7 +192,6 @@ public class UserRestController {
         } catch (Throwable e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-
     }
 
     /**
@@ -198,7 +200,7 @@ public class UserRestController {
      * @param id user id
      * @return deleted user
      */
-    //@PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.DELETE,
@@ -208,13 +210,13 @@ public class UserRestController {
             notes = "This can only be done by the authenticated user")
     public ResponseEntity<?> deleteUserById(
             @ApiParam(value = "user id", required = true) @PathVariable long id) {
+
         try {
             User deleted = userDao.deleteEntityByKey(id);
             return ResponseEntity.ok().body(userConverter.toResource(deleted));
         } catch (Throwable e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-
     }
 
     /**
@@ -223,7 +225,7 @@ public class UserRestController {
      * @param id user id
      * @return authorities of user with given id
      */
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(
             value = "/{id}/authorities",
             method = RequestMethod.GET,
@@ -233,6 +235,7 @@ public class UserRestController {
             notes = "This can only be done by user with admin role")
     public ResponseEntity<?> getUserAuthorities(
             @ApiParam(value = "user id", required = true) @PathVariable long id) {
+
         try {
             List<Authority> authorities = new ArrayList<>();
             authorities.addAll(userDao.getEntityByKey(id).getAuthorities());
@@ -249,7 +252,7 @@ public class UserRestController {
      * @param authority authority object
      * @return granted authority
      */
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(
             value = "/{id}/authorities",
             method = RequestMethod.POST,
@@ -260,6 +263,7 @@ public class UserRestController {
     public ResponseEntity<?> appendUserAuthority(
             @ApiParam(value = "user id", required = true) @PathVariable long id,
             @ApiParam(value = "authority object", required = true) @RequestBody AuthorityDTO authority) {
+
         try {
             SearchCriteria criteria = new SearchCriteria().criteria("title", authority.getTitle());
             Authority granted = authorityDao.getEntity(criteria);
@@ -279,7 +283,7 @@ public class UserRestController {
      * @param authId authority id
      * @return deleted authority
      */
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(
             value = "/{id}/authorities/{authId}",
             method = RequestMethod.DELETE,
@@ -290,6 +294,7 @@ public class UserRestController {
     public ResponseEntity<?> deleteUserAuthority(
             @ApiParam(value = "user id", required = true) @PathVariable long id,
             @ApiParam(value = "authority id", required = true) @PathVariable long authId) {
+
         try {
             Authority removed = authorityDao.getEntityByKey(authId);
             User updated = userDao.getEntityByKey(id);

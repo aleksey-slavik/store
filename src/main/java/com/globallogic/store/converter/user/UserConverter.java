@@ -4,6 +4,11 @@ import com.globallogic.store.converter.Convertible;
 import com.globallogic.store.domain.user.User;
 import com.globallogic.store.dto.user.UserDTO;
 
+/**
+ * Converter for converting {@link User} objects to {@link UserDTO} objects and back
+ *
+ * @author oleksii.slavik
+ */
 public class UserConverter implements Convertible<User, UserDTO> {
 
     @Override

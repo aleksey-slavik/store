@@ -4,6 +4,11 @@ import com.globallogic.store.converter.Convertible;
 import com.globallogic.store.domain.user.Authority;
 import com.globallogic.store.dto.user.AuthorityDTO;
 
+/**
+ * Converter for converting {@link Authority} objects to {@link AuthorityDTO} objects and back
+ *
+ * @author oleksii.slavik
+ */
 public class AuthorityConverter implements Convertible<Authority, AuthorityDTO> {
 
     @Override

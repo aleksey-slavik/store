@@ -6,14 +6,16 @@ import com.globallogic.store.domain.user.User;
 import com.globallogic.store.dto.product.ProductDTO;
 
 /**
- * Created by oleksii.slavik on 3/12/2018.
+ * Converter for converting {@link Product} objects to {@link ProductDTO} objects and back
+ *
+ * @author oleksii.slavik
  */
 public class ProductConverter implements Convertible<Product, ProductDTO> {
 
     @Override
     public Product toOrigin(ProductDTO dto) {
         Product product = new Product();
-        product.setId(dto.getProductId());
+        product.setId(dto.getId());
         product.setName(dto.getName());
         product.setBrand(dto.getBrand());
         product.setDescription(dto.getDescription());
@@ -28,7 +30,7 @@ public class ProductConverter implements Convertible<Product, ProductDTO> {
     @Override
     public ProductDTO toResource(Product origin) {
         ProductDTO dto = new ProductDTO();
-        dto.setProductId(origin.getId());
+        dto.setId(origin.getId());
         dto.setName(origin.getName());
         dto.setBrand(origin.getBrand());
         dto.setDescription(origin.getDescription());

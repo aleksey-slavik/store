@@ -33,7 +33,7 @@
     <form id="modal-form">
         <div class="mainArea">
             <input id="id" name="id" type="hidden"/>
-            <input id="productId" name="productId" type="hidden"/>
+            <input id="id" name="id" type="hidden"/>
 
             <label>Name:</label>
             <input id="productName" name="productName" type="text" disabled/>

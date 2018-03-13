@@ -5,7 +5,9 @@ import com.globallogic.store.domain.product.Product;
 import com.globallogic.store.dto.product.ProductPreviewDTO;
 
 /**
- * Created by oleksii.slavik on 3/12/2018.
+ * Converter for converting {@link Product} objects to {@link ProductPreviewDTO} objects and back
+ *
+ * @author oleksii.slavik
  */
 public class ProductPreviewConverter implements Convertible<Product, ProductPreviewDTO> {
     @Override
@@ -16,7 +18,7 @@ public class ProductPreviewConverter implements Convertible<Product, ProductPrev
     @Override
     public ProductPreviewDTO toResource(Product origin) {
         ProductPreviewDTO dto = new ProductPreviewDTO();
-        dto.setProductId(origin.getId());
+        dto.setId(origin.getId());
         dto.setName(origin.getName());
         dto.setBrand(origin.getBrand());
         dto.setPrice(origin.getPrice());
