@@ -136,25 +136,25 @@
         <constructor-arg name="productDao" ref="productDao"/>
         <constructor-arg name="userDao" ref="userDao"/>
         <constructor-arg name="aclSecurityUtil" ref="aclSecurityUtil"/>
-        <constructor-arg name="previewAssembler" ref="productPreviewAssembler"/>
-        <constructor-arg name="productAssembler" ref="productAssembler"/>
+        <constructor-arg name="previewConverter" ref="productPreviewConverter"/>
+        <constructor-arg name="productConverter" ref="productConverter"/>
     </bean>
 
     <bean id="orderRestController" class="com.globallogic.store.rest.OrderRestController">
         <constructor-arg name="orderDao" ref="orderDao"/>
         <constructor-arg name="orderItemDao" ref="orderItemDao"/>
         <constructor-arg name="userDao" ref="userDao"/>
-        <constructor-arg name="orderAssembler" ref="orderAssembler"/>
-        <constructor-arg name="orderItemAssembler" ref="orderItemAssembler"/>
+        <constructor-arg name="orderConverter" ref="orderConverter"/>
+        <constructor-arg name="orderItemConverter" ref="orderItemConverter"/>
     </bean>
 
     <!-- DTO Converters -->
-    <bean id="productPreviewAssembler" class="com.globallogic.store.assembler.product.ProductPreviewAssembler"/>
-    <bean id="productAssembler" class="com.globallogic.store.assembler.product.ProductAssembler"/>
+    <bean id="productPreviewConverter" class="com.globallogic.store.converter.product.ProductPreviewConverter"/>
+    <bean id="productConverter" class="com.globallogic.store.converter.product.ProductConverter"/>
     <bean id="userConverter" class="com.globallogic.store.converter.user.UserConverter"/>
     <bean id="authorityConverter" class="com.globallogic.store.converter.user.AuthorityConverter"/>
-    <bean id="orderAssembler" class="com.globallogic.store.assembler.order.OrderAssembler"/>
-    <bean id="orderItemAssembler" class="com.globallogic.store.assembler.order.OrderItemAssembler"/>
+    <bean id="orderConverter" class="com.globallogic.store.converter.order.OrderConverter"/>
+    <bean id="orderItemConverter" class="com.globallogic.store.converter.order.OrderItemConverter"/>
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.postgresql.Driver"/>

@@ -1,7 +1,5 @@
 package com.globallogic.store.dto.product;
 
-import org.springframework.hateoas.ResourceSupport;
-
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;

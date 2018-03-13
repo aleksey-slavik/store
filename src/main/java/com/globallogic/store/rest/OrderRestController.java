@@ -1,7 +1,7 @@
 package com.globallogic.store.rest;
 
-import com.globallogic.store.assembler.order.OrderAssembler;
-import com.globallogic.store.assembler.order.OrderItemAssembler;
+import com.globallogic.store.converter.order.OrderConverter;
+import com.globallogic.store.converter.order.OrderItemConverter;
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.dao.SearchCriteria;
 import com.globallogic.store.domain.order.Status;
@@ -36,41 +36,41 @@ import java.util.List;
 public class OrderRestController {
 
     /**
-     * {@link Order} DAO
+     * order DAO
      */
     private GenericDao<Order> orderDao;
 
     /**
-     * {@link OrderItem} DAO
+     * order item DAO
      */
     private GenericDao<OrderItem> orderItemDao;
 
     /**
-     * {@link User} DAO
+     * user DAO
      */
     private GenericDao<User> userDao;
 
     /**
      * Resource assembler to convert {@link Order} to {@link OrderDTO}
      */
-    private OrderAssembler orderAssembler;
+    private OrderConverter orderConverter;
 
     /**
      * Resource assembler to convert {@link Order} to {@link OrderItemDTO}
      */
-    private OrderItemAssembler orderItemAssembler;
+    private OrderItemConverter orderItemConverter;
 
     public OrderRestController(
             GenericDao<Order> orderDao,
             GenericDao<OrderItem> orderItemDao,
             GenericDao<User> userDao,
-            OrderAssembler orderAssembler,
-            OrderItemAssembler orderItemAssembler) {
+            OrderConverter orderConverter,
+            OrderItemConverter orderItemConverter) {
         this.orderDao = orderDao;
         this.orderItemDao = orderItemDao;
         this.userDao = userDao;
-        this.orderAssembler = orderAssembler;
-        this.orderItemAssembler = orderItemAssembler;
+        this.orderConverter = orderConverter;
+        this.orderItemConverter = orderItemConverter;
     }
 
     /**
@@ -94,7 +94,7 @@ public class OrderRestController {
         if (order == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else {
-            return ResponseEntity.ok().body(orderAssembler.toResource(order));
+            return ResponseEntity.ok().body(orderConverter.toResource(order));
         }
     }
 
@@ -143,7 +143,7 @@ public class OrderRestController {
         if (orders == null || orders.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else {
-            return ResponseEntity.ok().body(orderAssembler.toResources(orders));
+            return ResponseEntity.ok().body(orderConverter.toResources(orders));
         }
     }
 
@@ -171,7 +171,7 @@ public class OrderRestController {
             order.setTotalCost(0);
         }
 
-        Order created = orderDao.createEntity(order.toOrigin());
+        Order created = orderDao.createEntity(orderConverter.toOrigin(order));
         return ResponseEntity.ok().body(created);
     }
 
@@ -194,8 +194,8 @@ public class OrderRestController {
             @ApiParam(value = "order id", required = true) @PathVariable long id,
             @ApiParam(value = "updated order object", required = true) @Valid @RequestBody OrderDTO order) {
         order.setOrderId(id);
-        Order updated = orderDao.updateEntity(order.toOrigin());
-        return ResponseEntity.ok().body(orderAssembler.toResource(updated));
+        Order updated = orderDao.updateEntity(orderConverter.toOrigin(order));
+        return ResponseEntity.ok().body(orderConverter.toResource(updated));
     }
 
     /**
@@ -215,7 +215,7 @@ public class OrderRestController {
     public ResponseEntity<?> deleteOrderById(
             @ApiParam(value = "order id", required = true) @PathVariable long id) {
         Order deleted = orderDao.deleteEntityByKey(id);
-        return ResponseEntity.ok().body(orderAssembler.toResource(deleted));
+        return ResponseEntity.ok().body(orderConverter.toResource(deleted));
     }
 
     /**
@@ -243,7 +243,7 @@ public class OrderRestController {
                     .criteria("product", itemId);
 
             OrderItem item = orderItemDao.getEntity(criteria);
-            return ResponseEntity.ok().body(orderItemAssembler.toResource(item));
+            return ResponseEntity.ok().body(orderItemConverter.toResource(item));
         } catch (NoResultException e) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
@@ -286,7 +286,7 @@ public class OrderRestController {
         if (items == null || items.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else {
-            return ResponseEntity.ok().body(orderItemAssembler.toResources(items));
+            return ResponseEntity.ok().body(orderItemConverter.toResources(items));
         }
     }
 
@@ -311,7 +311,7 @@ public class OrderRestController {
         Order order = orderDao.getEntityByKey(id);
 
         if (order != null) {
-            order.appendItem(orderItem.toOrigin(order));
+            order.appendItem(orderItemConverter.toOrigin(orderItem));
             orderDao.updateEntity(order);
             return ResponseEntity.ok().body(orderItem);
         } else {
@@ -343,7 +343,7 @@ public class OrderRestController {
 
         if (order != null) {
             orderItem.setProductId(itemId);
-            order.updateItem(orderItem.toOrigin(order));
+            order.updateItem(orderItemConverter.toOrigin(orderItem));
             orderDao.updateEntity(order);
             return ResponseEntity.ok().body(orderItem);
         } else {
@@ -379,7 +379,7 @@ public class OrderRestController {
             OrderItem item = orderItemDao.getEntity(criteria);
             order.deleteItem(item);
             orderDao.updateEntity(order);
-            return ResponseEntity.ok().body(orderItemAssembler.toResource(item));
+            return ResponseEntity.ok().body(orderItemConverter.toResource(item));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
@@ -406,7 +406,7 @@ public class OrderRestController {
         if (order != null) {
             order.clear();
             orderDao.updateEntity(order);
-            return ResponseEntity.ok().body(orderAssembler.toResource(order));
+            return ResponseEntity.ok().body(orderConverter.toResource(order));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }

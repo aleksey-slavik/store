@@ -1,13 +1,12 @@
 package com.globallogic.store.rest;
 
-import com.globallogic.store.assembler.product.ProductAssembler;
-import com.globallogic.store.assembler.product.ProductPreviewAssembler;
+import com.globallogic.store.converter.product.ProductConverter;
+import com.globallogic.store.converter.product.ProductPreviewConverter;
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.dao.SearchCriteria;
 import com.globallogic.store.domain.user.User;
 import com.globallogic.store.dto.product.ProductDTO;
 import com.globallogic.store.domain.product.Product;
-import com.globallogic.store.dto.product.ProductPreviewDTO;
 import com.globallogic.store.security.AuthenticatedUser;
 import com.globallogic.store.security.acl.AclSecurityUtil;
 import io.swagger.annotations.*;
@@ -38,36 +37,36 @@ public class ProductRestController {
     private AclSecurityUtil aclSecurityUtil;
 
     /**
-     * {@link Product} DAO
+     * product DAO
      */
     private GenericDao<Product> productDao;
 
     /**
-     * {@link User} DAO
+     * user DAO
      */
     private GenericDao<User> userDao;
 
     /**
-     * Resource assembler to convert {@link Product} to {@link ProductPreviewDTO}
+     * product preview converter
      */
-    private ProductPreviewAssembler previewAssembler;
+    private ProductPreviewConverter previewConverter;
 
     /**
-     * Resource assembler to convert {@link Product} to {@link ProductDTO}
+     * product converter
      */
-    private ProductAssembler productAssembler;
+    private ProductConverter productConverter;
 
     public ProductRestController(
             AclSecurityUtil aclSecurityUtil,
             GenericDao<Product> productDao,
             GenericDao<User> userDao,
-            ProductPreviewAssembler previewAssembler,
-            ProductAssembler productAssembler) {
+            ProductPreviewConverter previewConverter,
+            ProductConverter productConverter) {
         this.aclSecurityUtil = aclSecurityUtil;
         this.productDao = productDao;
         this.userDao = userDao;
-        this.previewAssembler = previewAssembler;
-        this.productAssembler = productAssembler;
+        this.previewConverter = previewConverter;
+        this.productConverter = productConverter;
     }
 
     /**
@@ -88,7 +87,7 @@ public class ProductRestController {
         if (product == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else {
-            return ResponseEntity.ok().body(productAssembler.toResource(product));
+            return ResponseEntity.ok().body(productConverter.toResource(product));
         }
     }
 
@@ -141,7 +140,7 @@ public class ProductRestController {
         if (products == null || products.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else {
-            return ResponseEntity.ok().body(previewAssembler.toResources(products));
+            return ResponseEntity.ok().body(previewConverter.toResources(products));
         }
     }
 
@@ -162,9 +161,9 @@ public class ProductRestController {
             @ApiParam(value = "created product object", required = true) @Valid @RequestBody ProductDTO product) {
         long id = ((AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
         product.setOwnerId(id);
-        Product created = productDao.createEntity(productAssembler.toResource(product));
+        Product created = productDao.createEntity(productConverter.toOrigin(product));
         aclSecurityUtil.addPermission(created, BasePermission.ADMINISTRATION, Product.class);
-        return ResponseEntity.ok().body(productAssembler.toResource(created));
+        return ResponseEntity.ok().body(productConverter.toResource(created));
     }
 
     /**
@@ -186,8 +185,8 @@ public class ProductRestController {
             @ApiParam(value = "product id", required = true) @PathVariable Long id,
             @ApiParam(value = "updated product object", required = true) @Valid @RequestBody ProductDTO product) {
         product.setProductId(id);
-        Product updated = productDao.updateEntity(productAssembler.toResource(product));
-        return ResponseEntity.ok(productAssembler.toResource(updated));
+        Product updated = productDao.updateEntity(productConverter.toOrigin(product));
+        return ResponseEntity.ok(productConverter.toResource(updated));
     }
 
     /**
@@ -207,7 +206,7 @@ public class ProductRestController {
     public ResponseEntity<?> deleteProduct(
             @ApiParam(value = "product id", required = true) @PathVariable Long id) {
         Product deleted = productDao.deleteEntityByKey(id);
-        return ResponseEntity.ok(productAssembler.toResource(deleted));
+        return ResponseEntity.ok(productConverter.toResource(deleted));
     }
 
     /**
@@ -230,7 +229,7 @@ public class ProductRestController {
             @ApiParam(value = "username of user who will be granted permissions", required = true) @PathVariable String username,
             @ApiParam(value = "shared product object") @RequestBody ProductDTO product) {
         if (id == product.getProductId())
-            aclSecurityUtil.addPermission(productAssembler.toResource(product), username, BasePermission.WRITE, Product.class);
+            aclSecurityUtil.addPermission(productConverter.toOrigin(product), username, BasePermission.WRITE, Product.class);
         return ResponseEntity.ok().build();
     }
 
@@ -254,7 +253,7 @@ public class ProductRestController {
             @ApiParam(value = "username of user of who will be removed permissions", required = true) @PathVariable String username,
             @ApiParam(value = "shared product object") @RequestBody ProductDTO product) {
         if (id == product.getProductId())
-            aclSecurityUtil.deletePermission(productAssembler.toResource(product), username, BasePermission.WRITE, Product.class);
+            aclSecurityUtil.deletePermission(productConverter.toOrigin(product), username, BasePermission.WRITE, Product.class);
         return ResponseEntity.ok().build();
     }
 

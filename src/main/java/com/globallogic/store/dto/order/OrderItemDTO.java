@@ -1,11 +1,6 @@
 package com.globallogic.store.dto.order;
 
-import com.globallogic.store.domain.order.Order;
-import com.globallogic.store.domain.order.OrderItem;
-import com.globallogic.store.domain.product.Product;
-import org.springframework.hateoas.ResourceSupport;
-
-public class OrderItemDTO extends ResourceSupport {
+public class OrderItemDTO {
 
     private long productId;
 
@@ -55,14 +50,5 @@ public class OrderItemDTO extends ResourceSupport {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
-    }
-
-    public OrderItem toOrigin(Order order) {
-        Product product = new Product();
-        product.setId(productId);
-        product.setName(name);
-        product.setBrand(brand);
-        product.setPrice(price);
-        return new OrderItem(order, product, quantity);
     }
 }

@@ -143,7 +143,7 @@ public class UserRestController {
      * @param user created user object
      * @return created user
      */
-    @PreAuthorize("isAnonymous() || hasRole('ADMIN')")
+    //@PreAuthorize("isAnonymous() || hasRole('ADMIN')")
     @RequestMapping(
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)

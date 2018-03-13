@@ -28,7 +28,7 @@ public class OrderConverter implements Convertible<Order, OrderDTO> {
         List<OrderItem> items = new ArrayList<>();
 
         for (OrderItemDTO itemDto : dto.getItems()) {
-            OrderItem item = itemDto.toOrigin(order);
+            OrderItem item = new OrderItemConverter().toOrigin(itemDto);
             items.add(item);
         }
 

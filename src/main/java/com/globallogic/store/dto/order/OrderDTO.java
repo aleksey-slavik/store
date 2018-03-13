@@ -1,17 +1,13 @@
 package com.globallogic.store.dto.order;
 
-import com.globallogic.store.domain.order.Order;
-import com.globallogic.store.domain.order.OrderItem;
 import com.globallogic.store.domain.order.Status;
-import com.globallogic.store.domain.user.User;
-import org.springframework.hateoas.ResourceSupport;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrderDTO extends ResourceSupport {
+public class OrderDTO {
 
     private long orderId;
 
@@ -84,27 +80,5 @@ public class OrderDTO extends ResourceSupport {
 
     public void setItems(List<OrderItemDTO> items) {
         this.items = items;
-    }
-
-    public Order toOrigin() {
-        Order order = new Order();
-        order.setId(orderId);
-        User user = new User();
-        user.setId(customerId);
-        user.setUsername(customer);
-        order.setCustomer(user);
-        order.setTotalCost(totalCost);
-        order.setCreatedDate(createdDate);
-        order.setStatus(status);
-        List<OrderItem> items = new ArrayList<>();
-
-        for (OrderItemDTO itemDto : getItems()) {
-            OrderItem item = itemDto.toOrigin(order);
-            items.add(item);
-        }
-
-        order.setItems(items);
-        order.checkTotalCost();
-        return order;
     }
 }
