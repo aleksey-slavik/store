@@ -7,7 +7,7 @@ import javax.validation.constraints.Size;
 
 public class UserDTO {
 
-    private long userId;
+    private long id;
 
     @NotNull(message = "Username cannot be null")
     @Size(max = 30, message = "Username must be less than {max} characters")
@@ -31,12 +31,12 @@ public class UserDTO {
 
     private boolean enabled;
 
-    public long getUserId() {
-        return userId;
+    public long getId() {
+        return id;
     }
 
-    public void setUserId(long userId) {
-        this.userId = userId;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getUsername() {

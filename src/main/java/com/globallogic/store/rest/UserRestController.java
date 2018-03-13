@@ -5,6 +5,7 @@ import com.globallogic.store.converter.user.UserConverter;
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.dao.SearchCriteria;
 import com.globallogic.store.domain.user.Authority;
+import com.globallogic.store.domain.user.AuthorityName;
 import com.globallogic.store.domain.user.User;
 import com.globallogic.store.dto.user.AuthorityDTO;
 import com.globallogic.store.dto.user.UserDTO;
@@ -14,10 +15,8 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.NoResultException;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +68,7 @@ public class UserRestController {
      * @param id given id
      * @return user with given id
      */
-    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.GET,
@@ -101,7 +100,7 @@ public class UserRestController {
      * @param order     sorting order
      * @return list of users
      */
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -152,11 +151,16 @@ public class UserRestController {
             notes = "This can only be done by the anonymous user or user, which have admin role")
     public ResponseEntity<?> createUser(
             @ApiParam(value = "created user object", required = true) @Valid @RequestBody UserDTO user) {
-        if (checkUser(user.getUsername()) != null) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
-        } else {
+        try {
             User created = userDao.createEntity(userConverter.toOrigin(user));
+            SearchCriteria criteria = new SearchCriteria().criteria("title", AuthorityName.CUSTOMER);
+            Authority granted = authorityDao.getEntity(criteria);
+            created.appendAuthority(granted);
+            created.setEnabled(true);
+            userDao.updateEntity(created);
             return ResponseEntity.ok().body(userConverter.toResource(created));
+        } catch (Throwable e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
@@ -167,7 +171,7 @@ public class UserRestController {
      * @param user updated user object
      * @return updated user
      */
-    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.PUT,
@@ -178,13 +182,14 @@ public class UserRestController {
     public ResponseEntity<?> updateUser(
             @ApiParam(value = "user id", required = true) @PathVariable long id,
             @ApiParam(value = "updated user object", required = true) @Valid @RequestBody UserDTO user) {
-        if (checkUser(id, user.getUsername()) != null) {
-            user.setUserId(id);
+        try {
+            user.setId(id);
             User updated = userDao.updateEntity(userConverter.toOrigin(user));
             return ResponseEntity.ok().body(userConverter.toResource(updated));
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+        } catch (Throwable e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
+
     }
 
     /**
@@ -193,7 +198,7 @@ public class UserRestController {
      * @param id user id
      * @return deleted user
      */
-    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.DELETE,
@@ -203,12 +208,13 @@ public class UserRestController {
             notes = "This can only be done by the authenticated user")
     public ResponseEntity<?> deleteUserById(
             @ApiParam(value = "user id", required = true) @PathVariable long id) {
-        if (checkUser(id) != null) {
+        try {
             User deleted = userDao.deleteEntityByKey(id);
             return ResponseEntity.ok().body(userConverter.toResource(deleted));
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+        } catch (Throwable e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
+
     }
 
     /**
@@ -217,7 +223,7 @@ public class UserRestController {
      * @param id user id
      * @return authorities of user with given id
      */
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(
             value = "/{id}/authorities",
             method = RequestMethod.GET,
@@ -227,12 +233,12 @@ public class UserRestController {
             notes = "This can only be done by user with admin role")
     public ResponseEntity<?> getUserAuthorities(
             @ApiParam(value = "user id", required = true) @PathVariable long id) {
-        if (checkUser(id) != null) {
-            List<Authority> authorities =  new ArrayList<>();
+        try {
+            List<Authority> authorities = new ArrayList<>();
             authorities.addAll(userDao.getEntityByKey(id).getAuthorities());
             return ResponseEntity.ok().body(authorityConverter.toResources(authorities));
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+        } catch (Throwable e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
@@ -254,16 +260,15 @@ public class UserRestController {
     public ResponseEntity<?> appendUserAuthority(
             @ApiParam(value = "user id", required = true) @PathVariable long id,
             @ApiParam(value = "authority object", required = true) @RequestBody AuthorityDTO authority) {
-        User updated = checkUser(id);
-
-        if (updated != null) {
+        try {
             SearchCriteria criteria = new SearchCriteria().criteria("title", authority.getTitle());
             Authority granted = authorityDao.getEntity(criteria);
+            User updated = userDao.getEntityByKey(id);
             updated.appendAuthority(granted);
             userDao.updateEntity(updated);
             return ResponseEntity.ok().body(authorityConverter.toResource(granted));
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+        } catch (Throwable e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
@@ -285,63 +290,14 @@ public class UserRestController {
     public ResponseEntity<?> deleteUserAuthority(
             @ApiParam(value = "user id", required = true) @PathVariable long id,
             @ApiParam(value = "authority id", required = true) @PathVariable long authId) {
-        User updated = checkUser(id);
-
-        if (updated != null) {
+        try {
             Authority removed = authorityDao.getEntityByKey(authId);
+            User updated = userDao.getEntityByKey(id);
             updated.removeAuthority(removed);
             userDao.updateEntity(updated);
             return ResponseEntity.ok().body(authorityConverter.toResource(removed));
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
-        }
-    }
-
-    /**
-     * Check is exist user with given username
-     *
-     * @param username username of user
-     * @return true is user with given username already exist, false in otherwise
-     */
-    private User checkUser(String username) {
-        try {
-            SearchCriteria criteria = new SearchCriteria().criteria("username", username);
-            return userDao.getEntity(criteria);
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
-    /**
-     * Check is exist user with given id
-     *
-     * @param id user id
-     * @return true if user with given id already exist, false in otherwise
-     */
-    private User checkUser(long id) {
-        try {
-            SearchCriteria criteria = new SearchCriteria().criteria("id", id);
-            return userDao.getEntity(criteria);
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
-    /**
-     * Check is exist user with given id and username
-     *
-     * @param id       user id
-     * @param username username of user
-     * @return true if user with given id already exist, false in otherwise
-     */
-    private User checkUser(long id, String username) {
-        try {
-            SearchCriteria criteria = new SearchCriteria()
-                    .criteria("id", id)
-                    .criteria("username", username);
-            return userDao.getEntity(criteria);
-        } catch (NoResultException e) {
-            return null;
+        } catch (Throwable e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 }
