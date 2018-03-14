@@ -6,12 +6,6 @@
         <div class="header" align="center">
             <%@ include file="/parts/search.jsp" %>
         </div>
-
-        <%--<sec:authorize access="hasAuthority('CUSTOMER') && !hasAuthority('ADMIN')">
-            <div class="header" align="center">
-                <button id="addProduct" type="button">Add product</button>
-            </div>
-        </sec:authorize>--%>
     </div>
 
     <div class="centralArea">
@@ -24,7 +18,8 @@
                 <table class="modal-table">
                     <tr>
                         <td>
-                            <input id="id" name="id" type="hidden"/>
+                            <input id="productId" name="id" type="hidden"/>
+                            <input id="merchantId" name="merchantId" type="hidden"/>
 
                             <table class="modal-table-item">
                                 <tr>
@@ -38,6 +33,10 @@
                                 <tr>
                                     <td><label for="price">Price:</label></td>
                                     <td><input id="price" name="price" type="text" disabled/></td>
+                                </tr>
+                                <tr>
+                                    <td><label for="merchant">Merchant:</label></td>
+                                    <td><input id="merchant" name="merchant" type="text" disabled/></td>
                                 </tr>
                                 <sec:authorize access="hasAuthority('CUSTOMER')">
                                     <tr>

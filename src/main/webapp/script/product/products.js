@@ -29,15 +29,17 @@ function fillProduct(item) {
     $('#brand').val(item.brand);
     $('#description').val(item.description);
     $('#price').val(item.price);
+    $('#merchant').val(item.owner);
+    $('#merchantId').val(item.ownerId);
 }
 
 function orderItemToJSON() {
     return JSON.stringify({
         "orderId": currentOrderId,
         "productId": $('#productId').val(),
-        "name": currentItem.name,
-        "brand": currentItem.brand,
-        "price": currentItem.price,
+        "name": $('#name').val(),
+        "brand": $('#brand').val(),
+        "price": $('#price').val(),
         "quantity": $('#quantity').val()
     });
 }
@@ -143,12 +145,35 @@ function addOrderItem() {
 
         success: function (data, textStatus, xhr) {
             if (xhr.status == 204) {
-                currentOrderId = createNewOrder();
+                console.log('opened order for ' + principal + ' not found');
+                createNewOrder();
             } else {
-                currentOrderId = data.id;
+                console.log('opened order for ' + principal + ' found with id=' + data[0].id);
+                currentOrderId = data[0].id;
             }
 
-            appendOrderItem(currentOrderId);
+            appendOrderItem();
+        },
+
+        error: function (xhr, textStatus, errorThrown) {
+            console.log(xhr);
+            console.log(textStatus);
+            console.log(errorThrown);
+        }
+    });
+}
+
+function createNewOrder() {
+    $.ajax({
+        type: 'POST',
+        contentType: 'application/json',
+        url: 'http://localhost:8080/api/orders',
+        dataType: "json",
+        async: false,
+
+        success: function (data) {
+            console.log('order for ' + principal + ' created with id=' + data.id);
+            currentOrderId = data.id;
         },
 
         error: function (xhr, textStatus, errorThrown) {
@@ -162,11 +187,13 @@ function addOrderItem() {
 /**
  * Add orders item to opened order
  */
-function appendOrderItem(id) {
+function appendOrderItem() {
+    console.log(orderItemToJSON());
+
     $.ajax({
         type: 'POST',
         contentType: 'application/json',
-        url: 'http://localhost:8080/api/orders/' + id + '/items',
+        url: 'http://localhost:8080/api/orders/' + currentOrderId + '/items',
         dataType: "json",
         data: orderItemToJSON(),
         async: false,

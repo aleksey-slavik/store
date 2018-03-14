@@ -10,7 +10,6 @@ import com.globallogic.store.dto.order.OrderDTO;
 import com.globallogic.store.dto.order.OrderItemDTO;
 import com.globallogic.store.domain.order.Order;
 import com.globallogic.store.domain.order.OrderItem;
-import com.globallogic.store.security.AuthenticatedUser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -21,7 +20,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.NoResultException;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -151,7 +149,6 @@ public class OrderRestController {
     /**
      * Resource to create a order
      *
-     * @param order created order object
      * @return created order
      */
     @PreAuthorize("isAuthenticated()")
@@ -161,24 +158,17 @@ public class OrderRestController {
     @ApiOperation(
             value = "Resource to create a order",
             notes = "This can only be done by the authenticated user, which is a customer of order or have admin role")
-    public ResponseEntity<?> createOrder(
-            @ApiParam(value = "created order object") @RequestBody OrderDTO order) {
-
-        if (order == null) {
-            order = new OrderDTO();
-            AuthenticatedUser principal = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
-            order.setCustomerId(principal.getId());
-            order.setCustomer(principal.getUsername());
-            order.setStatus(Status.OPENED);
-            order.setTotalCost(0);
-        }
-
-        try {
-            Order created = orderDao.createEntity(orderConverter.toOrigin(order));
-            return ResponseEntity.ok().body(created);
-        } catch (Throwable e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+    public ResponseEntity<?> createOrder() {
+        OrderDTO order = new OrderDTO();
+        String principal = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userDao.getEntity(new SearchCriteria().criteria("username", principal));
+        order.setCustomerId(user.getId());
+        order.setCustomer(user.getUsername());
+        order.setStatus(Status.OPENED);
+        order.setTotalCost(0);
+        order.setCreatedDate(System.currentTimeMillis());
+        Order created = orderDao.createEntity(orderConverter.toOrigin(order));
+        return ResponseEntity.ok().body(created);
     }
 
     /**
@@ -200,13 +190,9 @@ public class OrderRestController {
             @ApiParam(value = "order id", required = true) @PathVariable long id,
             @ApiParam(value = "updated order object", required = true) @Valid @RequestBody OrderDTO order) {
 
-        try {
-            order.setId(id);
-            Order updated = orderDao.updateEntity(orderConverter.toOrigin(order));
-            return ResponseEntity.ok().body(orderConverter.toResource(updated));
-        } catch (Throwable e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        order.setId(id);
+        Order updated = orderDao.updateEntity(orderConverter.toOrigin(order));
+        return ResponseEntity.ok().body(orderConverter.toResource(updated));
     }
 
     /**
@@ -226,12 +212,8 @@ public class OrderRestController {
     public ResponseEntity<?> deleteOrderById(
             @ApiParam(value = "order id", required = true) @PathVariable long id) {
 
-        try {
-            Order deleted = orderDao.deleteEntityByKey(id);
-            return ResponseEntity.ok().body(orderConverter.toResource(deleted));
-        } catch (Throwable e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        Order deleted = orderDao.deleteEntityByKey(id);
+        return ResponseEntity.ok().body(orderConverter.toResource(deleted));
     }
 
     /**
@@ -253,15 +235,16 @@ public class OrderRestController {
             @ApiParam(value = "order id", required = true) @PathVariable long id,
             @ApiParam(value = "order item id", required = true) @PathVariable long itemId) {
 
-        try {
-            SearchCriteria criteria = new SearchCriteria()
-                    .criteria("order", id)
-                    .criteria("product", itemId);
+        SearchCriteria criteria = new SearchCriteria()
+                .criteria("order", id)
+                .criteria("product", itemId);
 
-            OrderItem item = orderItemDao.getEntity(criteria);
-            return ResponseEntity.ok().body(orderItemConverter.toResource(item));
-        } catch (NoResultException e) {
+        OrderItem item = orderItemDao.getEntity(criteria);
+
+        if (item == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } else {
+            return ResponseEntity.ok().body(orderItemConverter.toResource(item));
         }
     }
 
@@ -325,14 +308,10 @@ public class OrderRestController {
             @ApiParam(value = "order id", required = true) @PathVariable long id,
             @ApiParam(value = "order item object", required = true) @Valid @RequestBody OrderItemDTO orderItem) {
 
-        try {
-            Order order = orderDao.getEntityByKey(id);
-            order.appendItem(orderItemConverter.toOrigin(orderItem));
-            orderDao.updateEntity(order);
-            return ResponseEntity.ok().body(orderItem);
-        } catch (Throwable e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        Order order = orderDao.getEntityByKey(id);
+        order.appendItem(orderItemConverter.toOrigin(orderItem));
+        orderDao.updateEntity(order);
+        return ResponseEntity.ok().body(orderItem);
     }
 
     /**
@@ -356,15 +335,11 @@ public class OrderRestController {
             @ApiParam(value = "order item id", required = true) @PathVariable long itemId,
             @ApiParam(value = "order item object", required = true) @Valid @RequestBody OrderItemDTO orderItem) {
 
-        try {
-            Order order = orderDao.getEntityByKey(id);
-            orderItem.setProductId(itemId);
-            order.updateItem(orderItemConverter.toOrigin(orderItem));
-            orderDao.updateEntity(order);
-            return ResponseEntity.ok().body(orderItem);
-        } catch (Throwable e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        Order order = orderDao.getEntityByKey(id);
+        orderItem.setProductId(itemId);
+        order.updateItem(orderItemConverter.toOrigin(orderItem));
+        orderDao.updateEntity(order);
+        return ResponseEntity.ok().body(orderItem);
     }
 
     /**
@@ -386,20 +361,16 @@ public class OrderRestController {
             @ApiParam(value = "order id", required = true) @PathVariable long id,
             @ApiParam(value = "order item id", required = true) @PathVariable long itemId) {
 
-        try {
-            Order order = orderDao.getEntityByKey(id);
+        Order order = orderDao.getEntityByKey(id);
 
-            SearchCriteria criteria = new SearchCriteria()
-                    .criteria("order", id)
-                    .criteria("product", itemId);
+        SearchCriteria criteria = new SearchCriteria()
+                .criteria("order", id)
+                .criteria("product", itemId);
 
-            OrderItem item = orderItemDao.getEntity(criteria);
-            order.deleteItem(item);
-            orderDao.updateEntity(order);
-            return ResponseEntity.ok().body(orderItemConverter.toResource(item));
-        } catch (Throwable e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        OrderItem item = orderItemDao.getEntity(criteria);
+        order.deleteItem(item);
+        orderDao.updateEntity(order);
+        return ResponseEntity.ok().body(orderItemConverter.toResource(item));
     }
 
     /**
@@ -419,13 +390,9 @@ public class OrderRestController {
     public ResponseEntity<?> deleteAllOrderItem(
             @ApiParam(value = "order id", required = true) @PathVariable long id) {
 
-        try {
-            Order order = orderDao.getEntityByKey(id);
-            order.clear();
-            orderDao.updateEntity(order);
-            return ResponseEntity.ok().body(orderConverter.toResource(order));
-        } catch (Throwable e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        Order order = orderDao.getEntityByKey(id);
+        order.clear();
+        orderDao.updateEntity(order);
+        return ResponseEntity.ok().body(orderConverter.toResource(order));
     }
 }

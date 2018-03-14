@@ -26,7 +26,7 @@ public class OrderItemConverter implements Convertible<OrderItem, OrderItemDTO> 
         item.setProduct(product);
         item.setPrice(dto.getPrice());
         item.setQuantity(dto.getQuantity());
-        return null;
+        return item;
     }
 
     @Override

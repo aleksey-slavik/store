@@ -18,7 +18,7 @@ public class OrderItem implements Serializable {
      * composite order item id
      */
     @EmbeddedId
-    private OrderItemId primaryKey;
+    private OrderItemId primaryKey = new OrderItemId();
 
     /**
      * order object

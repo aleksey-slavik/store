@@ -22,6 +22,9 @@
         <div class="leftArea-list">
             <ul id="itemList"></ul>
         </div>
+        <div class="header" align="center">
+            <button id="addProduct" type="button">Add product</button>
+        </div>
     </div>
 
     <div class="centralArea">
