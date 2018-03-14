@@ -25,9 +25,5 @@
 </sec:authorize>
 
 <%@include file="/parts/bottom.jsp" %>
-
-<script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/script/product/products.js"></script>
-
 </body>
 </html>

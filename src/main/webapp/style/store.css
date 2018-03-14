@@ -9,6 +9,49 @@ html, body {
     margin: 0;
 }
 
+input, textarea, select {
+    border-radius: 3px;
+    border: 1px solid #ccc;
+    min-height: 30px;
+    outline: none;
+}
+
+textarea {
+    resize: none;
+    width: 100%;
+}
+
+label {
+    display: block;
+}
+
+a {
+    text-decoration: none;
+}
+
+input {
+    padding: 5px;
+    width: 250px;
+}
+
+button {
+    background-color: #215f93;
+    color: #ffffff;
+    padding: 5px;
+    width: 150px;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+input:disabled, textarea:disabled {
+    border: none;
+    background: white;
+    outline: none;
+    color: black;
+}
+
 .header {
     padding: 0;
 }
@@ -21,9 +64,14 @@ html, body {
     border-spacing: 10px 10px;
 }
 
-.leftArea, .mainArea, .rightArea, .additionalArea {
+.leftArea, .rightArea, .additionalArea {
     display: table-cell;
     width: 20%;
+}
+
+.mainArea {
+    display: table-cell;
+    width: 60%;
 }
 
 .centralArea {
@@ -52,53 +100,6 @@ li a {
 li a:hover {
     background-color: #215f93;
     color: #ffffff;
-}
-
-input, textarea, select {
-    border: 1px solid #ccc;
-    min-height: 30px;
-    outline: none;
-}
-
-input:disabled, textarea:disabled {
-    border: none;
-    background: #ccced1;
-    outline: none;
-    color: black;
-}
-
-.mainArea, input, select {
-    margin-bottom: 15px;
-    margin-top: 5px;
-    width: 280px;
-}
-
-.additionalArea, input, select {
-    margin-bottom: 15px;
-    margin-top: 5px;
-    width: 280px;
-}
-
-textarea {
-    margin-bottom: 15px;
-    margin-top: 5px;
-    height: 200px;
-    width: 280px;
-}
-
-label {
-    display: block;
-}
-
-button {
-    border-radius: 3px;
-    background-color: #215f93;
-    color: #ffffff;
-    padding: 5px;
-}
-
-input, select {
-    border-radius: 3px;
 }
 
 #searchKey {
@@ -179,10 +180,6 @@ input, select {
     background-color: #dddfe2;
 }
 
-a {
-    text-decoration: none;
-}
-
 .icon {
     width: 30px;
     height: 30px;
@@ -212,10 +209,6 @@ a {
     padding: 5px;
     margin: 0;
     width: 340px;
-}
-
-button:hover {
-    opacity: 0.8;
 }
 
 .modal-form {

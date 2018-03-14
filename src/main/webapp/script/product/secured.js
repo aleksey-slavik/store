@@ -3,15 +3,16 @@ findAllProducts();
 $("#buttonDelete").hide();
 
 /**
- * Register listener for create button
+ * listener for clear form button
  */
 $('#buttonCreate').click(function () {
+    //todo clear permission list
     clearProductForm();
     return false;
 });
 
 /**
- * Register listener for save button
+ * listener for save button
  */
 $('#buttonSave').click(function () {
     if ($('#id').val() === '') {
@@ -24,15 +25,18 @@ $('#buttonSave').click(function () {
 });
 
 /**
- * Register listener for delete button
+ * listener for delete button
  */
 $('#buttonDelete').click(function () {
-    deleteProduct();
+    deleteProduct(); //todo delete permissions with product
     return false;
 });
 
+/**
+ * listener for share permission button
+ */
 $('#buttonShare').click(function () {
-    grantPermission();
+    grantPermission(); //todo add permission
     return false;
 });
 
@@ -44,62 +48,6 @@ $('#itemList').on('click', 'a', function () {
 });
 
 /**
- * Register listener for searchProduct button
- */
-$('#buttonSearch').click(function () {
-    //searchProduct($('#searchKey').val());
-    return false;
-});
-
-/**
- * Trigger searchProduct when pressing 'Enter' on searchProduct input field
- */
-$('#searchKey').keypress(function (e) {
-    /*if (e.which === 13) {
-        searchProduct($('#searchKey').val());
-        e.preventDefault();
-        return false;
-    }*/
-});
-
-/**
- * Get list of items by given key.
- * If key is empty return all items
- *
- * @param searchKey searchProduct key
- */
-function searchProduct(searchKey) {
-    clearProductForm();
-
-    if (searchKey === '') {
-        findAllProducts();
-    } else {
-        findProductByKey(searchKey);
-    }
-}
-
-
-/**
- * Get list of items by given key.
- * Implementation of {@link findItemByKey} method.
- *
- * @param searchKey search key
- */
-function findProductByKey(searchKey) {
-    findItemByKey(
-        rootURL,
-        searchKey,
-        function (data) {
-            fillProductList(data);
-        },
-        function () {
-            searchProduct('');
-            $('#searchKey').val('');
-        }
-    )
-}
-
-/**
  * Fill list of product using given data
  *
  * @param data given data
@@ -108,8 +56,17 @@ function fillProductList(data) {
     var list = data == null ? [] : (data instanceof Array ? data : [data]);
     $('#itemList').find('li').remove();
     $.each(list, function (index, item) {
-        $('#itemList').append('<li><a href="#" data-identity="' + item.productId + '">' + item.name + '</a></li>');
+        $('#itemList').append('<li><a href="#" data-identity="' + item.id + '">' + item.name + '</a></li>');
     });
+}
+
+/**
+ * Fill list of permissions of given product
+ *
+ * @param data given data
+ */
+function fillPermissionList(data) {
+    //todo fill permission list
 }
 
 /**
@@ -118,11 +75,13 @@ function fillProductList(data) {
  * @param item given data
  */
 function fillProduct(item) {
-    $('#id').val(item.productId);
+    $('#productId').val(item.id);
     $('#name').val(item.name);
     $('#brand').val(item.brand);
     $('#description').val(item.description);
     $('#price').val(item.price);
+    $('#merchantId').val(item.ownerId);
+    $('#merchant').val(item.owner);
 }
 
 /**
@@ -131,99 +90,124 @@ function fillProduct(item) {
  * @returns {string}
  */
 function productItemToJSON() {
-    var itemId = $('#id').val();
     return JSON.stringify({
-        "productId": itemId === '' ? null : itemId,
+        "productId": $('#productId').val(),
         "name": $('#name').val(),
         "brand": $('#brand').val(),
         "description": $('#description').val(),
-        "price": $('#price').val()
+        "price": $('#price').val(),
+        "ownerId": $('#merchantId').val(),
+        "owner": $('#merchant').val()
     });
 }
 
-/**
- * Sending GET request to rest service for get all items.
- * Implementation of {@link getItem} method.
- */
 function findAllProducts() {
-    getItem(
-        rootURL,
-        function (data) {
+    $.ajax({
+        type: 'GET',
+        url: 'http://localhost:8080/api/products?size=20',
+        async: false,
+        dataType: "json",
+
+        success: function (data) {
             fillProductList(data);
         },
-        function () {
-            //do nothing
+
+        error: function (xhr, textStatus, errorThrown) {
+            console.log(xhr);
+            console.log(textStatus);
+            console.log(errorThrown);
         }
-    )
+    })
 }
 
-/**
- * Sending GET request to rest service for get item by given id.
- * Implementation of {@link getItem} method.
- *
- * @param id given id
- */
 function findProductById(id) {
-    getItem(
-        rootURL + '/' + id,
-        function (data) {
+    $.ajax({
+        type: 'GET',
+        url: 'http://localhost:8080/api/products/' + id,
+        async: false,
+        dataType: "json",
+
+        success: function (data) {
             currentItem = data;
             fillProduct(currentItem);
             $('#buttonDelete').show();
         },
-        function () {
-            //do nothing
+
+        error: function (xhr, textStatus, errorThrown) {
+            console.log(xhr);
+            console.log(textStatus);
+            console.log(errorThrown);
         }
-    )
+    });
 }
 
-/**
- * Sending POST request to rest service for create item.
- * Implementation of {@link createItem} method.
- */
 function createProduct() {
-    createItem(
-        rootURL,
-        productItemToJSON(),
-        function (data) {
+    $.ajax({
+        type: 'POST',
+        contentType: 'application/json',
+        url: 'http://localhost:8080/api/products',
+        dataType: "json",
+        data: productItemToJSON(),
+        async: false,
+
+        success: function (data) {
+            alert('Item with id=' + data.id + ' successfully created!');
             findAllProducts();
             $('#buttonDelete').show();
             $('#id').val(data.id);
+        },
+
+        error: function (xhr, textStatus, errorThrown) {
+            console.log(xhr);
+            console.log(textStatus);
+            console.log(errorThrown);
         }
-    )
+    });
 }
 
-/**
- * Sending PUT request to rest service for update item.
- * Implementation of {@link updateItem} method.
- */
 function updateProduct() {
-    var itemId = $('#id').val();
+    var itemId = $('#productId').val();
 
-    updateItem(
-        rootURL,
-        itemId,
-        productItemToJSON(),
-        function () {
-            alert('Item with id=' + itemId + ' successfully updated!');
+    $.ajax({
+        type: 'PUT',
+        contentType: 'application/json',
+        url: 'http://localhost:8080/api/products/' + itemId,
+        dataType: "json",
+        data: productItemToJSON(),
+        async: false,
+
+        success: function (data) {
+            alert('Item with id=' + data.id + ' successfully updated!');
+        },
+
+        error: function (xhr, textStatus, errorThrown) {
+            console.log(xhr);
+            console.log(textStatus);
+            console.log(errorThrown);
         }
-    )
+    });
 }
 
-/**
- * Sending DELETE request to rest service for delete item.
- */
 function deleteProduct() {
-    var itemId = $('#id').val();
+    var itemId = $('#productId').val();
 
-    deleteItem(
-        rootURL,
-        itemId,
-        function () {
+    $.ajax({
+        type: 'DELETE',
+        url: 'http://localhost:8080/api/products/' + itemId,
+        async: false,
+
+        success: function (data) {
+            alert('Item with id=' + data.id + ' successfully deleted!');
             findAllProducts();
             clearProductForm();
+        },
+
+        error: function (xhr, textStatus, errorThrown) {
+            console.log(xhr);
+            console.log(textStatus);
+            console.log(errorThrown);
         }
-    )
+    });
 }
 
 /**

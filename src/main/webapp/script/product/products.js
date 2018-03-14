@@ -1,13 +1,28 @@
+/**
+ * selected order item
+ */
 var currentItem;
+
+/**
+ * principal order id
+ */
 var currentOrderId;
 
 //start statement of page when it is loaded
 findAllProducts();
 
+/**
+ * product menu listener
+ */
 $('#wrapper').on('click', 'a', function () {
     findProductById($(this).data('identity'));
 });
 
+/**
+ * Insert product preview data to product menu
+ *
+ * @param data product preview data
+ */
 function fillProductInfoList(data) {
     var list = data == null ? [] : (data instanceof Array ? data : [data]);
     $('#wrapper').find('div').remove();
@@ -23,6 +38,11 @@ function fillProductInfoList(data) {
     });
 }
 
+/**
+ * Insert order item data to modal window
+ *
+ * @param item order item data
+ */
 function fillProduct(item) {
     $('#productId').val(item.id);
     $('#name').val(item.name);
@@ -33,6 +53,9 @@ function fillProduct(item) {
     $('#merchantId').val(item.ownerId);
 }
 
+/**
+ * Create order item json
+ */
 function orderItemToJSON() {
     return JSON.stringify({
         "orderId": currentOrderId,
@@ -44,11 +67,17 @@ function orderItemToJSON() {
     });
 }
 
+/**
+ * Clear modal window
+ */
 function clearProductForm() {
     currentItem = {};
     fillProduct(currentItem);
 }
 
+/**
+ * Get product list
+ */
 function findAllProducts() {
     $.ajax({
         type: 'GET',
@@ -68,6 +97,11 @@ function findAllProducts() {
     })
 }
 
+/**
+ * Get product by given id
+ *
+ * @param id product id
+ */
 function findProductById(id) {
     $.ajax({
         type: 'GET',
@@ -163,6 +197,9 @@ function addOrderItem() {
     });
 }
 
+/**
+ * Create new order for principal
+ */
 function createNewOrder() {
     $.ajax({
         type: 'POST',

@@ -59,3 +59,5 @@
         </div>
     </div>
 </div>
+<script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.min.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/script/product/products.js"></script>

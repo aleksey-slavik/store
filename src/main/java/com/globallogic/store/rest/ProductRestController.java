@@ -160,15 +160,11 @@ public class ProductRestController {
     public ResponseEntity<?> createProduct(
             @ApiParam(value = "created product object", required = true) @Valid @RequestBody ProductDTO product) {
 
-        try {
-            long id = ((AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
-            product.setOwnerId(id);
-            Product created = productDao.createEntity(productConverter.toOrigin(product));
-            aclSecurityUtil.addPermission(created, BasePermission.ADMINISTRATION, Product.class);
-            return ResponseEntity.ok().body(productConverter.toResource(created));
-        } catch (Throwable e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        long id = ((AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
+        product.setOwnerId(id);
+        Product created = productDao.createEntity(productConverter.toOrigin(product));
+        aclSecurityUtil.addPermission(created, BasePermission.ADMINISTRATION, Product.class);
+        return ResponseEntity.ok().body(productConverter.toResource(created));
     }
 
     /**
@@ -190,13 +186,9 @@ public class ProductRestController {
             @ApiParam(value = "product id", required = true) @PathVariable Long id,
             @ApiParam(value = "updated product object", required = true) @Valid @RequestBody ProductDTO product) {
 
-        try {
-            product.setId(id);
-            Product updated = productDao.updateEntity(productConverter.toOrigin(product));
-            return ResponseEntity.ok(productConverter.toResource(updated));
-        } catch (Throwable e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        product.setId(id);
+        Product updated = productDao.updateEntity(productConverter.toOrigin(product));
+        return ResponseEntity.ok(productConverter.toResource(updated));
     }
 
     /**
@@ -216,12 +208,8 @@ public class ProductRestController {
     public ResponseEntity<?> deleteProduct(
             @ApiParam(value = "product id", required = true) @PathVariable Long id) {
 
-        try {
-            Product deleted = productDao.deleteEntityByKey(id);
-            return ResponseEntity.ok(productConverter.toResource(deleted));
-        } catch (Throwable e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        Product deleted = productDao.deleteEntityByKey(id);
+        return ResponseEntity.ok(productConverter.toResource(deleted));
     }
 
     /**
@@ -244,15 +232,11 @@ public class ProductRestController {
             @ApiParam(value = "username of user who will be granted permissions", required = true) @PathVariable String username,
             @ApiParam(value = "shared product object") @RequestBody ProductDTO product) {
 
-        try {
-            if (id == product.getId()) {
-                aclSecurityUtil.addPermission(productConverter.toOrigin(product), username, BasePermission.WRITE, Product.class);
-            }
-
-            return ResponseEntity.ok().build();
-        } catch (Throwable e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        if (id == product.getId()) {
+            aclSecurityUtil.addPermission(productConverter.toOrigin(product), username, BasePermission.WRITE, Product.class);
         }
+
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -275,13 +259,9 @@ public class ProductRestController {
             @ApiParam(value = "username of user of who will be removed permissions", required = true) @PathVariable String username,
             @ApiParam(value = "shared product object") @RequestBody ProductDTO product) {
 
-        try {
-            if (id == product.getId())
-                aclSecurityUtil.deletePermission(productConverter.toOrigin(product), username, BasePermission.WRITE, Product.class);
-            return ResponseEntity.ok().build();
-        } catch (Throwable e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        if (id == product.getId())
+            aclSecurityUtil.deletePermission(productConverter.toOrigin(product), username, BasePermission.WRITE, Product.class);
+        return ResponseEntity.ok().build();
     }
 
 }
