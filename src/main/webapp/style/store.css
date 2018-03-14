@@ -12,7 +12,6 @@ html, body {
 input, textarea, select {
     border-radius: 3px;
     border: 1px solid #ccc;
-    min-height: 30px;
     outline: none;
 }
 

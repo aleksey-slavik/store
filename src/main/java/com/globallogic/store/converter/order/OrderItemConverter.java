@@ -32,7 +32,7 @@ public class OrderItemConverter implements Convertible<OrderItem, OrderItemDTO> 
     @Override
     public OrderItemDTO toResource(OrderItem origin) {
         OrderItemDTO dto = new OrderItemDTO();
-        dto.setOrderId(origin.getOrder().getId());
+        dto.setOrderId(origin.getPrimaryKey().getOrderId());
         dto.setProductId(origin.getProduct().getId());
         dto.setName(origin.getProduct().getName());
         dto.setBrand(origin.getProduct().getBrand());

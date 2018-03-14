@@ -1,11 +1,4 @@
 /**
- * Root url path for orders rest service
- *
- * @type {string}
- */
-var rootURL = "http://localhost:8080/api/orders";
-
-/**
  * Id of orders for current user
  */
 var sessionOrderId;
@@ -18,11 +11,9 @@ var currentItem;
 //start statement of page when it is loaded
 findUserOrderByUsername();
 
-/**
- * Register listener for list item
- */
-$('#orderTable').on('click', 'a', function () {
-    findUserOrderItemById($(this).data('identity'));
+$('#orderTable').on('click', 'img', function () {
+    //todo remove order item
+    console.log('remove item with id=' + $(this).data('identity'));
 });
 
 /**
@@ -34,16 +25,18 @@ function fillUserOrderList(data) {
     $('#orderTable').find('tr').remove();
     $('#orderTable').append(
         '<tr>' +
-        '<th width="80%">Product:</th>' +
-        '<th width="10%">Quantity:</th>' +
+        '<th width="75%">Product:</th>' +
         '<th width="10%">Price:</th>' +
+        '<th width="10%">Quantity:</th>' +
+        '<th width="5%">Remove:</th>' +
         '</tr>');
     $.each(data.items, function (index, item) {
         $('#orderTable').append(
             '<tr class="orderTableRow">' +
-            '<td><a href="#" data-identity="' + item.id + '">' + item.product.name + '(' + item.product.brand + ')</a></td>' +
-            '<td align="center"><a href="#" data-identity="' + item.id + '">' + item.quantity + '</a></td>' +
-            '<td align="center"><a href="#" data-identity="' + item.id + '">' + item.price + '</a></td>' +
+            '<td>' + item.name + '(' + item.brand + ')</td>' +
+            '<td align="center">' + item.price + '</td>' +
+            '<td align="center">' + item.quantity + '</td>' +
+            '<td align="center"><img class="icon" src="/images/trash.png" alt="remove" title="remove item" data-identity="' + item.productId + '"></td>' +
             '</tr>');
     });
 
@@ -62,10 +55,10 @@ function fillUserOrderList(data) {
  * @param item given data
  */
 function fillUserOrderItem(item) {
-    $('#id').val(item.id);
-    $('#productId').val(item.product.id);
-    $('#productName').val(item.product.name);
-    $('#productBrand').val(item.product.brand);
+    $('#productId').val(item.productId);
+    $('#orderId').val(item.orderId);
+    $('#name').val(item.name);
+    $('#brand').val(item.brand);
     $('#quantity').val(item.quantity);
     $('#price').val(item.price);
 }
@@ -125,89 +118,51 @@ function updateOrderItem(id) {
     )
 }
 
-/**
- * Sending GET request to rest service for get opened orders for current user if it exist.
- * Implementation of {@link getItem} method.
- */
 function findUserOrderByUsername() {
-    getItem(
-        rootURL + '/customers/' + principal,
-        function (data) {
-            sessionOrderId = data.id;
-            fillUserOrderList(data);
+    $.ajax({
+        type: 'GET',
+        url: 'http://localhost:8080/api/orders?owner=' + principal + '&status=OPENED',
+        async: false,
+        dataType: "json",
+
+        success: function (data, textStatus, xhr) {
+            switch (xhr.status) {
+                case 204:
+                    alert('You don\'t have opened order!');
+                    break;
+                default:
+                    sessionOrderId = data[0].id;
+                    fillUserOrderList(data[0]);
+                    break;
+            }
         },
-        function () {
-            alert('Can not create cart for user: ' + principal);
+
+        error: function (xhr, textStatus, errorThrown) {
+            console.log(xhr);
+            console.log(textStatus);
+            console.log(errorThrown);
         }
-    )
+    });
 }
 
-/**
- * Sending GET request to rest service for get item by given id.
- * Implementation of {@link getItem} method.
- *
- * @param id given id
- */
 function findUserOrderItemById(id) {
-    getItem(
-        rootURL + '/' + sessionOrderId + '/items/' + id,
-        function (data) {
+    $.ajax({
+        type: 'GET',
+        url: 'http://localhost:8080/api/orders/' + sessionOrderId + '/items/' + id,
+        async: false,
+        dataType: "json",
+
+        success: function (data) {
+            console.log(data);
             currentItem = data;
-            fillUserOrderItem(currentItem);
+            fillUserOrderItem(data);
             showOrderItemModalWindow();
         },
-        function () {
-            //do nothing
+
+        error: function (xhr, textStatus, errorThrown) {
+            console.log(xhr);
+            console.log(textStatus);
+            console.log(errorThrown);
         }
-    )
-}
-
-/**
- * Show semi-transparent DIV, which shading whole page
- */
-function showCover() {
-    var coverDiv = document.createElement('div');
-    coverDiv.id = 'cover-div';
-    document.body.appendChild(coverDiv);
-}
-
-/**
- * Remove semi-transparent DIV, which shading whole page
- */
-function hideCover() {
-    document.body.removeChild(document.getElementById('cover-div'));
-}
-
-/**
- * Show modal window with item info
- */
-function showOrderItemModalWindow() {
-    showCover();
-    var container = document.getElementById('modal-form-container');
-
-    function closeWindow() {
-        hideCover();
-        container.style.display = 'none';
-        document.onkeydown = null;
-    }
-
-    $('#buttonCancel').click(function () {
-        clearUserOrderItemForm();
-        closeWindow();
-        return false;
     });
-
-    $('#buttonChange').click(function () {
-        updateOrderItem(currentItem.id);
-        closeWindow();
-        return false;
-    });
-
-    $('#buttonDelete').click(function () {
-        deleteOrderItem(currentItem.id);
-        closeWindow();
-        return false;
-    });
-
-    container.style.display = 'block';
 }
