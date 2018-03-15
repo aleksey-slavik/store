@@ -124,31 +124,13 @@ function findProductById(id) {
 }
 
 /**
- * Show semi-transparent DIV, which shading whole page
- */
-function showCover() {
-    var coverDiv = document.createElement('div');
-    coverDiv.id = 'cover-div';
-    document.body.appendChild(coverDiv);
-}
-
-/**
- * Remove semi-transparent DIV, which shading whole page
- */
-function hideCover() {
-    document.body.removeChild(document.getElementById('cover-div'));
-}
-
-/**
  * Show modal window with item info
  */
 function showModalWindow() {
-    showCover();
     var container = document.getElementById('modal-form-container');
 
     function closeWindow() {
         clearProductForm();
-        hideCover();
         container.style.display = 'none';
         document.onkeydown = null;
     }

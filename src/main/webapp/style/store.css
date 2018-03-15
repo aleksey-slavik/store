@@ -76,6 +76,7 @@ input:disabled, textarea:disabled {
 .centralArea {
     display: table-cell;
     width: 80%;
+    padding: 5px;
 }
 
 .leftArea-list {
@@ -211,14 +212,10 @@ li a:hover {
 }
 
 .modal-form {
-    display: inline-block;
     padding: 5px;
-    width: 80%;
-    height: 80%;
     border: 1px solid black;
     border-radius: 3px;
     background-color: white;
-    vertical-align: middle;
 }
 
 .modal-form input:disabled, .modal-form textarea:disabled {
@@ -226,32 +223,16 @@ li a:hover {
 }
 
 #modal-form-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 9999;
     display: none;
     width: 100%;
-    height: 100%;
-    text-align: center;
+    padding: 5px;
 }
 
 #modal-form-container:before {
     display: inline-block;
-    height: 100%;
+    width: 100%;
     content: '';
     vertical-align: middle;
-}
-
-#cover-div {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 9000;
-    width: 100%;
-    height: 100%;
-    background-color: #202948;
-    opacity: 0.3;
 }
 
 .modal-table {
@@ -268,7 +249,7 @@ li a:hover {
 .close {
     position: fixed;
     top: 10%;
-    right: 10%;
+    right: 1%;
     color: #000;
     font-size: 35px;
     font-weight: bold;
@@ -278,20 +259,4 @@ li a:hover {
 .close:focus {
     color: red;
     cursor: pointer;
-}
-
-/* Add Zoom Animation */
-.animate {
-    -webkit-animation: animatezoom 0.6s;
-    animation: animatezoom 0.6s
-}
-
-@-webkit-keyframes animatezoom {
-    from {-webkit-transform: scale(0)}
-    to {-webkit-transform: scale(1)}
-}
-
-@keyframes animatezoom {
-    from {transform: scale(0)}
-    to {transform: scale(1)}
 }

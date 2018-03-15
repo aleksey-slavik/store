@@ -9,15 +9,12 @@
     </div>
 
     <div class="centralArea">
-        <div id="wrapper">
-        </div>
-
         <div id="modal-form-container">
-            <form class="modal-form animate">
+            <form class="modal-form">
                 <span id="buttonCancel" class="close" title="Close Modal">&times;</span>
                 <table class="modal-table">
                     <tr>
-                        <td>
+                        <td width="30%">
                             <input id="productId" name="id" type="hidden"/>
                             <input id="merchantId" name="merchantId" type="hidden"/>
 
@@ -49,13 +46,16 @@
                                 <button id="buttonBuy">Buy</button>
                             </sec:authorize>
                         </td>
-                        <td>
+                        <td width="70%">
                             <label for="description">Description:</label>
                             <textarea id="description" name="description" disabled></textarea>
                         </td>
                     </tr>
                 </table>
             </form>
+        </div>
+
+        <div id="wrapper">
         </div>
     </div>
 </div>
