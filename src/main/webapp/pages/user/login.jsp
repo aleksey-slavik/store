@@ -28,13 +28,11 @@
                 <td><label for="password">Password:</label></td>
                 <td><input type="password" name="password" id="password"/></td>
             </tr>
-            <tr>
-                <td></td>
-                <td align="left">
-                    <button style="width:280px">Login</button>
-                </td>
-            </tr>
         </table>
+
+        <div class="header" align="center">
+            <button>Login</button>
+        </div>
 
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
     </form>

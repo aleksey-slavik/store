@@ -9,6 +9,7 @@ import com.globallogic.store.domain.user.AuthorityName;
 import com.globallogic.store.domain.user.User;
 import com.globallogic.store.dto.user.AuthorityDTO;
 import com.globallogic.store.dto.user.UserDTO;
+import com.globallogic.store.security.RegisterUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -54,15 +55,22 @@ public class UserRestController {
      */
     private AuthorityConverter authorityConverter;
 
+    /**
+     * Registration service
+     */
+    private RegisterUserService registerUserService;
+
     public UserRestController(
             GenericDao<User> userDao,
             GenericDao<Authority> authorityDao,
             UserConverter userConverter,
-            AuthorityConverter authorityConverter) {
+            AuthorityConverter authorityConverter,
+            RegisterUserService registerUserService) {
         this.userDao = userDao;
         this.authorityDao = authorityDao;
         this.userConverter = userConverter;
         this.authorityConverter = authorityConverter;
+        this.registerUserService = registerUserService;
     }
 
     /**
@@ -153,6 +161,7 @@ public class UserRestController {
             value = "Resource to create a user",
             notes = "This can only be done by the anonymous user or user, which have admin role")
     public ResponseEntity<?> createUser(
+            @ApiParam(value = "auto login") @RequestParam(value = "autoLogin", required = false) boolean autoLogin,
             @ApiParam(value = "created user object", required = true) @Valid @RequestBody UserDTO user) {
 
         User created = userDao.createEntity(userConverter.toOrigin(user));
@@ -161,6 +170,11 @@ public class UserRestController {
         created.appendAuthority(granted);
         created.setEnabled(true);
         userDao.updateEntity(created);
+
+        if (autoLogin) {
+            registerUserService.autoLogin(created.getUsername(), created.getPassword());
+        }
+
         return ResponseEntity.ok().body(userConverter.toResource(created));
     }
 

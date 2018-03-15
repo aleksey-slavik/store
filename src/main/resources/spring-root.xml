@@ -64,9 +64,7 @@
     <bean id="product" class="com.globallogic.store.web.product.ProductWebController"/>
     <bean id="login" class="com.globallogic.store.web.user.LoginWebController"/>
     <bean id="accessDenied" class="com.globallogic.store.web.security.AccessDeniedWebController"/>
-    <bean id="register" class="com.globallogic.store.web.user.RegistrationWebController">
-        <property name="registerUserService" ref="registerUserService"/>
-    </bean>
+    <bean id="register" class="com.globallogic.store.web.user.RegistrationWebController"/>
     <bean id="user" class="com.globallogic.store.web.user.UserWebController"/>
     <bean id="order" class="com.globallogic.store.web.order.OrderWebController"/>
     <bean id="cart" class="com.globallogic.store.web.order.CartWebController"/>
@@ -132,6 +130,7 @@
         <constructor-arg name="authorityDao" ref="authorityDao"/>
         <constructor-arg name="userConverter" ref="userConverter"/>
         <constructor-arg name="authorityConverter" ref="authorityConverter"/>
+        <constructor-arg name="registerUserService" ref="registerUserService"/>
     </bean>
 
     <bean id="productRestController" class="com.globallogic.store.rest.ProductRestController">
