@@ -55,6 +55,7 @@
                 <prop key="/cart">cart</prop>
                 <prop key="/account">account</prop>
                 <prop key="/account/products">userProducts</prop>
+                <prop key="/account/orders">userOrders</prop>
             </props>
         </property>
     </bean>
@@ -71,6 +72,7 @@
     <bean id="cart" class="com.globallogic.store.web.order.CartWebController"/>
     <bean id="account" class="com.globallogic.store.web.user.AccountWebController"/>
     <bean id="userProducts" class="com.globallogic.store.web.user.UserProductsWebController"/>
+    <bean id="userOrders" class="com.globallogic.store.web.user.UserOrdersWebController"/>
 
     <!-- Exceptions Resolver -->
     <!--<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">

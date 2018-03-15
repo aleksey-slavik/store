@@ -101,7 +101,7 @@ public class UserRestController {
      * @param order     sorting order
      * @return list of users
      */
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)

@@ -1,11 +1,4 @@
 /**
- * Root url path for products rest service
- *
- * @type {string}
- */
-var rootURL = "http://localhost:8080/api/users";
-
-/**
  * Temporary variable for product data
  */
 var currentItem;
@@ -32,8 +25,8 @@ $('#buttonChange').click(function () {
  * Register listener for update user data button
  */
 $('#buttonSave').click(function () {
-   updateUserData();
-   return false;
+    updateUserData();
+    return false;
 });
 
 /**
@@ -62,14 +55,8 @@ function fillUserData(item) {
     $('#username').val(item.username);
     $('#password').val(item.password);
     $('#email').val(item.email);
-    $('#role').val(item.role);
 }
 
-/**
- * Parse orders item data from form to json format
- *
- * @returns {string}
- */
 function userDataToJSON() {
     return JSON.stringify({
         "id": $('#id').val(),
@@ -77,28 +64,28 @@ function userDataToJSON() {
         "lastName": $('#lastName').val(),
         "username": $('#username').val(),
         "password": $('#password').val(),
-        "email": $('#email').val(),
-        "role": $('#role').val()
+        "email": $('#email').val()
     });
 }
 
-/**
- * Sending GET request to rest service for get item.
- * Implementation of {@link getItem} method.
- */
 function findUserData() {
-    getItem(
-        rootURL + '/?username=' + principal,
+    $.ajax({
+        type: 'GET',
+        url: 'http://localhost:8080/api/users/?username=' + principal,
+        async: false,
+        dataType: "json",
 
-        function (data) {
+        success: function (data) {
             currentItem = data[0];
             fillUserData(currentItem);
         },
 
-        function () {
-            alert('User with username "' + principal + '" not found!');
+        error: function (xhr, textStatus, errorThrown) {
+            console.log(xhr);
+            console.log(textStatus);
+            console.log(errorThrown);
         }
-    )
+    });
 }
 
 /**
@@ -118,16 +105,16 @@ function changeStatement(divId) {
     }
 }
 
-/**
- * Sending PUT request to rest service for update item.
- * Implementation of {@link updateItem} method.
- */
 function updateUserData() {
-    updateItem(
-        rootURL,
-        $('#id').val(),
-        userDataToJSON(),
-        function (data) {
+    $.ajax({
+        type: 'PUT',
+        contentType: 'application/json',
+        url: 'http://localhost:8080/api/users/' + $('#id').val(),
+        dataType: "json",
+        data: userDataToJSON(),
+        async: false,
+
+        success: function (data) {
             currentItem = data;
             alert('User data successfully updated!');
             $('#buttonChange').show();
@@ -136,6 +123,12 @@ function updateUserData() {
             changeStatement('firstName');
             changeStatement('lastName');
             changeStatement('password');
+        },
+
+        error: function (xhr, textStatus, errorThrown) {
+            console.log(xhr);
+            console.log(textStatus);
+            console.log(errorThrown);
         }
-    )
+    });
 }

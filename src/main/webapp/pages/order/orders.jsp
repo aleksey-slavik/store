@@ -83,7 +83,7 @@
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/script/rest.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/script/order/secured.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/script/order/orders.js"></script>
 <%@include file="/parts/bottom.jsp" %>
 </body>
 </html>

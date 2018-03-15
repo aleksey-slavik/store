@@ -16,6 +16,7 @@
         <intercept-url pattern="/order" access="hasAuthority('ADMIN')"/>
         <intercept-url pattern="/cart" access="hasAuthority('CUSTOMER')"/>
         <intercept-url pattern="/account" access="isAuthenticated()"/>
+        <intercept-url pattern="/account/*" access="isAuthenticated()"/>
 
         <!-- access denied page -->
         <access-denied-handler

@@ -13,27 +13,41 @@
 </script>
 
 <div class="container">
+    <div class="leftArea">
+        <div class="leftArea-list">
+            <ul id="itemList">
+                <li><a href="${pageContext.request.contextPath}/account/products">My products</a></li>
+                <li><a href="${pageContext.request.contextPath}/account/orders">Order history</a></li>
+            </ul>
+        </div>
+    </div>
+
     <form id="itemForm">
         <div class="mainArea">
-            <input id="id" name="id" type="hidden" disabled/>
-
-            <label>First Name:</label>
-            <input id="firstName" name="firstName" type="text" disabled/>
-
-            <label>Last Name:</label>
-            <input id="lastName" name="lastName" type="text" disabled/>
-
-            <label>Username:</label>
-            <input id="username" name="username" type="text" disabled/>
-
-            <label>Password:</label>
-            <input id="password" name="password" type="password" disabled/>
-
-            <label>E-mail:</label>
-            <input id="email" name="email" type="text" disabled/>
-
-            <label>Role:</label>
-            <input id="role" name="role" type="text" disabled/>
+            <input id="id" name="id" type="text" hidden/>
+            <input id="enabled" name="enabled" type="text" hidden/>
+            <table>
+                <tr>
+                    <td><label for="firstName">First name:</label></td>
+                    <td><input id="firstName" name="firstName" type="text" disabled/></td>
+                </tr>
+                <tr>
+                    <td><label for="lastName">Last name:</label></td>
+                    <td><input id="lastName" name="lastName" type="text" disabled/></td>
+                </tr>
+                <tr>
+                    <td><label for="username">Username:</label></td>
+                    <td><input id="username" name="username" type="text" disabled/></td>
+                </tr>
+                <tr>
+                    <td><label for="password">Password:</label></td>
+                    <td><input id="password" name="password" type="password" disabled/></td>
+                </tr>
+                <tr>
+                    <td><label for="email">E-mail:</label></td>
+                    <td><input id="email" name="email" type="email" disabled/></td>
+                </tr>
+            </table>
 
             <button id="buttonChange">Change</button>
             <button id="buttonSave">Save</button>
@@ -43,8 +57,7 @@
 </div>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/script/rest.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/script/user/public.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/script/user/account.js"></script>
 
 <%@include file="/parts/bottom.jsp" %>
 </body>

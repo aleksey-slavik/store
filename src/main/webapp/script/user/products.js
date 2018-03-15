@@ -1,7 +1,7 @@
 var currentItem;
 findAllUserProducts();
 
-$('#buttonCreate').click(function () {
+$('#addProduct').click(function () {
     clearUserForm();
     return false;
 });
@@ -39,12 +39,12 @@ function fillUserProductList(data) {
     var list = data == null ? [] : (data instanceof Array ? data : [data]);
     $('#itemList').find('li').remove();
     $.each(list, function (index, item) {
-        $('#itemList').append('<li><a href="#" data-identity="' + item.productId + '">' + item.name + '</a></li>');
+        $('#itemList').append('<li><a href="#" data-identity="' + item.id+ '">' + item.name + '</a></li>');
     });
 }
 
 function fillUserProduct(item) {
-    $('#id').val(item.productId);
+    $('#id').val(item.id);
     $('#name').val(item.name);
     $('#brand').val(item.brand);
     $('#description').val(item.description);
@@ -56,7 +56,7 @@ function fillUserProduct(item) {
 function userProductItemToJSON() {
     var itemId = $('#id').val();
     return JSON.stringify({
-        "productId": itemId === '' ? null : itemId,
+        "id": itemId === '' ? null : itemId,
         "name": $('#name').val(),
         "brand": $('#brand').val(),
         "description": $('#description').val(),
@@ -120,7 +120,7 @@ function createUserProduct() {
             alert("Product " + data.name + " was successfully created");
             findAllUserProducts();
             $('#buttonDelete').show();
-            $('#id').val(data.productId);
+            $('#id').val(data.id);
         },
 
         error: function (xhr, textStatus, errorThrown) {
