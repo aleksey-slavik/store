@@ -55,6 +55,7 @@ function fillUserData(item) {
     $('#username').val(item.username);
     $('#password').val(item.password);
     $('#email').val(item.email);
+    $('#enabled').val(item.enabled);
 }
 
 function userDataToJSON() {
@@ -64,7 +65,8 @@ function userDataToJSON() {
         "lastName": $('#lastName').val(),
         "username": $('#username').val(),
         "password": $('#password').val(),
-        "email": $('#email').val()
+        "email": $('#email').val(),
+        "enabled": $('#enabled').val()
     });
 }
 

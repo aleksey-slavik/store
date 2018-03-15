@@ -20,7 +20,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Rest controller for operations with users
@@ -153,17 +155,13 @@ public class UserRestController {
     public ResponseEntity<?> createUser(
             @ApiParam(value = "created user object", required = true) @Valid @RequestBody UserDTO user) {
 
-        try {
-            User created = userDao.createEntity(userConverter.toOrigin(user));
-            SearchCriteria criteria = new SearchCriteria().criteria("title", AuthorityName.CUSTOMER);
-            Authority granted = authorityDao.getEntity(criteria);
-            created.appendAuthority(granted);
-            created.setEnabled(true);
-            userDao.updateEntity(created);
-            return ResponseEntity.ok().body(userConverter.toResource(created));
-        } catch (Throwable e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        User created = userDao.createEntity(userConverter.toOrigin(user));
+        SearchCriteria criteria = new SearchCriteria().criteria("title", AuthorityName.CUSTOMER);
+        Authority granted = authorityDao.getEntity(criteria);
+        created.appendAuthority(granted);
+        created.setEnabled(true);
+        userDao.updateEntity(created);
+        return ResponseEntity.ok().body(userConverter.toResource(created));
     }
 
     /**
@@ -185,13 +183,13 @@ public class UserRestController {
             @ApiParam(value = "user id", required = true) @PathVariable long id,
             @ApiParam(value = "updated user object", required = true) @Valid @RequestBody UserDTO user) {
 
-        try {
-            user.setId(id);
-            User updated = userDao.updateEntity(userConverter.toOrigin(user));
-            return ResponseEntity.ok().body(userConverter.toResource(updated));
-        } catch (Throwable e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        Set<Authority> authorities = new HashSet<>();
+        authorities.addAll(userDao.getEntityByKey(id).getAuthorities());
+        user.setId(id);
+        User updated = userConverter.toOrigin(user);
+        updated.setAuthorities(authorities);
+        updated = userDao.updateEntity(updated);
+        return ResponseEntity.ok().body(userConverter.toResource(updated));
     }
 
     /**
@@ -211,12 +209,8 @@ public class UserRestController {
     public ResponseEntity<?> deleteUserById(
             @ApiParam(value = "user id", required = true) @PathVariable long id) {
 
-        try {
-            User deleted = userDao.deleteEntityByKey(id);
-            return ResponseEntity.ok().body(userConverter.toResource(deleted));
-        } catch (Throwable e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        User deleted = userDao.deleteEntityByKey(id);
+        return ResponseEntity.ok().body(userConverter.toResource(deleted));
     }
 
     /**
@@ -225,7 +219,7 @@ public class UserRestController {
      * @param id user id
      * @return authorities of user with given id
      */
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(
             value = "/{id}/authorities",
             method = RequestMethod.GET,
@@ -236,13 +230,9 @@ public class UserRestController {
     public ResponseEntity<?> getUserAuthorities(
             @ApiParam(value = "user id", required = true) @PathVariable long id) {
 
-        try {
-            List<Authority> authorities = new ArrayList<>();
-            authorities.addAll(userDao.getEntityByKey(id).getAuthorities());
-            return ResponseEntity.ok().body(authorityConverter.toResources(authorities));
-        } catch (Throwable e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        List<Authority> authorities = new ArrayList<>();
+        authorities.addAll(userDao.getEntityByKey(id).getAuthorities());
+        return ResponseEntity.ok().body(authorityConverter.toResources(authorities));
     }
 
     /**
@@ -252,7 +242,7 @@ public class UserRestController {
      * @param authority authority object
      * @return granted authority
      */
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(
             value = "/{id}/authorities",
             method = RequestMethod.POST,
@@ -264,16 +254,12 @@ public class UserRestController {
             @ApiParam(value = "user id", required = true) @PathVariable long id,
             @ApiParam(value = "authority object", required = true) @RequestBody AuthorityDTO authority) {
 
-        try {
-            SearchCriteria criteria = new SearchCriteria().criteria("title", authority.getTitle());
-            Authority granted = authorityDao.getEntity(criteria);
-            User updated = userDao.getEntityByKey(id);
-            updated.appendAuthority(granted);
-            userDao.updateEntity(updated);
-            return ResponseEntity.ok().body(authorityConverter.toResource(granted));
-        } catch (Throwable e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        SearchCriteria criteria = new SearchCriteria().criteria("title", authority.getTitle());
+        Authority granted = authorityDao.getEntity(criteria);
+        User updated = userDao.getEntityByKey(id);
+        updated.appendAuthority(granted);
+        userDao.updateEntity(updated);
+        return ResponseEntity.ok().body(authorityConverter.toResource(granted));
     }
 
     /**
@@ -283,7 +269,7 @@ public class UserRestController {
      * @param authId authority id
      * @return deleted authority
      */
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(
             value = "/{id}/authorities/{authId}",
             method = RequestMethod.DELETE,
@@ -295,14 +281,10 @@ public class UserRestController {
             @ApiParam(value = "user id", required = true) @PathVariable long id,
             @ApiParam(value = "authority id", required = true) @PathVariable long authId) {
 
-        try {
-            Authority removed = authorityDao.getEntityByKey(authId);
-            User updated = userDao.getEntityByKey(id);
-            updated.removeAuthority(removed);
-            userDao.updateEntity(updated);
-            return ResponseEntity.ok().body(authorityConverter.toResource(removed));
-        } catch (Throwable e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        Authority removed = authorityDao.getEntityByKey(authId);
+        User updated = userDao.getEntityByKey(id);
+        updated.removeAuthority(removed);
+        userDao.updateEntity(updated);
+        return ResponseEntity.ok().body(authorityConverter.toResource(removed));
     }
 }

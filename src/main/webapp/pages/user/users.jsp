@@ -23,70 +23,63 @@
 
     <form id="itemForm">
         <div class="mainArea">
+            <table>
+                <tr>
+                    <td><label for="id">Id:</label></td>
+                    <td><input id="id" name="id" type="text" disabled/></td>
+                </tr>
+                <tr>
+                    <td><label for="username">Username:</label></td>
+                    <td><input id="username" name="username" type="text"/></td>
+                </tr>
+                <tr>
+                    <td><label for="password">Password:</label></td>
+                    <td><input id="password" name="password" type="password"/></td>
+                </tr>
+                <tr>
+                    <td><label for="email">E-mail:</label></td>
+                    <td><input id="email" name="email" type="text"/></td>
+                </tr>
+                <tr>
+                    <td><label for="firstName">First name:</label></td>
+                    <td><input id="firstName" name="firstName" type="text"/></td>
+                </tr>
+                <tr>
+                    <td><label for="lastName">Last Name:</label></td>
+                    <td><input id="lastName" name="lastName" type="text"/></td>
+                </tr>
+                <tr>
+                    <td><label for="enabled">Active:</label></td>
+                    <td><input id="enabled" name="enabled" type="checkbox"/></td>
+                </tr>
+            </table>
 
-            <label>Id:</label>
-            <input id="id" name="id" type="text" disabled/>
-
-            <label>Username:</label>
-            <input id="username" name="username" type="text"/>
-
-            <label>Password:</label>
-            <input id="password" name="password" type="text"/>
-
-            <label>E-mail:</label>
-            <input id="email" name="email" type="text"/>
-
-            <button id="buttonCreate">Clear</button>
+            <button id="buttonClear">Clear</button>
             <button id="buttonSave">Save</button>
             <button id="buttonDelete">Delete</button>
         </div>
 
         <div class="rightArea">
-            <label>First Name:</label>
-            <input id="firstName" name="firstName" type="text"/>
-
-            <label>Last Name:</label>
-            <input id="lastName" name="lastName" type="text"/>
 
             <fieldset id="roles">
-                <legend>Roles</legend>
-                <div>
-                    <input id="role_admin" name="roles" value="1" title="ADMIN" type="checkbox">
-                    <label for="role_admin">ADMIN</label>
-                </div>
-                <div>
-                    <input id="role_customer" name="roles" value="2" title="CUSTOMER" type="checkbox">
-                    <label for="role_admin">CUSTOMER</label>
-                </div>
-            </fieldset>
-
-            <fieldset id="permissions">
-                <legend>Permissions</legend>
-                <div>
-                    <input id="permission_supervisor" name="permissions" value="1" title="SUPERVISOR" type="checkbox">
-                    <label for="permission_supervisor">SUPERVISOR</label>
-                </div>
-                <div>
-                    <input id="permission_order_read_same" name="permissions" value="2" title="ORDER_READ_SAME" type="checkbox">
-                    <label for="permission_supervisor">ORDER_READ_SAME</label>
-                </div>
-                <div>
-                    <input id="permission_order_update_same" name="permissions" value="3" title="ORDER_UPDATE_SAME" type="checkbox">
-                    <label for="permission_supervisor">ORDER_UPDATE_SAME</label>
-                </div>
-                <div>
-                    <input id="permission_order_delete_same" name="permissions" value="4" title="ORDER_DELETE_SAME" type="checkbox">
-                    <label for="permission_supervisor">ORDER_DELETE_SAME</label>
-                </div>
+                <legend>Authorities:</legend>
+                <table>
+                    <tr>
+                        <td><input id="role_customer" name="roles" value="CUSTOMER" type="checkbox"></td>
+                        <td><label for="role_customer">CUSTOMER</label></td>
+                    </tr>
+                    <tr>
+                        <td><input id="role_admin" name="roles" value="ADMIN" type="checkbox"></td>
+                        <td><label for="role_admin">ADMIN</label></td>
+                    </tr>
+                </table>
             </fieldset>
         </div>
     </form>
 </div>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/script/jquery.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/script/rest.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/script/search.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/script/user/secured.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/script/user/users.js"></script>
 
 <%@include file="/parts/bottom.jsp" %>
 </body>

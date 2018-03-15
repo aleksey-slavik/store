@@ -42,6 +42,15 @@
         </tr>
     </table>
 </form>
+
+<table align="center">
+    <tr>
+        <td>
+            Already registered? <a href="${pageContext.request.contextPath}/login">Sign In</a>.
+        </td>
+    </tr>
+</table>
+
 <%@include file="/parts/bottom.jsp" %>
 </body>
 </html>
