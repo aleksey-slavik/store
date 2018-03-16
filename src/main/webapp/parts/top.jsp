@@ -22,7 +22,7 @@
                     </td>
                 </sec:authorize>
 
-                <sec:authorize access="hasAuthority('CUSTOMER')">
+                <sec:authorize access="hasAuthority('CUSTOMER') && !hasAuthority('ADMIN')">
                     <td>
                         <div class="top-panel-icon">
                             <a href="cart">

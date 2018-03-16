@@ -14,9 +14,9 @@
         <!-- interceptors -->
         <intercept-url pattern="/user" access="hasAuthority('ADMIN')"/>
         <intercept-url pattern="/order" access="hasAuthority('ADMIN')"/>
-        <intercept-url pattern="/cart" access="hasAuthority('CUSTOMER')"/>
+        <intercept-url pattern="/cart" access="hasAuthority('CUSTOMER') and !hasAuthority('ADMIN')"/>
         <intercept-url pattern="/account" access="isAuthenticated()"/>
-        <intercept-url pattern="/account/*" access="isAuthenticated()"/>
+        <intercept-url pattern="/account/*" access="hasAuthority('CUSTOMER') and !hasAuthority('ADMIN')"/>
 
         <!-- access denied page -->
         <access-denied-handler

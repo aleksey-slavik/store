@@ -63,6 +63,7 @@
                     <td><button id="buttonShare">Share</button></td>
                 </tr>
             </table>
+            <table id="sid-table"></table>
         </div>
     </form>
 </div>

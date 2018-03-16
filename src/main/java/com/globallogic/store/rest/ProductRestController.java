@@ -2,6 +2,7 @@ package com.globallogic.store.rest;
 
 import com.globallogic.store.converter.product.ProductConverter;
 import com.globallogic.store.converter.product.ProductPreviewConverter;
+import com.globallogic.store.converter.product.SidConverter;
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.dao.criteria.SearchCriteria;
 import com.globallogic.store.domain.user.User;
@@ -56,17 +57,24 @@ public class ProductRestController {
      */
     private ProductConverter productConverter;
 
+    /**
+     * permission converter
+     */
+    private SidConverter sidConverter;
+
     public ProductRestController(
             AclSecurityUtil aclSecurityUtil,
             GenericDao<Product> productDao,
             GenericDao<User> userDao,
             ProductPreviewConverter previewConverter,
-            ProductConverter productConverter) {
+            ProductConverter productConverter,
+            SidConverter sidConverter) {
         this.aclSecurityUtil = aclSecurityUtil;
         this.productDao = productDao;
         this.userDao = userDao;
         this.previewConverter = previewConverter;
         this.productConverter = productConverter;
+        this.sidConverter = sidConverter;
     }
 
     /**
@@ -174,7 +182,7 @@ public class ProductRestController {
      * @param product updated product object
      * @return updated product object
      */
-    @PreAuthorize("hasRole('ADMIN') || hasPermission(#id, 'com.globallogic.store.domain.product.Product', 'ADMINISTRATION') || hasPermission(#id, 'com.globallogic.store.domain.product.Product', 'WRITE')")
+    @PreAuthorize("hasRole('ADMIN') || hasPermission(#id, 'com.globallogic.store.domain.product.Product', 'WRITE')")
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.PUT,
@@ -210,6 +218,33 @@ public class ProductRestController {
 
         Product deleted = productDao.deleteEntityByKey(id);
         return ResponseEntity.ok(productConverter.toResource(deleted));
+    }
+
+    /**
+     * Resource to get list if username of users, which have permissions to update (except for merchant of product)
+     *
+     * @param id product id
+     */
+    @PreAuthorize("hasRole('ADMIN') || hasPermission(#id, 'com.globallogic.store.domain.product.Product', 'ADMINISTRATION')")
+    @RequestMapping(
+            value = "/{id}/permissions",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(
+            value = "Resource to get list if username of users, which have permissions to update (except for merchant of product)",
+            notes = "This can only be done by the user with \"administration\" permissions")
+    public ResponseEntity<?> getPermissionList(
+            @ApiParam(value = "product id", required = true) @PathVariable long id) {
+
+        Product product = productDao.getEntityByKey(id);
+        List<String> sids = aclSecurityUtil.getSidList(product, BasePermission.WRITE, Product.class);
+
+        if (sids == null || sids.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } else {
+            sids.remove(product.getOwner().getUsername());
+            return ResponseEntity.ok().body(sidConverter.toResources(sids));
+        }
     }
 
     /**
