@@ -1,7 +1,7 @@
-package com.globallogic.store.converter.product;
+package com.globallogic.store.converter.permission;
 
 import com.globallogic.store.converter.Convertible;
-import com.globallogic.store.dto.product.SidDTO;
+import com.globallogic.store.dto.permission.SidDTO;
 
 /**
  * Converter for converting sid objects to {@link SidDTO} objects and back

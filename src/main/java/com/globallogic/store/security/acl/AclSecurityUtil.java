@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class AclSecurityUtil {
 
@@ -88,18 +89,13 @@ public class AclSecurityUtil {
             transaction = session.beginTransaction();
             ObjectIdentity oid = new ObjectIdentityImpl(clazz.getCanonicalName(), identifiable.getId());
             MutableAcl acl = (MutableAcl) mutableAclService.readAclById(oid);
-            List<AccessControlEntry> entries = acl.getEntries();
             PrincipalSid recipient = new PrincipalSid(sid);
 
-            for (int i = 0; i < entries.size(); ) {
-                if (entries.get(i).getSid().equals(recipient) && entries.get(i).getPermission().equals(permission)) {
+            for (int i = 0; i < acl.getEntries().size(); i++) {
+                if (acl.getEntries().get(i).getSid().equals(recipient) && acl.getEntries().get(i).getPermission().equals(permission)) {
+                    System.out.println(acl.getEntries().get(i));
                     acl.deleteAce(i);
-                    entries = acl.getEntries();
-                    i = 0;
-                    continue;
                 }
-
-                i++;
             }
 
             mutableAclService.updateAcl(acl);

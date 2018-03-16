@@ -26,6 +26,7 @@
         <mapping class="com.globallogic.store.domain.order.Bill"/>
         <mapping class="com.globallogic.store.domain.order.Order"/>
         <mapping class="com.globallogic.store.domain.order.OrderItem"/>
+        <mapping class="com.globallogic.store.domain.permission.Permission"/>
 
     </session-factory>
 </hibernate-configuration>

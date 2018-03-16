@@ -1,4 +1,4 @@
-package com.globallogic.store.dto.product;
+package com.globallogic.store.dto.permission;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;

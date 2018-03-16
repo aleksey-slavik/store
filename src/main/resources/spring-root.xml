@@ -124,6 +124,10 @@
         <constructor-arg value="com.globallogic.store.domain.order.OrderItem"/>
     </bean>
 
+    <bean name="permissionDao" class="com.globallogic.store.dao.GenericDao">
+        <constructor-arg value="com.globallogic.store.domain.permission.Permission"/>
+    </bean>
+
     <!-- Spring Rest Beans -->
     <bean id="userRestController" class="com.globallogic.store.rest.UserRestController">
         <constructor-arg name="userDao" ref="userDao"/>
@@ -136,7 +140,7 @@
     <bean id="productRestController" class="com.globallogic.store.rest.ProductRestController">
         <constructor-arg name="productDao" ref="productDao"/>
         <constructor-arg name="userDao" ref="userDao"/>
-        <constructor-arg name="aclSecurityUtil" ref="aclSecurityUtil"/>
+        <constructor-arg name="permissionService" ref="permissionService"/>
         <constructor-arg name="previewConverter" ref="productPreviewConverter"/>
         <constructor-arg name="productConverter" ref="productConverter"/>
         <constructor-arg name="sidConverter" ref="sidConverter"/>
@@ -157,7 +161,7 @@
     <bean id="authorityConverter" class="com.globallogic.store.converter.user.AuthorityConverter"/>
     <bean id="orderConverter" class="com.globallogic.store.converter.order.OrderConverter"/>
     <bean id="orderItemConverter" class="com.globallogic.store.converter.order.OrderItemConverter"/>
-    <bean id="sidConverter" class="com.globallogic.store.converter.product.SidConverter"/>
+    <bean id="sidConverter" class="com.globallogic.store.converter.permission.SidConverter"/>
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.postgresql.Driver"/>
@@ -205,7 +209,7 @@
     </aop:config>
 
     <!-- Access Control List Config -->
-    <bean id="aclCache" class="org.springframework.security.acls.domain.EhCacheBasedAclCache">
+    <!--<bean id="aclCache" class="org.springframework.security.acls.domain.EhCacheBasedAclCache">
         <constructor-arg>
             <bean class="org.springframework.cache.ehcache.EhCacheFactoryBean">
                 <property name="cacheManager">
@@ -252,12 +256,6 @@
         </constructor-arg>
     </bean>
 
-    <bean id="permissionGrantingStrategy" class="org.springframework.security.acls.domain.DefaultPermissionGrantingStrategy">
-        <constructor-arg>
-            <bean class="org.springframework.security.acls.domain.ConsoleAuditLogger"/>
-        </constructor-arg>
-    </bean>
-
     <bean id="aclService" class="org.springframework.security.acls.jdbc.JdbcMutableAclService">
         <constructor-arg ref="dataSource"/>
         <constructor-arg ref="lookupStrategy"/>
@@ -267,13 +265,21 @@
 
     <bean id="aclSecurityUtil" class="com.globallogic.store.security.acl.AclSecurityUtil">
         <property name="mutableAclService" ref="aclService"/>
+    </bean>-->
+
+    <bean id="expressionHandler" class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
+        <property name="permissionEvaluator" ref="permissionEvaluator"/>
     </bean>
 
-    <bean id="expressionHandler"
-          class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler"
-          p:permissionEvaluator-ref="permissionEvaluator"/>
+    <bean id="permissionService" class="com.globallogic.store.security.acl.PermissionService">
+        <constructor-arg name="permissionDao" ref="permissionDao"/>
+    </bean>
 
-    <bean id="permissionEvaluator" class="org.springframework.security.acls.AclPermissionEvaluator">
+    <bean id="permissionEvaluator" class="com.globallogic.store.security.acl.PrincipalPermissionEvaluator">
+        <constructor-arg name="permissionService" ref="permissionService"/>
+    </bean>
+
+    <!--<bean id="permissionEvaluator" class="org.springframework.security.acls.AclPermissionEvaluator">
         <constructor-arg ref="aclService"/>
-    </bean>
+    </bean>-->
 </beans>

@@ -26,13 +26,13 @@ $('#buttonShare').click(function () {
     return false;
 });
 
-$('#buttonRemove').click(function () {
-    removePermission();
-    return false;
-});
-
 $('#itemList').on('click', 'a', function () {
     findUserProductById($(this).data('identity'));
+    getPermissionList($(this).data('identity'));
+});
+
+$('#sidTable').on('click', 'img', function () {
+    removePermission($(this).data('identity'));
 });
 
 function fillUserProductList(data) {
@@ -40,6 +40,18 @@ function fillUserProductList(data) {
     $('#itemList').find('li').remove();
     $.each(list, function (index, item) {
         $('#itemList').append('<li><a href="#" data-identity="' + item.id+ '">' + item.name + '</a></li>');
+    });
+}
+
+function fillProductPermissions(data) {
+    var list = data == null ? [] : (data instanceof Array ? data : [data]);
+    $('#sidTable').find('tr').remove();
+    $.each(list, function (index, item) {
+        $('#sidTable').append(
+            '<tr>' +
+            '<td>' + item.sid + '</td>' +
+            '<td><img class="icon" src="/images/trash.png" alt="remove" title="remove item" data-identity=">' + item.sid + '"></td>' +
+            '</tr>');
     });
 }
 
@@ -54,9 +66,8 @@ function fillUserProduct(item) {
 }
 
 function userProductItemToJSON() {
-    var itemId = $('#id').val();
     return JSON.stringify({
-        "id": itemId === '' ? null : itemId,
+        "id": $('#id').val(),
         "name": $('#name').val(),
         "brand": $('#brand').val(),
         "description": $('#description').val(),
@@ -180,22 +191,18 @@ function clearUserForm() {
     $('#buttonDelete').hide();
     currentItem = {};
     fillUserProduct(currentItem);
+    fillProductPermissions({});
 }
 
-function grantPermission() {
-    var productId = $('#id').val();
-    var targetUser = $('#share').val();
-
+function getPermissionList(id) {
     $.ajax({
-        type: 'POST',
-        contentType: 'application/json',
-        url: 'http://localhost:8080/api/products/' + productId + '/permissions/' + targetUser,
-        dataType: 'json',
-        data: userProductItemToJSON(),
+        type: 'GET',
+        url: 'http://localhost:8080/api/products/' + id + '/permissions',
         async: false,
+        dataType: "json",
 
-        success: function () {
-            alert('Permissions for update product with id=' + productId + ' were successfully issued to user ' + targetUser);
+        success: function (data) {
+            fillProductPermissions(data);
         },
 
         error: function (xhr, textStatus, errorThrown) {
@@ -206,20 +213,47 @@ function grantPermission() {
     });
 }
 
-function removePermission() {
+function grantPermission() {
     var productId = $('#id').val();
     var targetUser = $('#share').val();
+    var sidJson = JSON.stringify({
+        "sid": targetUser
+    });
 
     $.ajax({
-        type: 'DELETE',
+        type: 'POST',
         contentType: 'application/json',
-        url: 'http://localhost:8080/api/products/' + productId + '/permissions/' + targetUser,
-        dataType: "json",
-        data: userProductItemToJSON(),
+        url: 'http://localhost:8080/api/products/' + productId + '/permissions',
+        dataType: 'json',
+        data: sidJson,
         async: false,
 
         success: function () {
-            alert('Permissions for update product with id=' + productId + ' were successfully removed to user ' + targetUser);
+            alert('Permissions for update product with id=' + productId + ' were successfully issued to user ' + targetUser);
+            $('#share').val('');
+            getPermissionList(productId);
+        },
+
+        error: function (xhr, textStatus, errorThrown) {
+            console.log(xhr);
+            console.log(textStatus);
+            console.log(errorThrown);
+        }
+    });
+}
+
+function removePermission(user) {
+    var productId = $('#id').val();
+    console.log(userProductItemToJSON());
+
+    $.ajax({
+        type: 'DELETE',
+        url: 'http://localhost:8080/api/products/' + productId + '/permissions/' + user,
+        async: false,
+
+        success: function () {
+            getPermissionList(productId);
+            alert('Permissions for update product with id=' + productId + ' were successfully removed from user ' + user);
         },
 
         error: function (xhr, textStatus, errorThrown) {
