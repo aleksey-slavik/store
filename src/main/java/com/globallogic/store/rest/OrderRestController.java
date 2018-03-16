@@ -201,7 +201,7 @@ public class OrderRestController {
      * @param id order id
      * @return deleted order
      */
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(
             value = "/{id}",
             method = RequestMethod.DELETE,

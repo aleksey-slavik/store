@@ -1,23 +1,10 @@
-/**
- * Root url path for orders rest service
- *
- * @type {string}
- */
-var rootURL = "http://localhost:8080/api/orders";
-
-/**
- * Temporary variable for orders data
- */
 var currentOrder;
-
-/**
- * Temporary variable for orders item data
- */
-var currentOrderItem;
 
 //start statement of page when it is loaded
 findAllOrders();
 $('#buttonDelete').hide();
+$('#buttonCreate').hide();
+$('#buttonSave').hide();
 
 /**
  * Register listener for create button
@@ -51,22 +38,29 @@ $('#itemList').on('click', 'a', function () {
 });
 
 /**
- * Register listener for list of orders items
- */
-$('#orderItemList').on('click', 'a', function () {
-    findOrderItemById($(this).data('identity'));
-});
-
-/**
  * Fill list of orders items using given data
  *
  * @param data given data
  */
 function fillOrderItemList(data) {
     var list = data == null ? [] : (data instanceof Array ? data : [data]);
-    $('#orderItemList').find('li').remove();
+    $('#orderTable').find('tr').remove();
+    $('#orderTable').append(
+        '<tr>' +
+        '<th width="40%">Product:</th>' +
+        '<th width="20%">Price:</th>' +
+        '<th width="20%">Quantity:</th>' +
+        '<th width="20%">Cost:</th>' +
+        '</tr>');
     $.each(list, function (index, item) {
-        $('#orderItemList').append('<li><a href="#" data-identity="' + item.id + '">' + item.product.name + '</a></li>');
+        var cost = item.price * item.quantity;
+        $('#orderTable').append(
+            '<tr class="orderTableRow">' +
+            '<td align="center">' + item.name + '(' + item.brand + ')</td>' +
+            '<td align="center">' + item.price + '</td>' +
+            '<td align="center">' + item.quantity + '</td>' +
+            '<td align="center">' + cost + '</td>' +
+            '</tr>');
     });
 }
 
@@ -79,27 +73,18 @@ function fillOrderList(data) {
     var list = data == null ? [] : (data instanceof Array ? data : [data]);
     $('#itemList').find('li').remove();
     $.each(list, function (index, item) {
-        $('#itemList').append('<li><a href="#" data-identity="' + item.id + '">' + item.user.username + '</a></li>');
+        $('#itemList').append('<li><a href="#" data-identity="' + item.id + '">' + item.customer + '</a></li>');
     });
 }
 
-/**
- * Fill orders item form using given item data
- *
- * @param item given data
- */
 function fillOrder(item) {
+    var created = new Date(item.createdDate);
     $('#id').val(item.id);
-    $('#user').val(item.user.username);
+    $('#userId').val(item.customerId);
+    $('#user').val(item.customer);
+    $('#created').val(item == null ? '' : created.toLocaleString());
     $('#status').val(item.status);
     $('#totalCost').val(item.totalCost);
-}
-
-function fillOrderItem(item) {
-    $('#name').val(item.product.name);
-    $('#brand').val(item.product.brand);
-    $('#price').val(item.price);
-    $('#quantity').val(item.quantity);
 }
 
 /**
@@ -109,221 +94,113 @@ function fillOrderItem(item) {
  */
 function orderToJSON() {
     return JSON.stringify({
-        "id": currentOrder.id,
-        "user": currentOrder.user,
-        "totalCost":  $('#totalCost').val(),
+        "id": $('#id').val(),
+        "customerId": $('#userId').val(),
+        "customer": $('#user').val(),
+        "createdDate": currentOrder.createdDate,
+        "totalCost": $('#totalCost').val(),
         "status": $('#status').val(),
         "items": currentOrder.items
     });
 }
 
-/**
- * Parse orders item data from form to json format
- *
- * @returns {string}
- */
-function orderItemToJSON() {
-    return JSON.stringify({
-        "id": currentOrderItem.id,
-        "product": currentOrderItem.product,
-        "price":  $('#price').val(),
-        "quantity": $('#quantity').val()
+function findAllOrders() {
+    $.ajax({
+        type: 'GET',
+        url: 'http://localhost:8080/api/orders?size=20',
+        async: false,
+        dataType: "json",
+
+        success: function (data) {
+            fillOrderList(data);
+        },
+
+        error: function (xhr, textStatus, errorThrown) {
+            console.log(xhr);
+            console.log(textStatus);
+            console.log(errorThrown);
+        }
     });
 }
 
-/**
- * Sending GET request to rest service for get all items.
- * Implementation of {@link getItem} method.
- */
-function findAllOrders() {
-    getItem(
-        rootURL,
-        function (data) {
-            fillOrderList(data)
-        },
-        function () {
-            //do nothing
-        }
-    )
-}
-
-/**
- * Sending GET request to rest service for get orders by given id.
- * Implementation of {@link getItem} method.
- *
- * @param id given orders id
- */
 function findOrderById(id) {
-    getItem(
-        rootURL + '/' + id,
-        function (data) {
+    $.ajax({
+        type: 'GET',
+        url: 'http://localhost:8080/api/orders/' + id,
+        async: false,
+        dataType: "json",
+
+        success: function (data) {
             currentOrder = data;
             fillOrder(currentOrder);
             fillOrderItemList(currentOrder.items);
             $('#buttonDelete').show();
+            $('#buttonCreate').show();
+            $('#buttonSave').show();
         },
-        function () {
-            alert('Order with id=' + id + ' not found!');
+
+        error: function (xhr, textStatus, errorThrown) {
+            console.log(xhr);
+            console.log(textStatus);
+            console.log(errorThrown);
         }
-    )
+    });
 }
 
-/**
- * Sending GET request to rest service for get orders item by given id.
- * Implementation of {@link getItem} method.
- *
- * @param id given orders item id
- */
-function findOrderItemById(id) {
-    getItem(
-        rootURL + '/' + currentOrder.id + '/items/' + id,
-        function (data) {
-            currentOrderItem = data;
-            fillOrderItem(currentOrderItem);
-            showOrderItemModalWindow();
-        },
-        function () {
-            alert('Order with id=' + id + ' not found!');
-        }
-    )
-}
-
-/**
- * Sending PUT request to rest service for update current orders.
- * Implementation of {@link updateItem} method.
- */
 function updateOrder() {
-    updateItem(
-        rootURL,
-        currentOrder.id,
-        orderToJSON(),
-        function (data) {
+    var orderId = $('#id').val();
+
+    $.ajax({
+        type: 'PUT',
+        contentType: 'application/json',
+        url: 'http://localhost:8080/api/orders/' + orderId,
+        dataType: "json",
+        data: orderToJSON(),
+        async: false,
+
+        success: function (data) {
             currentOrder = data;
-            alert('Order with id=' + currentOrder.id + ' updated!');
+            alert('Order with id=' + data.id + ' updated!');
+        },
+
+        error: function (xhr, textStatus, errorThrown) {
+            console.log(xhr);
+            console.log(textStatus);
+            console.log(errorThrown);
         }
-    )
+    });
 }
 
-/**
- * Sending PUT request to rest service for delete current orders.
- * Implementation of {@link deleteItem} method.
- */
 function deleteOrder() {
-    deleteItem(
-        rootURL,
-        currentOrder.id,
-        function (data) {
+    var orderId = $('#id').val();
+
+    $.ajax({
+        type: 'DELETE',
+        url: 'http://localhost:8080/api/orders/' + orderId,
+        async: false,
+
+        success: function (data) {
             clearOrderForm();
             findAllOrders();
-            fillOrderItemList({});
             alert('Order with id=' + data.id + ' deleted!');
+        },
+
+        error: function (xhr, textStatus, errorThrown) {
+            console.log(xhr);
+            console.log(textStatus);
+            console.log(errorThrown);
         }
-    )
+    });
 }
 
 /**
-* Sending DELETE request to rest service for delete orders item by given item id.
-* Implementation of {@link deleteItem} method.
-*
-* @param id given item id
-*/
-function deleteOrderItem(id) {
-    deleteItem(
-        rootURL + '/' + currentOrder.id + '/items/',
-        id,
-        function () {
-            findOrderById(currentOrder.id);
-        }
-    )
-}
-
-/**
-* Sending PUT request to rest service for update orders item by given item id.
-* Implementation of {@link updateItem} method.
-*
-* @param id given item id
-*/
-function updateOrderItem(id) {
-    updateItem(
-        rootURL + '/' + currentOrder.id + '/items/',
-        id,
-        orderItemToJSON(),
-        function () {
-            findOrderById(currentOrder.id);
-        }
-    )
-}
-
-/**
-* Clear form for insert new data
-*/
+ * Clear form for insert new data
+ */
 function clearOrderForm() {
     currentOrder = {};
-    $('#id').val('');
-    $('#user').val('');
-    $('#status').val('');
-    $('#totalCost').val('');
-}
-
-/**
- * Clear orders item form
- */
-function clearOrderItemForm() {
-    currentOrderItem = {};
-    $('#name').val('');
-    $('#brand').val('');
-    $('#price').val('');
-    $('#quantity').val('');
-}
-
-/**
-* Show semi-transparent DIV, which shading whole page
-*/
-function showCover() {
-    var coverDiv = document.createElement('div');
-    coverDiv.id = 'cover-div';
-    document.body.appendChild(coverDiv);
-}
-
-/**
-* Remove semi-transparent DIV, which shading whole page
-*/
-function hideCover() {
-    document.body.removeChild(document.getElementById('cover-div'));
-}
-
-/**
-* Show modal window with item info
-*/
-function showOrderItemModalWindow() {
-    showCover();
-    var container = document.getElementById('modal-form-container');
-
-    function closeWindow() {
-        clearOrderItemForm();
-        hideCover();
-        container.style.display = 'none';
-        document.onkeydown = null;
-    }
-
-    $('#buttonCancel').click(function () {
-        closeWindow();
-        return false;
-    });
-
-    $('#buttonSaveItem').click(function () {
-        console.log(currentOrderItem);
-        updateOrderItem(currentOrderItem.id);
-        closeWindow();
-        return false;
-    });
-
-    $('#buttonDeleteItem').click(function () {
-        console.log(currentOrderItem);
-        deleteOrderItem(currentOrderItem.id);
-        closeWindow();
-        return false;
-    });
-
-    container.style.display = 'block';
+    fillOrder({});
+    fillOrderItemList({});
+    $('#buttonDelete').hide();
+    $('#buttonCreate').hide();
+    $('#buttonSave').hide();
 }

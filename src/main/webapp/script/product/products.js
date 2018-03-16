@@ -207,8 +207,6 @@ function createNewOrder() {
  * Add orders item to opened order
  */
 function appendOrderItem() {
-    console.log(orderItemToJSON());
-
     $.ajax({
         type: 'POST',
         contentType: 'application/json',
@@ -218,7 +216,7 @@ function appendOrderItem() {
         async: false,
 
         success: function (data) {
-            alert(data.product.name + ' successfully added to cart!');
+            alert(data.name + ' successfully added to cart!');
         },
 
         error: function (xhr, textStatus, errorThrown) {
