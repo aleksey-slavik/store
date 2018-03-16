@@ -42,8 +42,8 @@ public class PermissionService {
 
     public List<String> getPrincipalList(Identifiable identifiable, PermissionName permission, Class clazz) {
         SearchCriteria criteria = new SearchCriteria()
-                .criteria("object_class", clazz.getCanonicalName())
-                .criteria("object_id", identifiable.getId())
+                .criteria("objectClass", clazz.getCanonicalName())
+                .criteria("objectId", identifiable.getId())
                 .criteria("permission", permission)
                 .offset(1)
                 .limit(100)
@@ -74,8 +74,8 @@ public class PermissionService {
 
     public void deletePermission(Identifiable identifiable, String principal, PermissionName permission, Class clazz) {
         SearchCriteria criteria = new SearchCriteria()
-                .criteria("object_class", clazz.getCanonicalName())
-                .criteria("object_id", identifiable.getId())
+                .criteria("objectClass", clazz.getCanonicalName())
+                .criteria("objectId", identifiable.getId())
                 .criteria("sid", principal)
                 .criteria("permission", permission);
 
