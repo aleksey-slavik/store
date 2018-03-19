@@ -6,7 +6,6 @@ $("#buttonDelete").hide();
  * listener for clear form button
  */
 $('#buttonCreate').click(function () {
-    //todo clear permission list
     clearProductForm();
     return false;
 });
@@ -28,7 +27,7 @@ $('#buttonSave').click(function () {
  * listener for delete button
  */
 $('#buttonDelete').click(function () {
-    deleteProduct(); //todo delete permissions with product
+    deleteProduct();
     return false;
 });
 
@@ -36,7 +35,7 @@ $('#buttonDelete').click(function () {
  * listener for share permission button
  */
 $('#buttonShare').click(function () {
-    grantPermission(); //todo add permission
+    grantPermission();
     return false;
 });
 
@@ -45,6 +44,11 @@ $('#buttonShare').click(function () {
  */
 $('#itemList').on('click', 'a', function () {
     findProductById($(this).data('identity'));
+    getPermissionList($(this).data('identity'));
+});
+
+$('#sidTable').on('click', 'img', function () {
+    removePermission($(this).data('identity'));
 });
 
 /**
@@ -65,8 +69,16 @@ function fillProductList(data) {
  *
  * @param data given data
  */
-function fillPermissionList(data) {
-    //todo fill permission list
+function fillProductPermissions(data) {
+    var list = data == null ? [] : (data instanceof Array ? data : [data]);
+    $('#sidTable').find('tr').remove();
+    $.each(list, function (index, item) {
+        $('#sidTable').append(
+            '<tr>' +
+            '<td>' + item.sid + '</td>' +
+            '<td><img class="icon" src="/images/trash.png" alt="remove" title="remove item" data-identity=">' + item.sid + '"></td>' +
+            '</tr>');
+    });
 }
 
 /**
@@ -217,4 +229,75 @@ function clearProductForm() {
     $('#buttonDelete').hide();
     currentItem = {};
     fillProduct(currentItem);
+    fillProductPermissions({});
+}
+
+function getPermissionList(id) {
+    $.ajax({
+        type: 'GET',
+        url: 'http://localhost:8080/api/products/' + id + '/permissions',
+        async: false,
+        dataType: "json",
+
+        success: function (data) {
+            fillProductPermissions(data);
+        },
+
+        error: function (xhr, textStatus, errorThrown) {
+            console.log(xhr);
+            console.log(textStatus);
+            console.log(errorThrown);
+        }
+    });
+}
+
+function grantPermission() {
+    var productId = $('#id').val();
+    var targetUser = $('#share').val();
+    var sidJson = JSON.stringify({
+        "sid": targetUser
+    });
+
+    $.ajax({
+        type: 'POST',
+        contentType: 'application/json',
+        url: 'http://localhost:8080/api/products/' + productId + '/permissions',
+        dataType: 'json',
+        data: sidJson,
+        async: false,
+
+        success: function () {
+            alert('Permissions for update product with id=' + productId + ' were successfully issued to user ' + targetUser);
+            $('#share').val('');
+            getPermissionList(productId);
+        },
+
+        error: function (xhr, textStatus, errorThrown) {
+            console.log(xhr);
+            console.log(textStatus);
+            console.log(errorThrown);
+        }
+    });
+}
+
+function removePermission(user) {
+    var productId = $('#id').val();
+    console.log(userProductItemToJSON());
+
+    $.ajax({
+        type: 'DELETE',
+        url: 'http://localhost:8080/api/products/' + productId + '/permissions/' + user,
+        async: false,
+
+        success: function () {
+            getPermissionList(productId);
+            alert('Permissions for update product with id=' + productId + ' were successfully removed from user ' + user);
+        },
+
+        error: function (xhr, textStatus, errorThrown) {
+            console.log(xhr);
+            console.log(textStatus);
+            console.log(errorThrown);
+        }
+    });
 }

@@ -1,10 +1,6 @@
 //start statement of page when it is loaded
 findUserOrderByUsername();
 
-$('#orderTable').on('click', 'img', function () {
-    deleteOrderItem($(this).data('identity'));
-});
-
 /**
  * Fill list of orders using given data
  *
