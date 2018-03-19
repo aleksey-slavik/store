@@ -102,6 +102,22 @@ public class PermissionService {
         permissionDao.deleteEntityByKey(deleted.getId());
     }
 
+    public void deletePermission(Identifiable identifiable, Class clazz) {
+        SearchCriteria criteria = new SearchCriteria()
+                .criteria("objectClass", clazz.getCanonicalName())
+                .criteria("objectId", identifiable.getId())
+                .offset(1)
+                .limit(100)
+                .sortBy("id")
+                .order("asc");
+
+        List<Permission> deleted = permissionDao.getEntityList(criteria);
+
+        for (Permission permission : deleted) {
+            permissionDao.deleteEntityByKey(permission.getId());
+        }
+    }
+
     private String getPrincipal() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 

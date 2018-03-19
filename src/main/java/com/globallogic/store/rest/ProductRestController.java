@@ -257,6 +257,7 @@ public class ProductRestController {
             @ApiParam(value = "product id", required = true) @PathVariable Long id) {
 
         Product deleted = productDao.deleteEntityByKey(id);
+        permissionService.deletePermission(deleted, Product.class);
         return ResponseEntity.ok(productConverter.toResource(deleted));
     }
 
