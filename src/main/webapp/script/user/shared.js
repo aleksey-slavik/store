@@ -1,3 +1,4 @@
+//start page statement
 var currentItem;
 findAllSharedProducts();
 $('#buttonSave').hide();
