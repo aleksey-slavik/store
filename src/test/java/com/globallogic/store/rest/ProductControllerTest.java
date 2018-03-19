@@ -2,14 +2,21 @@ package com.globallogic.store.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.globallogic.store.Workflow;
+import com.globallogic.store.converter.product.ProductConverter;
+import com.globallogic.store.converter.product.ProductPreviewConverter;
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.domain.product.Product;
+import com.globallogic.store.dto.product.ProductDTO;
+import com.globallogic.store.security.service.PermissionService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -29,6 +36,15 @@ public class ProductControllerTest {
     @Mock
     private GenericDao<Product> productDao;
 
+    @Mock
+    private ProductConverter productConverter;
+
+    @Mock
+    private ProductPreviewConverter productPreviewConverter;
+
+    @Mock
+    private PermissionService permissionService;
+
     @InjectMocks
     private ProductRestController controller;
 
@@ -44,6 +60,8 @@ public class ProductControllerTest {
     public void init() {
         MockitoAnnotations.initMocks(this);
         mvc = MockMvcBuilders.standaloneSetup(controller).build();
+        Authentication auth = new UsernamePasswordAuthenticationToken(Workflow.createCustomerAuthenticatedUser(),null);
+        SecurityContextHolder.getContext().setAuthentication(auth);
     }
 
     @Test
@@ -53,10 +71,12 @@ public class ProductControllerTest {
         when(productDao.getEntityByKey(DUMMY_ID))
                 .thenReturn(product);
 
+        when(productConverter.toResource(product))
+                .thenReturn(Workflow.createProductDto(product));
+
         ResultActions actual = mvc.perform(get(URL_PATH_GET_BY_ID, DUMMY_ID)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(status().isOk());
 
         assertProduct(product, actual);
         verify(productDao, times(1)).getEntityByKey(DUMMY_ID);
@@ -70,7 +90,7 @@ public class ProductControllerTest {
 
         mvc.perform(get(URL_PATH_ROOT + DUMMY_ID)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNoContent());
 
         verify(productDao, times(1)).getEntityByKey(DUMMY_ID);
         verifyNoMoreInteractions(productDao);
@@ -83,10 +103,12 @@ public class ProductControllerTest {
         when(productDao.getEntityList(any()))
                 .thenReturn(products);
 
+        when(productPreviewConverter.toResources(products))
+                .thenReturn(Workflow.createProductPreviewDto(products));
+
         ResultActions actual = mvc.perform(get(URL_PATH_ROOT)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(LIST_SIZE)));
 
         assertProductList(products, actual);
@@ -108,50 +130,20 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void checkFindProductsByParameterTest() throws Exception {
-        List<Product> products = Workflow.createDummyProductList(LIST_SIZE);
-
-        when(productDao.getEntityList(any()))
-                .thenReturn(products);
-
-        ResultActions actual = mvc.perform(get(URL_PATH_ROOT)
-                .contentType(MediaType.APPLICATION_JSON)
-                .param("name", "Dummy"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(LIST_SIZE)));
-
-        assertProductList(products, actual);
-        verify(productDao, times(1)).getEntityList(any());
-        verifyNoMoreInteractions(productDao);
-    }
-
-    @Test
-    public void checkProductsNotFoundByParameterTest() throws Exception {
-        when(productDao.getEntityList(any()))
-                .thenReturn(null);
-
-        mvc.perform(get(URL_PATH_ROOT)
-                .contentType(MediaType.APPLICATION_JSON)
-                .param("brand", "Dummy"))
-                .andExpect(status().isNotFound());
-
-        verify(productDao, times(1)).getEntityList(any());
-        verifyNoMoreInteractions(productDao);
-    }
-
-    @Test
     public void checkCreateProductTest() throws Exception {
         Product product = Workflow.createDummyProduct(DUMMY_ID);
+        ProductDTO productDTO = Workflow.createProductDto(product);
 
         when(productDao.createEntity(any(Product.class)))
                 .thenReturn(product);
 
+        when(productConverter.toResource(product))
+                .thenReturn(Workflow.createProductDto(product));
+
         ResultActions actual = mvc.perform(post(URL_PATH_ROOT)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(product)))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                .content(new ObjectMapper().writeValueAsString(productDTO)))
+                .andExpect(status().isOk());
 
         assertProduct(product, actual);
         verify(productDao, times(1)).createEntity(any(Product.class));
@@ -161,15 +153,18 @@ public class ProductControllerTest {
     @Test
     public void checkUpdateProductTest() throws Exception {
         Product product = Workflow.createDummyProduct(DUMMY_ID);
+        ProductDTO productDTO = Workflow.createProductDto(product);
 
         when(productDao.updateEntity(any(Product.class)))
                 .thenReturn(product);
 
+        when(productConverter.toResource(product))
+                .thenReturn(Workflow.createProductDto(product));
+
         ResultActions actual = mvc.perform(put(URL_PATH_GET_BY_ID, DUMMY_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(product)))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                .content(new ObjectMapper().writeValueAsString(productDTO)))
+                .andExpect(status().isOk());
 
         assertProduct(product, actual);
         verify(productDao, times(1)).updateEntity(any(Product.class));
@@ -195,10 +190,12 @@ public class ProductControllerTest {
         when(productDao.deleteEntityByKey(DUMMY_ID))
                 .thenReturn(product);
 
+        when(productConverter.toResource(product))
+                .thenReturn(Workflow.createProductDto(product));
+
         ResultActions actual = mvc.perform(delete(URL_PATH_GET_BY_ID, DUMMY_ID)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(status().isOk());
 
         assertProduct(product, actual);
         verify(productDao, times(1)).deleteEntityByKey(DUMMY_ID);
