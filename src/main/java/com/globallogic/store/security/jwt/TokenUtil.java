@@ -1,6 +1,6 @@
 package com.globallogic.store.security.jwt;
 
-import com.globallogic.store.security.AuthenticatedUser;
+import com.globallogic.store.security.core.AuthenticatedUser;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.DefaultClock;
 import org.springframework.beans.factory.annotation.Value;

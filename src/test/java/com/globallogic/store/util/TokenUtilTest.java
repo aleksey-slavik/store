@@ -1,7 +1,7 @@
 package com.globallogic.store.util;
 
 import com.globallogic.store.Workflow;
-import com.globallogic.store.security.AuthenticatedUser;
+import com.globallogic.store.security.core.AuthenticatedUser;
 import com.globallogic.store.security.jwt.TokenUtil;
 import io.jsonwebtoken.Clock;
 import org.assertj.core.util.DateUtil;

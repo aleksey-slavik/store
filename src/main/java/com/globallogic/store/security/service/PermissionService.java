@@ -1,4 +1,4 @@
-package com.globallogic.store.security.acl;
+package com.globallogic.store.security.service;
 
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.dao.criteria.SearchCriteria;
@@ -57,6 +57,25 @@ public class PermissionService {
         }
 
         return principals;
+    }
+
+    public List<Long> getIdList(String principal, PermissionName permission, Class clazz) {
+        SearchCriteria criteria = new SearchCriteria()
+                .criteria("sid", principal)
+                .criteria("objectClass", clazz.getCanonicalName())
+                .criteria("permission", permission)
+                .offset(1)
+                .limit(100)
+                .sortBy("id")
+                .order("asc");
+
+        List<Long> ids = new ArrayList<>();
+
+        for (Permission granted : permissionDao.getEntityList(criteria)) {
+            ids.add(granted.getObjectId());
+        }
+
+        return ids;
     }
 
     public void addPermission(Identifiable identifiable, PermissionName permission, Class clazz) {

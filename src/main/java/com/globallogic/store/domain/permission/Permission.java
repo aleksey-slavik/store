@@ -113,15 +113,4 @@ public class Permission {
     public void setPermission(PermissionName permission) {
         this.permission = permission;
     }
-
-    @Override
-    public String toString() {
-        return "Permission{" +
-                "id=" + id +
-                ", objectClass='" + objectClass + '\'' +
-                ", objectId=" + objectId +
-                ", sid='" + sid + '\'' +
-                ", permission=" + permission +
-                '}';
-    }
 }

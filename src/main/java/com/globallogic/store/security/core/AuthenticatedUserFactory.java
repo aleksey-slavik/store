@@ -1,7 +1,8 @@
-package com.globallogic.store.security;
+package com.globallogic.store.security.core;
 
 import com.globallogic.store.domain.user.Authority;
 import com.globallogic.store.domain.user.User;
+import com.globallogic.store.security.core.AuthenticatedUser;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 

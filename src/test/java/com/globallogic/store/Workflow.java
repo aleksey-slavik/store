@@ -2,13 +2,12 @@ package com.globallogic.store;
 
 import com.globallogic.store.domain.product.Product;
 import com.globallogic.store.domain.user.*;
-import com.globallogic.store.security.AuthenticatedUser;
-import com.globallogic.store.security.AuthenticatedUserFactory;
+import com.globallogic.store.security.core.AuthenticatedUser;
+import com.globallogic.store.security.core.AuthenticatedUserFactory;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Emulates application flow

@@ -10,8 +10,8 @@ import com.globallogic.store.domain.user.User;
 import com.globallogic.store.dto.product.ProductDTO;
 import com.globallogic.store.domain.product.Product;
 import com.globallogic.store.dto.permission.SidDTO;
-import com.globallogic.store.security.AuthenticatedUser;
-import com.globallogic.store.security.acl.PermissionService;
+import com.globallogic.store.security.core.AuthenticatedUser;
+import com.globallogic.store.security.service.PermissionService;
 import io.swagger.annotations.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -139,6 +139,45 @@ public class ProductRestController {
                 .criteria("brand", (Object[]) brand)
                 .criteria("price", (Object[]) price)
                 .criteria("owner", user)
+                .offset(page)
+                .limit(size)
+                .sortBy(sort)
+                .order(order);
+
+        List<Product> products = productDao.getEntityList(criteria);
+
+        if (products == null || products.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } else {
+            return ResponseEntity.ok().body(previewConverter.toResources(products));
+        }
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(
+            value = "/shared",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(
+            value = "Resource to get a list of products, to which current user have permissions",
+            notes = "This can only be done by the authenticated user")
+    public ResponseEntity<?> getSharedProductList(
+            @ApiParam(value = "name of product") @RequestParam(value = "name", required = false) String[] name,
+            @ApiParam(value = "brand of product") @RequestParam(value = "brand", required = false) String[] brand,
+            @ApiParam(value = "price of product") @RequestParam(value = "price", required = false) Double[] price,
+            @ApiParam(value = "page number", defaultValue = "1") @RequestParam(value = "page", defaultValue = "1") int page,
+            @ApiParam(value = "count of items per page", defaultValue = "5") @RequestParam(value = "size", defaultValue = "5") int size,
+            @ApiParam(value = "name of sorting column", defaultValue = "id") @RequestParam(value = "sort", defaultValue = "id") String sort,
+            @ApiParam(value = "sorting order", defaultValue = "asc") @RequestParam(value = "order", defaultValue = "asc") String order) {
+
+        String principal = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<Long> ids = permissionService.getIdList(principal, PermissionName.UPDATE, Product.class);
+
+        SearchCriteria criteria = new SearchCriteria()
+                .criteria("id", ids.toArray())
+                .criteria("name", (Object[]) name)
+                .criteria("brand", (Object[]) brand)
+                .criteria("price", (Object[]) price)
                 .offset(page)
                 .limit(size)
                 .sortBy(sort)

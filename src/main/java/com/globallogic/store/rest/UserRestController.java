@@ -9,7 +9,7 @@ import com.globallogic.store.domain.user.AuthorityName;
 import com.globallogic.store.domain.user.User;
 import com.globallogic.store.dto.user.AuthorityDTO;
 import com.globallogic.store.dto.user.UserDTO;
-import com.globallogic.store.security.RegisterUserService;
+import com.globallogic.store.security.service.RegisterUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;

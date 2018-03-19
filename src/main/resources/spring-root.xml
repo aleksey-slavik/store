@@ -55,6 +55,7 @@
                 <prop key="/cart">cart</prop>
                 <prop key="/account">account</prop>
                 <prop key="/account/products">userProducts</prop>
+                <prop key="/account/shared">sharedProducts</prop>
                 <prop key="/account/orders">userOrders</prop>
             </props>
         </property>
@@ -70,13 +71,14 @@
     <bean id="cart" class="com.globallogic.store.web.order.CartWebController"/>
     <bean id="account" class="com.globallogic.store.web.user.AccountWebController"/>
     <bean id="userProducts" class="com.globallogic.store.web.user.UserProductsWebController"/>
+    <bean id="sharedProducts" class="com.globallogic.store.web.user.SharedProductsWebController"/>
     <bean id="userOrders" class="com.globallogic.store.web.user.UserOrdersWebController"/>
 
     <!-- Exceptions Resolver -->
     <!--<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
         <property name="exceptionMappings">
             <props>
-                <prop key="com.globallogic.store.exception.NotFoundException">error/404</prop>
+                <prop key="com.globallogic.store.exception.AccesDeniedException">error/403</prop>
                 <prop key="java.lang.Exception">error/error</prop>
                 <prop key="java.lang.RuntimeException">error/error</prop>
             </props>
@@ -183,11 +185,11 @@
 
     <bean id="tokenUtil" class="com.globallogic.store.security.jwt.TokenUtil"/>
 
-    <bean id="loginUserService" class="com.globallogic.store.security.LoginUserService">
+    <bean id="loginUserService" class="com.globallogic.store.security.service.LoginUserService">
         <property name="userDao" ref="userDao"/>
     </bean>
 
-    <bean id="registerUserService" class="com.globallogic.store.security.RegisterUserService">
+    <bean id="registerUserService" class="com.globallogic.store.security.service.RegisterUserService">
         <property name="authenticationManager" ref="authenticationManager"/>
         <property name="userDetailsService" ref="loginUserService"/>
     </bean>
@@ -204,82 +206,20 @@
 
     <aop:config proxy-target-class="true">
         <aop:pointcut id="userServicePointCut"
-                      expression="execution(* com.globallogic.store.security.*Service.*(..))"/>
+                      expression="execution(* com.globallogic.store.security.service.*Service.*(..))"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="userServicePointCut"/>
     </aop:config>
 
     <!-- Access Control List Config -->
-    <!--<bean id="aclCache" class="org.springframework.security.acls.domain.EhCacheBasedAclCache">
-        <constructor-arg>
-            <bean class="org.springframework.cache.ehcache.EhCacheFactoryBean">
-                <property name="cacheManager">
-                    <bean class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" p:shared="true"/>
-                </property>
-                <property name="cacheName" value="aclCache"/>
-            </bean>
-        </constructor-arg>
-        <constructor-arg>
-            <bean class="org.springframework.security.acls.domain.DefaultPermissionGrantingStrategy">
-                <constructor-arg>
-                    <bean class="org.springframework.security.acls.domain.ConsoleAuditLogger"/>
-                </constructor-arg>
-            </bean>
-        </constructor-arg>
-        <constructor-arg>
-            <bean class="org.springframework.security.acls.domain.AclAuthorizationStrategyImpl">
-                <constructor-arg>
-                    <list>
-                        <bean class="org.springframework.security.core.authority.SimpleGrantedAuthority">
-                            <constructor-arg value="ADMIN"/>
-                        </bean>
-                    </list>
-                </constructor-arg>
-            </bean>
-        </constructor-arg>
-    </bean>
-
-    <bean id="lookupStrategy" class="org.springframework.security.acls.jdbc.BasicLookupStrategy">
-        <constructor-arg ref="dataSource"/>
-        <constructor-arg ref="aclCache"/>
-        <constructor-arg ref="aclAuthorizationStrategy"/>
-        <constructor-arg>
-            <bean class="org.springframework.security.acls.domain.ConsoleAuditLogger"/>
-        </constructor-arg>
-    </bean>
-
-    <bean id="aclAuthorizationStrategy"
-          class="org.springframework.security.acls.domain.AclAuthorizationStrategyImpl">
-        <constructor-arg>
-            <bean class="org.springframework.security.core.authority.SimpleGrantedAuthority">
-                <constructor-arg value="ADMIN"/>
-            </bean>
-        </constructor-arg>
-    </bean>
-
-    <bean id="aclService" class="org.springframework.security.acls.jdbc.JdbcMutableAclService">
-        <constructor-arg ref="dataSource"/>
-        <constructor-arg ref="lookupStrategy"/>
-        <constructor-arg ref="aclCache"/>
-        <property name="sidIdentityQuery" value="values identity_val_local()" />
-    </bean>
-
-    <bean id="aclSecurityUtil" class="com.globallogic.store.security.acl.AclSecurityUtil">
-        <property name="mutableAclService" ref="aclService"/>
-    </bean>-->
-
     <bean id="expressionHandler" class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
         <property name="permissionEvaluator" ref="permissionEvaluator"/>
     </bean>
 
-    <bean id="permissionService" class="com.globallogic.store.security.acl.PermissionService">
+    <bean id="permissionService" class="com.globallogic.store.security.service.PermissionService">
         <constructor-arg name="permissionDao" ref="permissionDao"/>
     </bean>
 
-    <bean id="permissionEvaluator" class="com.globallogic.store.security.acl.PrincipalPermissionEvaluator">
+    <bean id="permissionEvaluator" class="com.globallogic.store.security.core.PrincipalPermissionEvaluator">
         <constructor-arg name="permissionService" ref="permissionService"/>
     </bean>
-
-    <!--<bean id="permissionEvaluator" class="org.springframework.security.acls.AclPermissionEvaluator">
-        <constructor-arg ref="aclService"/>
-    </bean>-->
 </beans>

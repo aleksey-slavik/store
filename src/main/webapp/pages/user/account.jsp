@@ -19,6 +19,7 @@
             <div class="leftArea-list">
                 <ul id="itemList">
                     <li><a href="${pageContext.request.contextPath}/account/products">My products</a></li>
+                    <li><a href="${pageContext.request.contextPath}/account/shared">Shared products</a></li>
                     <li><a href="${pageContext.request.contextPath}/account/orders">Order history</a></li>
                 </ul>
             </div>
