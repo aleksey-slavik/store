@@ -6,12 +6,36 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
+/**
+ * Custom user details
+ *
+ * @author oleksii.slavik
+ */
 public class AuthenticatedUser implements UserDetails {
 
+    /**
+     * user id
+     */
     private final Long id;
+
+    /**
+     * username of user
+     */
     private final String username;
+
+    /**
+     * user password
+     */
     private final String password;
+
+    /**
+     * granted user authorities
+     */
     private final Collection<? extends GrantedAuthority> authorities;
+
+    /**
+     * statement of user
+     */
     private final boolean isEnabled;
 
     public AuthenticatedUser(Long id, String username, String password, Collection<? extends GrantedAuthority> authorities, boolean isEnabled) {

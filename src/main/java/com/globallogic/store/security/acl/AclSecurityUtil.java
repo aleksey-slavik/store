@@ -7,7 +7,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.domain.ObjectIdentityImpl;
 import org.springframework.security.acls.domain.PrincipalSid;
 import org.springframework.security.acls.model.*;
@@ -17,16 +16,31 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
+/**
+ * Access control list
+ *
+ * @author oleksii.slavik
+ */
 public class AclSecurityUtil {
 
+    /**
+     * mutable acl service
+     */
     private MutableAclService mutableAclService;
 
     public void setMutableAclService(MutableAclService mutableAclService) {
         this.mutableAclService = mutableAclService;
     }
 
+    /**
+     * Get list of sids, which have access to given object
+     *
+     * @param identifiable object id
+     * @param permission   needed permission
+     * @param clazz        obhect class
+     * @return list of sids, which have access to given object
+     */
     public List<String> getSidList(Identifiable identifiable, Permission permission, Class clazz) {
         List<String> sids = new ArrayList<>();
         MutableAcl acl;
@@ -45,17 +59,32 @@ public class AclSecurityUtil {
 
         for (AccessControlEntry entry : acl.getEntries()) {
             if (entry.getPermission().equals(permission)) {
-                sids.add(((PrincipalSid)entry.getSid()).getPrincipal());
+                sids.add(((PrincipalSid) entry.getSid()).getPrincipal());
             }
         }
 
         return sids;
     }
 
+    /**
+     * Provide permission to current user
+     *
+     * @param identifiable object id
+     * @param permission   granted permission
+     * @param clazz        object class
+     */
     public void addPermission(Identifiable identifiable, Permission permission, Class clazz) {
         addPermission(identifiable, getUsername(), permission, clazz);
     }
 
+    /**
+     * Provide permission to user with given username
+     *
+     * @param identifiable object id
+     * @param sid          username of user
+     * @param permission   granted permission
+     * @param clazz        object class
+     */
     public void addPermission(Identifiable identifiable, String sid, Permission permission, Class clazz) {
         MutableAcl acl;
         ObjectIdentity oid = new ObjectIdentityImpl(clazz.getCanonicalName(), identifiable.getId());
@@ -81,6 +110,14 @@ public class AclSecurityUtil {
         }
     }
 
+    /**
+     * Remove permission from user with given username
+     *
+     * @param identifiable object id
+     * @param sid          username of user
+     * @param permission   removed permission
+     * @param clazz        object class
+     */
     public void deletePermission(Identifiable identifiable, String sid, Permission permission, Class clazz) {
         SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
         Transaction transaction = null;
@@ -107,6 +144,12 @@ public class AclSecurityUtil {
         }
     }
 
+    /**
+     * Get username of authenticated user from security context
+     *
+     * @see SecurityContextHolder
+     * @return username of authenticated user
+     */
     private String getUsername() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 

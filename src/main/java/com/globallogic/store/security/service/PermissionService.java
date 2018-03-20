@@ -12,6 +12,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Permission service
+ *
+ * @author oleksii.slavik
+ */
 public class PermissionService {
 
     /**
@@ -23,6 +28,14 @@ public class PermissionService {
         this.permissionDao = permissionDao;
     }
 
+    /**
+     * Check permission of current user
+     *
+     * @param id         object id
+     * @param clazz      object class
+     * @param permission needed permission
+     * @return true, if user have permission to access object, false in otherwise
+     */
     public boolean hasPrivilege(long id, String clazz, String permission) {
         try {
             SearchCriteria criteria = new SearchCriteria()
@@ -32,7 +45,6 @@ public class PermissionService {
                     .criteria("permission", PermissionName.valueOf(permission));
 
             Permission privilege = permissionDao.getEntity(criteria);
-            System.out.println(privilege);
             return privilege != null;
         } catch (Throwable e) {
             e.printStackTrace();
@@ -40,6 +52,14 @@ public class PermissionService {
         }
     }
 
+    /**
+     * Get list of username of users, which have access to given object
+     *
+     * @param identifiable given object
+     * @param permission   needed permission
+     * @param clazz        object class
+     * @return list of username of users with needed permission
+     */
     public List<String> getPrincipalList(Identifiable identifiable, PermissionName permission, Class clazz) {
         SearchCriteria criteria = new SearchCriteria()
                 .criteria("objectClass", clazz.getCanonicalName())
@@ -59,6 +79,14 @@ public class PermissionService {
         return principals;
     }
 
+    /**
+     * Get list of id of object, to which user with given username have access
+     *
+     * @param principal  username of user
+     * @param permission needed permission
+     * @param clazz      object class
+     * @return list of id of object, to which user with given username have access
+     */
     public List<Long> getIdList(String principal, PermissionName permission, Class clazz) {
         SearchCriteria criteria = new SearchCriteria()
                 .criteria("sid", principal)
@@ -78,10 +106,25 @@ public class PermissionService {
         return ids;
     }
 
+    /**
+     * Provide permission to current user
+     *
+     * @param identifiable object id
+     * @param permission   granted permission
+     * @param clazz        object class
+     */
     public void addPermission(Identifiable identifiable, PermissionName permission, Class clazz) {
         addPermission(identifiable, getPrincipal(), permission, clazz);
     }
 
+    /**
+     * Provide permission to user with given username
+     *
+     * @param identifiable object id
+     * @param principal    username of user
+     * @param permission   granted permission
+     * @param clazz        object class
+     */
     public void addPermission(Identifiable identifiable, String principal, PermissionName permission, Class clazz) {
         Permission granted = new Permission();
         granted.setObjectClass(clazz.getCanonicalName());
@@ -91,6 +134,14 @@ public class PermissionService {
         permissionDao.createEntity(granted);
     }
 
+    /**
+     * Remove permission from user with given username
+     *
+     * @param identifiable object id
+     * @param principal    username of user
+     * @param permission   removed permission
+     * @param clazz        object class
+     */
     public void deletePermission(Identifiable identifiable, String principal, PermissionName permission, Class clazz) {
         SearchCriteria criteria = new SearchCriteria()
                 .criteria("objectClass", clazz.getCanonicalName())
@@ -102,6 +153,12 @@ public class PermissionService {
         permissionDao.deleteEntityByKey(deleted.getId());
     }
 
+    /**
+     * Remove all user permissions for given object
+     *
+     * @param identifiable object id
+     * @param clazz        object class
+     */
     public void deletePermission(Identifiable identifiable, Class clazz) {
         SearchCriteria criteria = new SearchCriteria()
                 .criteria("objectClass", clazz.getCanonicalName())
@@ -118,6 +175,12 @@ public class PermissionService {
         }
     }
 
+    /**
+     * Get username of authenticated user from security context
+     *
+     * @see SecurityContextHolder
+     * @return username of authenticated user
+     */
     private String getPrincipal() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 

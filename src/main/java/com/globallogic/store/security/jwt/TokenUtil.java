@@ -10,6 +10,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Java web token utility class
+ *
+ * @author oleksii.slavik
+ */
 public class TokenUtil {
 
     /**
@@ -36,9 +41,15 @@ public class TokenUtil {
     @Value("${jwt.user.role}")
     private String userRoleKey;
 
+    /**
+     * Key for access to user permission
+     */
     @Value("${jwt.user.permission}")
     private String userPermissionKey;
 
+    /**
+     * Key to access to user credentials
+     */
     @Value("&{jwt.user.password}")
     private String userCredentialsKey;
 
@@ -108,6 +119,12 @@ public class TokenUtil {
         return getClaimsFromToken(token).getExpiration();
     }
 
+    /**
+     * Decrypt user data from token
+     *
+     * @param token given token
+     * @return decrypted user
+     */
     public AuthenticatedUser parseToken(String token) {
         try {
             return new AuthenticatedUser(
@@ -122,6 +139,12 @@ public class TokenUtil {
         }
     }
 
+    /**
+     * Encrypt user data to token
+     *
+     * @param user given user data
+     * @return encrypted token
+     */
     public String generateToken(AuthenticatedUser user) {
         Date created = clock.now();
         Date expired = calculateExpiration(created);
@@ -140,6 +163,12 @@ public class TokenUtil {
                 .compact();
     }
 
+    /**
+     * Refresh token expiration date
+     *
+     * @param token given token
+     * @return token with refreshed date
+     */
     public String refreshToken(String token) {
         Date created = clock.now();
         Date expired = calculateExpiration(created);
@@ -153,11 +182,25 @@ public class TokenUtil {
                 .compact();
     }
 
+    /**
+     * Check valid token or not
+     *
+     * @param token given token
+     * @param user given user data
+     * @return true if token is valid, else in otherwise
+     */
     public boolean validateToken(String token, AuthenticatedUser user) {
         String username = getUsernameFromToken(token);
         return username.equals(user.getUsername()) && !isTokenExpired(token);
     }
 
+    /**
+     * Get claims from token
+     *
+     * @see Claims
+     * @param token given token
+     * @return token claims
+     */
     private Claims getClaimsFromToken(String token) {
         return Jwts.parser()
                 .setSigningKey(secret)
@@ -165,6 +208,12 @@ public class TokenUtil {
                 .getBody();
     }
 
+    /**
+     * Calculate expiration date for given date
+     *
+     * @param created created date
+     * @return expiration date
+     */
     private Date calculateExpiration(Date created) {
         return new Date(created.getTime() + expiration);
     }
@@ -180,6 +229,12 @@ public class TokenUtil {
         return expiration.before(clock.now());
     }
 
+    /**
+     * Create user authorities list as string for encrypt/decrypt their in token
+     *
+     * @param authorities authority list
+     * @return string representation of authorities
+     */
     private String createAuthorityList(Collection<? extends GrantedAuthority> authorities) {
         StringBuilder builder = new StringBuilder();
 
