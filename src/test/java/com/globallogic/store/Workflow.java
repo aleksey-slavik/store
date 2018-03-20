@@ -8,6 +8,8 @@ import com.globallogic.store.dto.product.ProductDTO;
 import com.globallogic.store.dto.product.ProductPreviewDTO;
 import com.globallogic.store.security.core.AuthenticatedUser;
 import com.globallogic.store.security.core.AuthenticatedUserFactory;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -105,5 +107,21 @@ public class Workflow {
         authority.setId(1);
         authority.setTitle(title);
         return authority;
+    }
+
+    public static void loginUser() {
+        AuthenticatedUser user = createCustomerAuthenticatedUser();
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user, user.getPassword());
+        SecurityContextHolder.getContext().setAuthentication(token);
+    }
+
+    public static void loginAdmin() {
+        AuthenticatedUser user = createAdminAuthenticatedUser();
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user, user.getPassword());
+        SecurityContextHolder.getContext().setAuthentication(token);
+    }
+
+    public static void logout() {
+        SecurityContextHolder.clearContext();
     }
 }

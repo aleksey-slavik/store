@@ -40,57 +40,6 @@
     <!-- Include a swagger configuration-->
     <bean class="com.globallogic.store.swagger.SwaggerConfig"/>
 
-    <!-- URL Handler -->
-    <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-        <property name="mappings">
-            <props>
-                <prop key="/">product</prop>
-                <prop key="/home">product</prop>
-                <prop key="/product">product</prop>
-                <prop key="/login">login</prop>
-                <prop key="/403">accessDenied</prop>
-                <prop key="/register">register</prop>
-                <prop key="/user">user</prop>
-                <prop key="/order">order</prop>
-                <prop key="/cart">cart</prop>
-                <prop key="/account">account</prop>
-                <prop key="/account/products">userProducts</prop>
-                <prop key="/account/shared">sharedProducts</prop>
-                <prop key="/account/orders">userOrders</prop>
-            </props>
-        </property>
-    </bean>
-
-    <!-- Controllers -->
-    <bean id="product" class="com.globallogic.store.web.product.ProductWebController"/>
-    <bean id="login" class="com.globallogic.store.web.user.LoginWebController"/>
-    <bean id="accessDenied" class="com.globallogic.store.web.security.AccessDeniedWebController"/>
-    <bean id="register" class="com.globallogic.store.web.user.RegistrationWebController"/>
-    <bean id="user" class="com.globallogic.store.web.user.UserWebController"/>
-    <bean id="order" class="com.globallogic.store.web.order.OrderWebController"/>
-    <bean id="cart" class="com.globallogic.store.web.order.CartWebController"/>
-    <bean id="account" class="com.globallogic.store.web.user.AccountWebController"/>
-    <bean id="userProducts" class="com.globallogic.store.web.user.UserProductsWebController"/>
-    <bean id="sharedProducts" class="com.globallogic.store.web.user.SharedProductsWebController"/>
-    <bean id="userOrders" class="com.globallogic.store.web.user.UserOrdersWebController"/>
-
-    <!-- Exceptions Resolver -->
-    <!--<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
-        <property name="exceptionMappings">
-            <props>
-                <prop key="com.globallogic.store.exception.AccesDeniedException">error/403</prop>
-                <prop key="java.lang.Exception">error/error</prop>
-                <prop key="java.lang.RuntimeException">error/error</prop>
-            </props>
-        </property>
-        <property name="statusCodes">
-            <props>
-                <prop key="error/404">404</prop>
-                <prop key="error/error">500</prop>
-            </props>
-        </property>
-    </bean>-->
-
     <!-- Resource resolver -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/pages/"/>
