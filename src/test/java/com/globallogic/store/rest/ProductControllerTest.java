@@ -14,9 +14,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -60,8 +57,6 @@ public class ProductControllerTest {
     public void init() {
         MockitoAnnotations.initMocks(this);
         mvc = MockMvcBuilders.standaloneSetup(controller).build();
-        Authentication auth = new UsernamePasswordAuthenticationToken(Workflow.createCustomerAuthenticatedUser(),null);
-        SecurityContextHolder.getContext().setAuthentication(auth);
     }
 
     @Test
@@ -131,6 +126,7 @@ public class ProductControllerTest {
 
     @Test
     public void checkCreateProductTest() throws Exception {
+        Workflow.loginUser();
         Product product = Workflow.createDummyProduct(DUMMY_ID);
         ProductDTO productDTO = Workflow.createProductDto(product);
 
@@ -148,6 +144,7 @@ public class ProductControllerTest {
         assertProduct(product, actual);
         verify(productDao, times(1)).createEntity(any(Product.class));
         verifyNoMoreInteractions(productDao);
+        Workflow.logout();
     }
 
     @Test
