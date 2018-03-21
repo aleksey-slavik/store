@@ -34,7 +34,7 @@ public class PermissionServiceTest {
     private PermissionService permissionService;
 
     @Before
-    public void before(){
+    public void before() {
         Workflow.loginUser();
     }
 

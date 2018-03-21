@@ -5,15 +5,17 @@ import com.globallogic.store.converter.user.UserConverter;
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.dao.criteria.SearchCriteria;
 import com.globallogic.store.domain.user.Authority;
-import com.globallogic.store.domain.user.AuthorityName;
 import com.globallogic.store.domain.user.User;
 import com.globallogic.store.dto.user.AuthorityDTO;
 import com.globallogic.store.dto.user.UserDTO;
+import com.globallogic.store.exception.AlreadyExistException;
+import com.globallogic.store.exception.NoContentException;
+import com.globallogic.store.exception.NotFoundException;
 import com.globallogic.store.security.service.RegisterUserService;
+import com.globallogic.store.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,9 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Rest controller for operations with users
@@ -46,6 +46,11 @@ public class UserRestController {
     private GenericDao<Authority> authorityDao;
 
     /**
+     * user service
+     */
+    private UserService userService;
+
+    /**
      * user converter
      */
     private UserConverter userConverter;
@@ -63,11 +68,13 @@ public class UserRestController {
     public UserRestController(
             GenericDao<User> userDao,
             GenericDao<Authority> authorityDao,
+            UserService userService,
             UserConverter userConverter,
             AuthorityConverter authorityConverter,
             RegisterUserService registerUserService) {
         this.userDao = userDao;
         this.authorityDao = authorityDao;
+        this.userService = userService;
         this.userConverter = userConverter;
         this.authorityConverter = authorityConverter;
         this.registerUserService = registerUserService;
@@ -78,6 +85,7 @@ public class UserRestController {
      *
      * @param id given id
      * @return user with given id
+     * @throws NotFoundException throws when user with needed id not exist
      */
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(
@@ -88,14 +96,9 @@ public class UserRestController {
             value = "Resource to get a user by id",
             notes = "This can only be done by the authenticated user, which is a account owner or have admin role")
     public ResponseEntity<?> getUserById(
-            @ApiParam(value = "user id", required = true) @PathVariable long id) {
-        User user = userDao.getEntityByKey(id);
-
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } else {
-            return ResponseEntity.ok().body(userConverter.toResource(user));
-        }
+            @ApiParam(value = "user id", required = true) @PathVariable long id) throws NotFoundException {
+        User user = userService.getById(id);
+        return ResponseEntity.ok().body(userConverter.toResource(user));
     }
 
     /**
@@ -110,6 +113,7 @@ public class UserRestController {
      * @param sort      name of sorting column
      * @param order     sorting order
      * @return list of users
+     * @throws NoContentException thrown when users with given criteria not found
      */
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(
@@ -126,7 +130,7 @@ public class UserRestController {
             @ApiParam(value = "page number", defaultValue = "1") @RequestParam(value = "page", defaultValue = "1") int page,
             @ApiParam(value = "count of items per page", defaultValue = "5") @RequestParam(value = "size", defaultValue = "5") int size,
             @ApiParam(value = "name of sorting column", defaultValue = "id") @RequestParam(value = "sort", defaultValue = "id") String sort,
-            @ApiParam(value = "sorting order", defaultValue = "asc") @RequestParam(value = "order", defaultValue = "asc") String order) {
+            @ApiParam(value = "sorting order", defaultValue = "asc") @RequestParam(value = "order", defaultValue = "asc") String order) throws NoContentException {
 
         SearchCriteria criteria = new SearchCriteria()
                 .criteria("username", (Object[]) username)
@@ -138,13 +142,8 @@ public class UserRestController {
                 .sortBy(sort)
                 .order(order);
 
-        List<User> users = userDao.getEntityList(criteria);
-
-        if (users == null || users.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } else {
-            return ResponseEntity.ok().body(userConverter.toResources(users));
-        }
+        List<User> users = userService.getList(criteria);
+        return ResponseEntity.ok().body(userConverter.toResources(users));
     }
 
     /**
@@ -162,14 +161,9 @@ public class UserRestController {
             notes = "This can only be done by the anonymous user or user, which have admin role")
     public ResponseEntity<?> createUser(
             @ApiParam(value = "auto login") @RequestParam(value = "autoLogin", required = false) boolean autoLogin,
-            @ApiParam(value = "created user object", required = true) @Valid @RequestBody UserDTO user) {
+            @ApiParam(value = "created user object", required = true) @Valid @RequestBody UserDTO user) throws NotFoundException, AlreadyExistException {
 
-        User created = userDao.createEntity(userConverter.toOrigin(user));
-        SearchCriteria criteria = new SearchCriteria().criteria("title", AuthorityName.CUSTOMER);
-        Authority granted = authorityDao.getEntity(criteria);
-        created.appendAuthority(granted);
-        created.setEnabled(true);
-        userDao.updateEntity(created);
+        User created = userService.insert(user);
 
         if (autoLogin) {
             registerUserService.autoLogin(created.getUsername(), created.getPassword());
@@ -195,14 +189,9 @@ public class UserRestController {
             notes = "This can only be done by the authenticated user")
     public ResponseEntity<?> updateUser(
             @ApiParam(value = "user id", required = true) @PathVariable long id,
-            @ApiParam(value = "updated user object", required = true) @Valid @RequestBody UserDTO user) {
+            @ApiParam(value = "updated user object", required = true) @Valid @RequestBody UserDTO user) throws NotFoundException {
 
-        Set<Authority> authorities = new HashSet<>();
-        authorities.addAll(userDao.getEntityByKey(id).getAuthorities());
-        user.setId(id);
-        User updated = userConverter.toOrigin(user);
-        updated.setAuthorities(authorities);
-        updated = userDao.updateEntity(updated);
+        User updated = userService.update(id, user);
         return ResponseEntity.ok().body(userConverter.toResource(updated));
     }
 
@@ -221,12 +210,10 @@ public class UserRestController {
             value = "Resource to delete a user",
             notes = "This can only be done by the authenticated user")
     public ResponseEntity<?> deleteUserById(
-            @ApiParam(value = "user id", required = true) @PathVariable long id) {
+            @ApiParam(value = "user id", required = true) @PathVariable long id) throws NotFoundException {
 
-        /*User deleted = userDao.deleteEntity(id);
-        return ResponseEntity.ok().body(userConverter.toResource(deleted));*/
-
-        return null;
+        User deleted = userService.remove(id);
+        return ResponseEntity.ok().body(userConverter.toResource(deleted));
     }
 
     /**
@@ -244,10 +231,9 @@ public class UserRestController {
             value = "Resource to get all user authorities",
             notes = "This can only be done by user with admin role")
     public ResponseEntity<?> getUserAuthorities(
-            @ApiParam(value = "user id", required = true) @PathVariable long id) {
+            @ApiParam(value = "user id", required = true) @PathVariable long id) throws NotFoundException {
 
-        List<Authority> authorities = new ArrayList<>();
-        authorities.addAll(userDao.getEntityByKey(id).getAuthorities());
+        List<Authority> authorities = userService.getUserAuthorities(id);
         return ResponseEntity.ok().body(authorityConverter.toResources(authorities));
     }
 
@@ -268,13 +254,9 @@ public class UserRestController {
             notes = "This can only be done by user with admin role")
     public ResponseEntity<?> appendUserAuthority(
             @ApiParam(value = "user id", required = true) @PathVariable long id,
-            @ApiParam(value = "authority object", required = true) @RequestBody AuthorityDTO authority) {
+            @ApiParam(value = "authority object", required = true) @RequestBody AuthorityDTO authority) throws NotFoundException {
 
-        SearchCriteria criteria = new SearchCriteria().criteria("title", authority.getTitle());
-        Authority granted = authorityDao.getEntity(criteria);
-        User updated = userDao.getEntityByKey(id);
-        updated.appendAuthority(granted);
-        userDao.updateEntity(updated);
+        Authority granted = userService.appendAuthority(id, authority);
         return ResponseEntity.ok().body(authorityConverter.toResource(granted));
     }
 
@@ -295,12 +277,9 @@ public class UserRestController {
             notes = "This can only be done by user with admin role")
     public ResponseEntity<?> deleteUserAuthority(
             @ApiParam(value = "user id", required = true) @PathVariable long id,
-            @ApiParam(value = "authority id", required = true) @PathVariable long authId) {
+            @ApiParam(value = "authority id", required = true) @PathVariable long authId) throws NotFoundException {
 
-        Authority removed = authorityDao.getEntityByKey(authId);
-        User updated = userDao.getEntityByKey(id);
-        updated.removeAuthority(removed);
-        userDao.updateEntity(updated);
+        Authority removed = userService.removeAuthority(id, authId);
         return ResponseEntity.ok().body(authorityConverter.toResource(removed));
     }
 }
