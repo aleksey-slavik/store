@@ -1,14 +1,11 @@
 package com.globallogic.store.service;
 
-import com.globallogic.store.converter.order.OrderConverter;
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.dao.criteria.SearchCriteria;
 import com.globallogic.store.domain.order.Order;
 import com.globallogic.store.domain.order.OrderItem;
 import com.globallogic.store.domain.order.Status;
 import com.globallogic.store.domain.user.User;
-import com.globallogic.store.dto.order.OrderDTO;
-import com.globallogic.store.dto.order.OrderItemDTO;
 import com.globallogic.store.exception.NoContentException;
 import com.globallogic.store.exception.NotAcceptableException;
 import com.globallogic.store.exception.NotFoundException;
@@ -24,17 +21,13 @@ public class OrderService {
 
     private OrderItemService orderItemService;
 
-    private OrderConverter orderConverter;
-
     public OrderService(
             GenericDao<Order> orderDao,
             UserService userService,
-            OrderItemService orderItemService,
-            OrderConverter orderConverter) {
+            OrderItemService orderItemService) {
         this.orderDao = orderDao;
         this.userService = userService;
         this.orderItemService = orderItemService;
-        this.orderConverter = orderConverter;
     }
 
     public Order getById(long id) throws NotFoundException {
@@ -72,11 +65,11 @@ public class OrderService {
         }
     }
 
-    public Order update(long id, OrderDTO order) throws NotAcceptableException {
+    public Order update(long id, Order order) throws NotAcceptableException {
         try {
             getById(id);
             order.setId(id);
-            return orderDao.updateEntity(orderConverter.toOrigin(order));
+            return orderDao.updateEntity(order);
         } catch (NotFoundException e) {
             throw new NotAcceptableException("Can't update order with id=" + id + "!");
         }

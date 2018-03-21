@@ -1,10 +1,9 @@
 package com.globallogic.store.service;
 
-import com.globallogic.store.converter.product.ProductConverter;
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.dao.criteria.SearchCriteria;
 import com.globallogic.store.domain.product.Product;
-import com.globallogic.store.dto.product.ProductDTO;
+import com.globallogic.store.domain.user.User;
 import com.globallogic.store.exception.NoContentException;
 import com.globallogic.store.exception.NotAcceptableException;
 import com.globallogic.store.exception.NotFoundException;
@@ -32,18 +31,11 @@ public class ProductService {
      */
     private UserService userService;
 
-    /**
-     * product converter
-     */
-    private ProductConverter productConverter;
-
     public ProductService(
             GenericDao<Product> productDao,
-            UserService userService,
-            ProductConverter productConverter) {
+            UserService userService) {
         this.productDao = productDao;
         this.userService = userService;
-        this.productConverter = productConverter;
     }
 
     /**
@@ -87,14 +79,14 @@ public class ProductService {
      * @return created product
      * @throws NotAcceptableException thrown when product owner not exist in database
      */
-    public Product insert(ProductDTO product) throws NotAcceptableException {
+    public Product insert(Product product) throws NotAcceptableException {
         try {
             long id = ((AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
-            userService.getById(id);
-            product.setOwnerId(id);
-            return productDao.createEntity(productConverter.toOrigin(product));
+            User owner = userService.getById(id);
+            product.setOwner(owner);
+            return productDao.createEntity(product);
         } catch (NotFoundException e) {
-            throw new NotAcceptableException("Can't create product without user owner. User with id=" + product.getOwnerId() + " not found!");
+            throw new NotAcceptableException("Can't create product without user owner!");
         }
     }
 
@@ -106,12 +98,12 @@ public class ProductService {
      * @return updated product
      * @throws NotAcceptableException thrown when product with given id or product owner are not exist in database
      */
-    public Product update(long id, ProductDTO product) throws NotAcceptableException {
+    public Product update(long id, Product product) throws NotAcceptableException {
         try {
             getById(id);
-            userService.getById(product.getOwnerId());
+            userService.getById(product.getOwner().getId());
             product.setId(id);
-            return productDao.updateEntity(productConverter.toOrigin(product));
+            return productDao.updateEntity(product);
         } catch (NotFoundException e) {
             throw new NotAcceptableException("Can't update product with id=" + id + "!");
         }

@@ -148,7 +148,7 @@ public class UserRestController {
             @ApiParam(value = "auto login") @RequestParam(value = "autoLogin", required = false) boolean autoLogin,
             @ApiParam(value = "created user object", required = true) @Valid @RequestBody UserDTO user) throws NotFoundException, AlreadyExistException {
 
-        User created = userService.insert(user);
+        User created = userService.insert(userConverter.toOrigin(user));
 
         if (autoLogin) {
             registerUserService.autoLogin(created.getUsername(), created.getPassword());
@@ -176,7 +176,7 @@ public class UserRestController {
             @ApiParam(value = "user id", required = true) @PathVariable long id,
             @ApiParam(value = "updated user object", required = true) @Valid @RequestBody UserDTO user) throws NotAcceptableException {
 
-        User updated = userService.update(id, user);
+        User updated = userService.update(id, userConverter.toOrigin(user));
         return ResponseEntity.ok().body(userConverter.toResource(updated));
     }
 

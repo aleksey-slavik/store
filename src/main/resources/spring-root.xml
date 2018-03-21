@@ -83,17 +83,25 @@
     <bean id="productService" class="com.globallogic.store.service.ProductService">
         <constructor-arg name="productDao" ref="productDao"/>
         <constructor-arg name="userService" ref="userService"/>
-        <constructor-arg name="productConverter" ref="productConverter"/>
     </bean>
 
     <bean id="userService" class="com.globallogic.store.service.UserService">
         <constructor-arg name="userDao" ref="userDao"/>
-        <constructor-arg name="userConverter" ref="userConverter"/>
         <constructor-arg name="authorityService" ref="authorityService"/>
     </bean>
 
     <bean id="authorityService" class="com.globallogic.store.service.AuthorityService">
         <constructor-arg name="authorityDao" ref="authorityDao"/>
+    </bean>
+
+    <bean id="orderService" class="com.globallogic.store.service.OrderService">
+        <constructor-arg name="orderDao" ref="orderDao"/>
+        <constructor-arg name="orderItemService" ref="orderItemService"/>
+        <constructor-arg name="userService" ref="userService"/>
+    </bean>
+
+    <bean class="com.globallogic.store.service.OrderItemService">
+        <constructor-arg name="orderItemDao" ref="orderItemDao"/>
     </bean>
 
     <!-- Spring Rest Beans -->
@@ -114,9 +122,9 @@
     </bean>
 
     <bean id="orderRestController" class="com.globallogic.store.rest.OrderRestController">
-        <constructor-arg name="orderDao" ref="orderDao"/>
-        <constructor-arg name="orderItemDao" ref="orderItemDao"/>
-        <constructor-arg name="userDao" ref="userDao"/>
+        <constructor-arg name="orderService" ref="orderService"/>
+        <constructor-arg name="orderItemService" ref="orderItemService"/>
+        <constructor-arg name="userService" ref="userService"/>
         <constructor-arg name="orderConverter" ref="orderConverter"/>
         <constructor-arg name="orderItemConverter" ref="orderItemConverter"/>
     </bean>

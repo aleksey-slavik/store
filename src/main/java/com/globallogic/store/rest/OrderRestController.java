@@ -172,7 +172,7 @@ public class OrderRestController {
             @ApiParam(value = "order id", required = true) @PathVariable long id,
             @ApiParam(value = "updated order object", required = true) @Valid @RequestBody OrderDTO order) throws NotAcceptableException {
 
-        Order updated = orderService.update(id, order);
+        Order updated = orderService.update(id, orderConverter.toOrigin(order));
         return ResponseEntity.ok().body(orderConverter.toResource(updated));
     }
 

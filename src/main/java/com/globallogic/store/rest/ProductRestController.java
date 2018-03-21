@@ -210,7 +210,7 @@ public class ProductRestController {
     public ResponseEntity<?> createProduct(
             @ApiParam(value = "created product object", required = true) @Valid @RequestBody ProductDTO product) throws NotAcceptableException, AlreadyExistException {
 
-        Product created = productService.insert(product);
+        Product created = productService.insert(productConverter.toOrigin(product));
         permissionService.addPermission(created, PermissionName.ADMINISTRATION, Product.class);
         return ResponseEntity.ok().body(productConverter.toResource(created));
     }
@@ -235,7 +235,7 @@ public class ProductRestController {
             @ApiParam(value = "product id", required = true) @PathVariable Long id,
             @ApiParam(value = "updated product object", required = true) @Valid @RequestBody ProductDTO product) throws NotAcceptableException {
 
-        Product updated = productService.update(id, product);
+        Product updated = productService.update(id, productConverter.toOrigin(product));
         return ResponseEntity.ok(productConverter.toResource(updated));
     }
 

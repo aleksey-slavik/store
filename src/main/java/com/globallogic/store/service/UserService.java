@@ -1,12 +1,10 @@
 package com.globallogic.store.service;
 
-import com.globallogic.store.converter.user.UserConverter;
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.dao.criteria.SearchCriteria;
 import com.globallogic.store.domain.user.Authority;
 import com.globallogic.store.domain.user.User;
 import com.globallogic.store.dto.user.AuthorityDTO;
-import com.globallogic.store.dto.user.UserDTO;
 import com.globallogic.store.exception.AlreadyExistException;
 import com.globallogic.store.exception.NoContentException;
 import com.globallogic.store.exception.NotAcceptableException;
@@ -25,15 +23,11 @@ public class UserService {
 
     private AuthorityService authorityService;
 
-    private UserConverter userConverter;
-
     public UserService(
             GenericDao<User> userDao,
-            AuthorityService authorityService,
-            UserConverter userConverter) {
+            AuthorityService authorityService) {
         this.userDao = userDao;
         this.authorityService = authorityService;
-        this.userConverter = userConverter;
     }
 
     public User getById(long id) throws NotFoundException {
@@ -65,12 +59,12 @@ public class UserService {
         }
     }
 
-    public User insert(UserDTO user) throws AlreadyExistException, NotFoundException {
+    public User insert(User user) throws AlreadyExistException, NotFoundException {
         try {
             checkUser(user.getId(), user.getUsername());
             throw new AlreadyExistException("User " + user.getUsername() + " already exist!");
         } catch (NotFoundException e) {
-            User created = userDao.createEntity(userConverter.toOrigin(user));
+            User created = userDao.createEntity(user);
             Authority customer = authorityService.getByTitle("CUSTOMER");
             created.appendAuthority(customer);
             created.setEnabled(true);
@@ -78,12 +72,12 @@ public class UserService {
         }
     }
 
-    public User update(long id, UserDTO user) throws NotAcceptableException {
+    public User update(long id, User user) throws NotAcceptableException {
         try {
             User updated = getById(id);
             Set<Authority> authorities = updated.getAuthorities();
-            user.setId(id);
-            updated = userConverter.toOrigin(user);
+            updated = user;
+            updated.setId(id);
             updated.setAuthorities(authorities);
             return userDao.updateEntity(updated);
         } catch (NotFoundException e) {
