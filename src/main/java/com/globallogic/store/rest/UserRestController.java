@@ -9,6 +9,7 @@ import com.globallogic.store.dto.user.AuthorityDTO;
 import com.globallogic.store.dto.user.UserDTO;
 import com.globallogic.store.exception.AlreadyExistException;
 import com.globallogic.store.exception.NoContentException;
+import com.globallogic.store.exception.NotAcceptableException;
 import com.globallogic.store.exception.NotFoundException;
 import com.globallogic.store.security.service.RegisterUserService;
 import com.globallogic.store.service.UserService;
@@ -173,7 +174,7 @@ public class UserRestController {
             notes = "This can only be done by the authenticated user")
     public ResponseEntity<?> updateUser(
             @ApiParam(value = "user id", required = true) @PathVariable long id,
-            @ApiParam(value = "updated user object", required = true) @Valid @RequestBody UserDTO user) throws NotFoundException {
+            @ApiParam(value = "updated user object", required = true) @Valid @RequestBody UserDTO user) throws NotAcceptableException {
 
         User updated = userService.update(id, user);
         return ResponseEntity.ok().body(userConverter.toResource(updated));

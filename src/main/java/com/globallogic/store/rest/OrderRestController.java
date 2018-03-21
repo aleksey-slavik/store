@@ -2,7 +2,6 @@ package com.globallogic.store.rest;
 
 import com.globallogic.store.converter.order.OrderConverter;
 import com.globallogic.store.converter.order.OrderItemConverter;
-import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.dao.criteria.SearchCriteria;
 import com.globallogic.store.domain.order.Status;
 import com.globallogic.store.domain.user.User;
@@ -10,14 +9,18 @@ import com.globallogic.store.dto.order.OrderDTO;
 import com.globallogic.store.dto.order.OrderItemDTO;
 import com.globallogic.store.domain.order.Order;
 import com.globallogic.store.domain.order.OrderItem;
+import com.globallogic.store.exception.NoContentException;
+import com.globallogic.store.exception.NotAcceptableException;
+import com.globallogic.store.exception.NotFoundException;
+import com.globallogic.store.service.OrderItemService;
+import com.globallogic.store.service.OrderService;
+import com.globallogic.store.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -34,19 +37,19 @@ import java.util.List;
 public class OrderRestController {
 
     /**
-     * order DAO
+     * order service
      */
-    private GenericDao<Order> orderDao;
+    private OrderService orderService;
 
     /**
-     * order item DAO
+     * order item service
      */
-    private GenericDao<OrderItem> orderItemDao;
+    private OrderItemService orderItemService;
 
     /**
-     * user DAO
+     * user service
      */
-    private GenericDao<User> userDao;
+    private UserService userService;
 
     /**
      * order converter
@@ -59,14 +62,14 @@ public class OrderRestController {
     private OrderItemConverter orderItemConverter;
 
     public OrderRestController(
-            GenericDao<Order> orderDao,
-            GenericDao<OrderItem> orderItemDao,
-            GenericDao<User> userDao,
+            OrderService orderService,
+            OrderItemService orderItemService,
+            UserService userService,
             OrderConverter orderConverter,
             OrderItemConverter orderItemConverter) {
-        this.orderDao = orderDao;
-        this.orderItemDao = orderItemDao;
-        this.userDao = userDao;
+        this.orderService = orderService;
+        this.orderItemService = orderItemService;
+        this.userService = userService;
         this.orderConverter = orderConverter;
         this.orderItemConverter = orderItemConverter;
     }
@@ -86,14 +89,10 @@ public class OrderRestController {
             value = "Resource to get a order by id",
             notes = "This can only be done by the authenticated user, which is a customer of order or have admin role")
     public ResponseEntity<?> getOrderById(
-            @ApiParam(value = "order id", required = true) @PathVariable long id) {
-        Order order = orderDao.getEntityByKey(id);
+            @ApiParam(value = "order id", required = true) @PathVariable long id) throws NotFoundException {
 
-        if (order == null) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } else {
-            return ResponseEntity.ok().body(orderConverter.toResource(order));
-        }
+        Order order = orderService.getById(id);
+        return ResponseEntity.ok().body(orderConverter.toResource(order));
     }
 
     /**
@@ -120,14 +119,9 @@ public class OrderRestController {
             @ApiParam(value = "page number", defaultValue = "1") @RequestParam(value = "page", defaultValue = "1") int page,
             @ApiParam(value = "count of items per page", defaultValue = "5") @RequestParam(value = "size", defaultValue = "5") int size,
             @ApiParam(value = "name of sorting column", defaultValue = "id") @RequestParam(value = "sort", defaultValue = "id") String sort,
-            @ApiParam(value = "sorting order", defaultValue = "asc") @RequestParam(value = "order", defaultValue = "asc") String order) {
+            @ApiParam(value = "sorting order", defaultValue = "asc") @RequestParam(value = "order", defaultValue = "asc") String order) throws NotFoundException, NoContentException {
 
-        User user = null;
-
-        if (customer != null) {
-            SearchCriteria customerCriteria = new SearchCriteria().criteria("username", customer);
-            user = userDao.getEntity(customerCriteria);
-        }
+        User user = customer != null ? userService.getByUsername(customer) : null;
 
         SearchCriteria criteria = new SearchCriteria()
                 .criteria("customer", user)
@@ -137,13 +131,8 @@ public class OrderRestController {
                 .sortBy(sort)
                 .order(order);
 
-        List<Order> orders = orderDao.getEntityList(criteria);
-
-        if (orders == null || orders.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } else {
-            return ResponseEntity.ok().body(orderConverter.toResources(orders));
-        }
+        List<Order> orders = orderService.getList(criteria);
+        return ResponseEntity.ok().body(orderConverter.toResources(orders));
     }
 
     /**
@@ -158,17 +147,10 @@ public class OrderRestController {
     @ApiOperation(
             value = "Resource to create a order",
             notes = "This can only be done by the authenticated user, which is a customer of order or have admin role")
-    public ResponseEntity<?> createOrder() {
-        OrderDTO order = new OrderDTO();
-        String principal = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userDao.getEntity(new SearchCriteria().criteria("username", principal));
-        order.setCustomerId(user.getId());
-        order.setCustomer(user.getUsername());
-        order.setStatus(Status.OPENED);
-        order.setTotalCost(0);
-        order.setCreatedDate(System.currentTimeMillis());
-        Order created = orderDao.createEntity(orderConverter.toOrigin(order));
-        return ResponseEntity.ok().body(created);
+    public ResponseEntity<?> createOrder() throws NotAcceptableException {
+
+        Order created = orderService.createEmptyOrder();
+        return ResponseEntity.ok().body(orderConverter.toResource(created));
     }
 
     /**
@@ -188,10 +170,9 @@ public class OrderRestController {
             notes = "This can only be done by the authenticated user, which is a customer of order or have admin role")
     public ResponseEntity<?> updateOrder(
             @ApiParam(value = "order id", required = true) @PathVariable long id,
-            @ApiParam(value = "updated order object", required = true) @Valid @RequestBody OrderDTO order) {
+            @ApiParam(value = "updated order object", required = true) @Valid @RequestBody OrderDTO order) throws NotAcceptableException {
 
-        order.setId(id);
-        Order updated = orderDao.updateEntity(orderConverter.toOrigin(order));
+        Order updated = orderService.update(id, order);
         return ResponseEntity.ok().body(orderConverter.toResource(updated));
     }
 
@@ -210,12 +191,10 @@ public class OrderRestController {
             value = "Resource to delete a order",
             notes = "This can only be done by user, which have admin role")
     public ResponseEntity<?> deleteOrderById(
-            @ApiParam(value = "order id", required = true) @PathVariable long id) {
+            @ApiParam(value = "order id", required = true) @PathVariable long id) throws NotFoundException {
 
-        /*Order deleted = orderDao.deleteEntity(id);
-        return ResponseEntity.ok().body(orderConverter.toResource(deleted));*/
-
-        return null;
+        Order deleted = orderService.remove(id);
+        return ResponseEntity.ok().body(orderConverter.toResource(deleted));
     }
 
     /**
@@ -235,19 +214,10 @@ public class OrderRestController {
             notes = "This can only be done by the authenticated user, which is a customer of order or have admin role")
     public ResponseEntity<?> getOrderItemByItemId(
             @ApiParam(value = "order id", required = true) @PathVariable long id,
-            @ApiParam(value = "order item id", required = true) @PathVariable long itemId) {
+            @ApiParam(value = "order item id", required = true) @PathVariable long itemId) throws NotFoundException {
 
-        SearchCriteria criteria = new SearchCriteria()
-                .criteria("order", id)
-                .criteria("product", itemId);
-
-        OrderItem item = orderItemDao.getEntity(criteria);
-
-        if (item == null) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } else {
-            return ResponseEntity.ok().body(orderItemConverter.toResource(item));
-        }
+        OrderItem item = orderItemService.getByIds(id, itemId);
+        return ResponseEntity.ok().body(orderItemConverter.toResource(item));
     }
 
     /**
@@ -273,7 +243,7 @@ public class OrderRestController {
             @ApiParam(value = "page number", defaultValue = "1") @RequestParam(value = "page", defaultValue = "1") int page,
             @ApiParam(value = "count of items per page", defaultValue = "5") @RequestParam(value = "size", defaultValue = "5") int size,
             @ApiParam(value = "name of sorting column", defaultValue = "product") @RequestParam(value = "sort", defaultValue = "product") String sort,
-            @ApiParam(value = "sorting order", defaultValue = "asc") @RequestParam(value = "order", defaultValue = "asc") String order) {
+            @ApiParam(value = "sorting order", defaultValue = "asc") @RequestParam(value = "order", defaultValue = "asc") String order) throws NoContentException {
 
         SearchCriteria criteria = new SearchCriteria()
                 .criteria("order", id)
@@ -282,13 +252,8 @@ public class OrderRestController {
                 .sortBy(sort)
                 .order(order);
 
-        List<OrderItem> items = orderItemDao.getEntityList(criteria);
-
-        if (items == null || items.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } else {
-            return ResponseEntity.ok().body(orderItemConverter.toResources(items));
-        }
+        List<OrderItem> items = orderItemService.getList(criteria);
+        return ResponseEntity.ok().body(orderItemConverter.toResources(items));
     }
 
     /**
@@ -308,11 +273,9 @@ public class OrderRestController {
             notes = "This can only be done by the authenticated user, which is a customer of order or have admin role")
     public ResponseEntity<?> addOrderItem(
             @ApiParam(value = "order id", required = true) @PathVariable long id,
-            @ApiParam(value = "order item object", required = true) @Valid @RequestBody OrderItemDTO orderItem) {
+            @ApiParam(value = "order item object", required = true) @Valid @RequestBody OrderItemDTO orderItem) throws NotFoundException {
 
-        Order order = orderDao.getEntityByKey(id);
-        order.appendItem(orderItemConverter.toOrigin(orderItem));
-        orderDao.updateEntity(order);
+        orderService.appendItem(id, orderItemConverter.toOrigin(orderItem));
         return ResponseEntity.ok().body(orderItem);
     }
 
@@ -335,12 +298,9 @@ public class OrderRestController {
     public ResponseEntity<?> updateOrderItem(
             @ApiParam(value = "order id", required = true) @PathVariable long id,
             @ApiParam(value = "order item id", required = true) @PathVariable long itemId,
-            @ApiParam(value = "order item object", required = true) @Valid @RequestBody OrderItemDTO orderItem) {
+            @ApiParam(value = "order item object", required = true) @Valid @RequestBody OrderItemDTO orderItem) throws NotFoundException {
 
-        Order order = orderDao.getEntityByKey(id);
-        orderItem.setProductId(itemId);
-        order.updateItem(orderItemConverter.toOrigin(orderItem));
-        orderDao.updateEntity(order);
+        orderService.updateItem(id, itemId, orderItemConverter.toOrigin(orderItem));
         return ResponseEntity.ok().body(orderItem);
     }
 
@@ -361,17 +321,9 @@ public class OrderRestController {
             notes = "This can only be done by the authenticated user, which is a customer of order or have admin role")
     public ResponseEntity<?> deleteOrderItem(
             @ApiParam(value = "order id", required = true) @PathVariable long id,
-            @ApiParam(value = "order item id", required = true) @PathVariable long itemId) {
+            @ApiParam(value = "order item id", required = true) @PathVariable long itemId) throws NotFoundException {
 
-        Order order = orderDao.getEntityByKey(id);
-
-        SearchCriteria criteria = new SearchCriteria()
-                .criteria("order", id)
-                .criteria("product", itemId);
-
-        OrderItem item = orderItemDao.getEntity(criteria);
-        order.deleteItem(item);
-        orderDao.updateEntity(order);
+        OrderItem item = orderService.deleteItem(id, itemId);
         return ResponseEntity.ok().body(orderItemConverter.toResource(item));
     }
 
@@ -390,11 +342,9 @@ public class OrderRestController {
             value = "Resource to delete all order items from order list",
             notes = "This can only be done by the authenticated user, which is a customer of order or have admin role")
     public ResponseEntity<?> deleteAllOrderItem(
-            @ApiParam(value = "order id", required = true) @PathVariable long id) {
+            @ApiParam(value = "order id", required = true) @PathVariable long id) throws NotFoundException {
 
-        Order order = orderDao.getEntityByKey(id);
-        order.clear();
-        orderDao.updateEntity(order);
+        Order order = orderService.deleteAllItems(id);
         return ResponseEntity.ok().body(orderConverter.toResource(order));
     }
 }

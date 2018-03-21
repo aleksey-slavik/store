@@ -9,6 +9,7 @@ import com.globallogic.store.dto.user.AuthorityDTO;
 import com.globallogic.store.dto.user.UserDTO;
 import com.globallogic.store.exception.AlreadyExistException;
 import com.globallogic.store.exception.NoContentException;
+import com.globallogic.store.exception.NotAcceptableException;
 import com.globallogic.store.exception.NotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -77,13 +78,18 @@ public class UserService {
         }
     }
 
-    public User update(long id, UserDTO user) throws NotFoundException {
-        User updated = getById(id);
-        Set<Authority> authorities = updated.getAuthorities();
-        user.setId(id);
-        updated = userConverter.toOrigin(user);
-        updated.setAuthorities(authorities);
-        return userDao.updateEntity(updated);
+    public User update(long id, UserDTO user) throws NotAcceptableException {
+        try {
+            User updated = getById(id);
+            Set<Authority> authorities = updated.getAuthorities();
+            user.setId(id);
+            updated = userConverter.toOrigin(user);
+            updated.setAuthorities(authorities);
+            return userDao.updateEntity(updated);
+        } catch (NotFoundException e) {
+            throw new NotAcceptableException("Can't update user with id=" + id + "!");
+        }
+
     }
 
     public User remove(long id) throws NotFoundException {

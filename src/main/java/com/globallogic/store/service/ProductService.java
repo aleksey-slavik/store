@@ -113,7 +113,7 @@ public class ProductService {
             product.setId(id);
             return productDao.updateEntity(productConverter.toOrigin(product));
         } catch (NotFoundException e) {
-            throw new NotAcceptableException("Can't update product with id=" + product.getId() + "!");
+            throw new NotAcceptableException("Can't update product with id=" + id + "!");
         }
     }
 
