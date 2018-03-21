@@ -223,8 +223,10 @@ public class UserRestController {
     public ResponseEntity<?> deleteUserById(
             @ApiParam(value = "user id", required = true) @PathVariable long id) {
 
-        User deleted = userDao.deleteEntityByKey(id);
-        return ResponseEntity.ok().body(userConverter.toResource(deleted));
+        /*User deleted = userDao.deleteEntity(id);
+        return ResponseEntity.ok().body(userConverter.toResource(deleted));*/
+
+        return null;
     }
 
     /**

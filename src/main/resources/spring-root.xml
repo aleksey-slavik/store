@@ -79,6 +79,16 @@
         <constructor-arg value="com.globallogic.store.domain.permission.Permission"/>
     </bean>
 
+    <!-- Services -->
+    <bean id="productService" class="com.globallogic.store.service.ProductService">
+        <constructor-arg name="productDao" ref="productDao"/>
+        <constructor-arg name="userService" ref="userService"/>
+    </bean>
+
+    <bean class="com.globallogic.store.service.UserService">
+        <constructor-arg name="userDao" ref="userDao"/>
+    </bean>
+
     <!-- Spring Rest Beans -->
     <bean id="userRestController" class="com.globallogic.store.rest.UserRestController">
         <constructor-arg name="userDao" ref="userDao"/>
@@ -91,6 +101,7 @@
     <bean id="productRestController" class="com.globallogic.store.rest.ProductRestController">
         <constructor-arg name="productDao" ref="productDao"/>
         <constructor-arg name="userDao" ref="userDao"/>
+        <constructor-arg name="productService" ref="productService"/>
         <constructor-arg name="permissionService" ref="permissionService"/>
         <constructor-arg name="previewConverter" ref="productPreviewConverter"/>
         <constructor-arg name="productConverter" ref="productConverter"/>

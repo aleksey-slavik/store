@@ -5,6 +5,9 @@ import com.globallogic.store.dao.criteria.SearchCriteria;
 import com.globallogic.store.domain.Identifiable;
 import com.globallogic.store.domain.permission.Permission;
 import com.globallogic.store.domain.permission.PermissionName;
+import com.globallogic.store.exception.AlreadyExistException;
+import com.globallogic.store.exception.NoContentException;
+import com.globallogic.store.exception.NotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -38,16 +41,9 @@ public class PermissionService {
      */
     public boolean hasPrivilege(long id, String clazz, String permission) {
         try {
-            SearchCriteria criteria = new SearchCriteria()
-                    .criteria("objectClass", clazz)
-                    .criteria("objectId", id)
-                    .criteria("sid", getPrincipal())
-                    .criteria("permission", PermissionName.valueOf(permission));
-
-            Permission privilege = permissionDao.getEntity(criteria);
-            return privilege != null;
-        } catch (Throwable e) {
-            e.printStackTrace();
+            checkPermission(id, getPrincipal(), PermissionName.valueOf(permission), clazz);
+            return true;
+        } catch (NotFoundException e) {
             return false;
         }
     }
@@ -59,8 +55,9 @@ public class PermissionService {
      * @param permission   needed permission
      * @param clazz        object class
      * @return list of username of users with needed permission
+     * @throws NoContentException throws when user list with needed permissions is empty
      */
-    public List<String> getPrincipalList(Identifiable identifiable, PermissionName permission, Class clazz) {
+    public List<String> getPrincipalList(Identifiable identifiable, PermissionName permission, Class clazz) throws NoContentException {
         SearchCriteria criteria = new SearchCriteria()
                 .criteria("objectClass", clazz.getCanonicalName())
                 .criteria("objectId", identifiable.getId())
@@ -76,7 +73,11 @@ public class PermissionService {
             principals.add(granted.getSid());
         }
 
-        return principals;
+        if (principals.isEmpty()) {
+            throw new NoContentException("There are no user with " + permission + " permission found!");
+        } else {
+            return principals;
+        }
     }
 
     /**
@@ -86,8 +87,9 @@ public class PermissionService {
      * @param permission needed permission
      * @param clazz      object class
      * @return list of id of object, to which user with given username have access
+     * @throws NoContentException throws when available object list for given user is empty
      */
-    public List<Long> getIdList(String principal, PermissionName permission, Class clazz) {
+    public List<Long> getIdList(String principal, PermissionName permission, Class clazz) throws NoContentException {
         SearchCriteria criteria = new SearchCriteria()
                 .criteria("sid", principal)
                 .criteria("objectClass", clazz.getCanonicalName())
@@ -103,7 +105,11 @@ public class PermissionService {
             ids.add(granted.getObjectId());
         }
 
-        return ids;
+        if (ids.isEmpty()) {
+            throw new NoContentException("There are no granted " + permission + " permission for " + principal);
+        } else {
+            return ids;
+        }
     }
 
     /**
@@ -112,8 +118,9 @@ public class PermissionService {
      * @param identifiable object id
      * @param permission   granted permission
      * @param clazz        object class
+     * @throws AlreadyExistException throws when permission already exist in database
      */
-    public void addPermission(Identifiable identifiable, PermissionName permission, Class clazz) {
+    public void addPermission(Identifiable identifiable, PermissionName permission, Class clazz) throws AlreadyExistException {
         addPermission(identifiable, getPrincipal(), permission, clazz);
     }
 
@@ -124,14 +131,20 @@ public class PermissionService {
      * @param principal    username of user
      * @param permission   granted permission
      * @param clazz        object class
+     * @throws AlreadyExistException throws when permission already exist in database
      */
-    public void addPermission(Identifiable identifiable, String principal, PermissionName permission, Class clazz) {
-        Permission granted = new Permission();
-        granted.setObjectClass(clazz.getCanonicalName());
-        granted.setObjectId(identifiable.getId());
-        granted.setSid(principal);
-        granted.setPermission(permission);
-        permissionDao.createEntity(granted);
+    public void addPermission(Identifiable identifiable, String principal, PermissionName permission, Class clazz) throws AlreadyExistException {
+        try {
+            checkPermission(identifiable.getId(), principal, permission, clazz.getCanonicalName());
+            throw new AlreadyExistException(permission + " permission already exist for " + principal);
+        } catch (NotFoundException e) {
+            Permission granted = new Permission();
+            granted.setObjectClass(clazz.getCanonicalName());
+            granted.setObjectId(identifiable.getId());
+            granted.setSid(principal);
+            granted.setPermission(permission);
+            permissionDao.createEntity(granted);
+        }
     }
 
     /**
@@ -141,16 +154,11 @@ public class PermissionService {
      * @param principal    username of user
      * @param permission   removed permission
      * @param clazz        object class
+     * @throws NotFoundException throws when permission not exist
      */
-    public void deletePermission(Identifiable identifiable, String principal, PermissionName permission, Class clazz) {
-        SearchCriteria criteria = new SearchCriteria()
-                .criteria("objectClass", clazz.getCanonicalName())
-                .criteria("objectId", identifiable.getId())
-                .criteria("sid", principal)
-                .criteria("permission", permission);
-
-        Permission deleted = permissionDao.getEntity(criteria);
-        permissionDao.deleteEntityByKey(deleted.getId());
+    public void deletePermission(Identifiable identifiable, String principal, PermissionName permission, Class clazz) throws NotFoundException {
+        Permission deleted = checkPermission(identifiable.getId(), principal, permission, clazz.getCanonicalName());
+        permissionDao.deleteEntity(deleted);
     }
 
     /**
@@ -171,15 +179,15 @@ public class PermissionService {
         List<Permission> deleted = permissionDao.getEntityList(criteria);
 
         for (Permission permission : deleted) {
-            permissionDao.deleteEntityByKey(permission.getId());
+            permissionDao.deleteEntity(permission);
         }
     }
 
     /**
      * Get username of authenticated user from security context
      *
-     * @see SecurityContextHolder
      * @return username of authenticated user
+     * @see SecurityContextHolder
      */
     private String getPrincipal() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -188,6 +196,32 @@ public class PermissionService {
             return ((UserDetails) auth.getPrincipal()).getUsername();
         } else {
             return auth.getPrincipal().toString();
+        }
+    }
+
+    /**
+     * Check availability of permission in database
+     *
+     * @param id         object id
+     * @param principal  username of user
+     * @param permission removed permission
+     * @param clazz      object class
+     * @return available permission
+     * @throws NotFoundException throws when permission not exist
+     */
+    private Permission checkPermission(long id, String principal, PermissionName permission, String clazz) throws NotFoundException {
+        SearchCriteria criteria = new SearchCriteria()
+                .criteria("objectClass", clazz)
+                .criteria("objectId", id)
+                .criteria("sid", principal)
+                .criteria("permission", permission);
+
+        Permission checked = permissionDao.getEntity(criteria);
+
+        if (checked == null) {
+            throw new NotFoundException(permission + " permission not found for " + principal);
+        } else {
+            return checked;
         }
     }
 }

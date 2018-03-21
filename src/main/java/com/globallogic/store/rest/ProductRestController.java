@@ -3,17 +3,20 @@ package com.globallogic.store.rest;
 import com.globallogic.store.converter.product.ProductConverter;
 import com.globallogic.store.converter.product.ProductPreviewConverter;
 import com.globallogic.store.converter.permission.SidConverter;
-import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.dao.criteria.SearchCriteria;
 import com.globallogic.store.domain.permission.PermissionName;
 import com.globallogic.store.domain.user.User;
 import com.globallogic.store.dto.product.ProductDTO;
 import com.globallogic.store.domain.product.Product;
 import com.globallogic.store.dto.permission.SidDTO;
-import com.globallogic.store.security.core.AuthenticatedUser;
+import com.globallogic.store.exception.AlreadyExistException;
+import com.globallogic.store.exception.NoContentException;
+import com.globallogic.store.exception.NotAcceptableException;
+import com.globallogic.store.exception.NotFoundException;
 import com.globallogic.store.security.service.PermissionService;
+import com.globallogic.store.service.ProductService;
+import com.globallogic.store.service.UserService;
 import io.swagger.annotations.*;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,14 +37,14 @@ import java.util.*;
 public class ProductRestController {
 
     /**
-     * product DAO
+     * product service
      */
-    private GenericDao<Product> productDao;
+    private ProductService productService;
 
     /**
-     * user DAO
+     * user service
      */
-    private GenericDao<User> userDao;
+    private UserService userService;
 
     /**
      * permission service
@@ -64,14 +67,14 @@ public class ProductRestController {
     private SidConverter sidConverter;
 
     public ProductRestController(
-            GenericDao<Product> productDao,
-            GenericDao<User> userDao,
+            ProductService productService,
+            UserService userService,
             PermissionService permissionService,
             ProductPreviewConverter previewConverter,
             ProductConverter productConverter,
             SidConverter sidConverter) {
-        this.productDao = productDao;
-        this.userDao = userDao;
+        this.productService = productService;
+        this.userService = userService;
         this.permissionService = permissionService;
         this.previewConverter = previewConverter;
         this.productConverter = productConverter;
@@ -83,6 +86,7 @@ public class ProductRestController {
      *
      * @param id product id
      * @return product with given id
+     * @throws NotFoundException thrown when product with given id not found
      */
     @RequestMapping(
             value = "/{id}",
@@ -90,14 +94,10 @@ public class ProductRestController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Resource to get a product by id")
     public ResponseEntity<?> getProductById(
-            @ApiParam(value = "product id", required = true) @PathVariable long id) {
-        Product product = productDao.getEntityByKey(id);
+            @ApiParam(value = "product id", required = true) @PathVariable long id) throws NotFoundException {
 
-        if (product == null) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } else {
-            return ResponseEntity.ok().body(productConverter.toResource(product));
-        }
+        Product product = productService.getById(id);
+        return ResponseEntity.ok().body(productConverter.toResource(product));
     }
 
     /**
@@ -112,6 +112,8 @@ public class ProductRestController {
      * @param sort  name of sorting column
      * @param order sorting order
      * @return list of products
+     * @throws NotFoundException  thrown when product owner is not exist
+     * @throws NoContentException thrown when products with given criteria not found
      */
     @RequestMapping(
             method = RequestMethod.GET,
@@ -125,14 +127,9 @@ public class ProductRestController {
             @ApiParam(value = "page number", defaultValue = "1") @RequestParam(value = "page", defaultValue = "1") int page,
             @ApiParam(value = "count of items per page", defaultValue = "5") @RequestParam(value = "size", defaultValue = "5") int size,
             @ApiParam(value = "name of sorting column", defaultValue = "id") @RequestParam(value = "sort", defaultValue = "id") String sort,
-            @ApiParam(value = "sorting order", defaultValue = "asc") @RequestParam(value = "order", defaultValue = "asc") String order) {
+            @ApiParam(value = "sorting order", defaultValue = "asc") @RequestParam(value = "order", defaultValue = "asc") String order) throws NotFoundException, NoContentException {
 
-        User user = null;
-
-        if (owner != null) {
-            SearchCriteria ownerCriteria = new SearchCriteria().criteria("username", owner);
-            user = userDao.getEntity(ownerCriteria);
-        }
+        User user = owner != null ? userService.getByUsername(owner) : null;
 
         SearchCriteria criteria = new SearchCriteria()
                 .criteria("name", (Object[]) name)
@@ -144,15 +141,23 @@ public class ProductRestController {
                 .sortBy(sort)
                 .order(order);
 
-        List<Product> products = productDao.getEntityList(criteria);
-
-        if (products == null || products.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } else {
-            return ResponseEntity.ok().body(previewConverter.toResources(products));
-        }
+        List<Product> products = productService.getList(criteria);
+        return ResponseEntity.ok().body(previewConverter.toResources(products));
     }
 
+    /**
+     * Resource to get a list of products, to which current user have permissions
+     *
+     * @param name  name of product
+     * @param brand brand of product
+     * @param price price of product
+     * @param page  page number
+     * @param size  count of items per page
+     * @param sort  name of sorting column
+     * @param order sorting order
+     * @return list of products
+     * @throws NoContentException throws when available object list for given user is empty
+     */
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(
             value = "/shared",
@@ -168,7 +173,7 @@ public class ProductRestController {
             @ApiParam(value = "page number", defaultValue = "1") @RequestParam(value = "page", defaultValue = "1") int page,
             @ApiParam(value = "count of items per page", defaultValue = "5") @RequestParam(value = "size", defaultValue = "5") int size,
             @ApiParam(value = "name of sorting column", defaultValue = "id") @RequestParam(value = "sort", defaultValue = "id") String sort,
-            @ApiParam(value = "sorting order", defaultValue = "asc") @RequestParam(value = "order", defaultValue = "asc") String order) {
+            @ApiParam(value = "sorting order", defaultValue = "asc") @RequestParam(value = "order", defaultValue = "asc") String order) throws NoContentException {
 
         String principal = SecurityContextHolder.getContext().getAuthentication().getName();
         List<Long> ids = permissionService.getIdList(principal, PermissionName.UPDATE, Product.class);
@@ -183,13 +188,8 @@ public class ProductRestController {
                 .sortBy(sort)
                 .order(order);
 
-        List<Product> products = productDao.getEntityList(criteria);
-
-        if (products == null || products.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } else {
-            return ResponseEntity.ok().body(previewConverter.toResources(products));
-        }
+        List<Product> products = productService.getList(criteria);
+        return ResponseEntity.ok().body(previewConverter.toResources(products));
     }
 
     /**
@@ -197,6 +197,8 @@ public class ProductRestController {
      *
      * @param product created product object
      * @return created product
+     * @throws NotAcceptableException thrown when product owner not exist in database
+     * @throws AlreadyExistException  throws when permission already exist in database
      */
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(
@@ -206,11 +208,9 @@ public class ProductRestController {
             value = "Resource to create a product",
             notes = "This can only be done by the authenticated user")
     public ResponseEntity<?> createProduct(
-            @ApiParam(value = "created product object", required = true) @Valid @RequestBody ProductDTO product) {
+            @ApiParam(value = "created product object", required = true) @Valid @RequestBody ProductDTO product) throws NotAcceptableException, AlreadyExistException {
 
-        long id = ((AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
-        product.setOwnerId(id);
-        Product created = productDao.createEntity(productConverter.toOrigin(product));
+        Product created = productService.insert(product);
         permissionService.addPermission(created, PermissionName.ADMINISTRATION, Product.class);
         return ResponseEntity.ok().body(productConverter.toResource(created));
     }
@@ -221,6 +221,7 @@ public class ProductRestController {
      * @param id      product id
      * @param product updated product object
      * @return updated product object
+     * @throws NotAcceptableException thrown when product with given id or product owner are not exist in database
      */
     @PreAuthorize("hasAuthority('ADMIN') || hasPermission(#id, 'com.globallogic.store.domain.product.Product', 'ADMINISTRATION') || hasPermission(#id, 'com.globallogic.store.domain.product.Product', 'UPDATE')")
     @RequestMapping(
@@ -232,10 +233,9 @@ public class ProductRestController {
             notes = "This can only be done by the user with \"write\" permissions")
     public ResponseEntity<?> updateProduct(
             @ApiParam(value = "product id", required = true) @PathVariable Long id,
-            @ApiParam(value = "updated product object", required = true) @Valid @RequestBody ProductDTO product) {
+            @ApiParam(value = "updated product object", required = true) @Valid @RequestBody ProductDTO product) throws NotAcceptableException {
 
-        product.setId(id);
-        Product updated = productDao.updateEntity(productConverter.toOrigin(product));
+        Product updated = productService.update(id, product);
         return ResponseEntity.ok(productConverter.toResource(updated));
     }
 
@@ -244,6 +244,7 @@ public class ProductRestController {
      *
      * @param id product id
      * @return deleted product object
+     * @throws NotFoundException thrown when product with given id not exist
      */
     @PreAuthorize("hasAuthority('ADMIN') || hasPermission(#id, 'com.globallogic.store.domain.product.Product', 'ADMINISTRATION')")
     @RequestMapping(
@@ -254,9 +255,9 @@ public class ProductRestController {
             value = "Resource to delete a product by id",
             notes = "This can only be done by the user with \"administration\" permissions")
     public ResponseEntity<?> deleteProduct(
-            @ApiParam(value = "product id", required = true) @PathVariable Long id) {
+            @ApiParam(value = "product id", required = true) @PathVariable Long id) throws NotFoundException {
 
-        Product deleted = productDao.deleteEntityByKey(id);
+        Product deleted = productService.remove(id);
         permissionService.deletePermission(deleted, Product.class);
         return ResponseEntity.ok(productConverter.toResource(deleted));
     }
@@ -265,6 +266,8 @@ public class ProductRestController {
      * Resource to get list if username of users, which have permissions to update (except for merchant of product)
      *
      * @param id product id
+     * @throws NotFoundException  throws when product with given id not exist
+     * @throws NoContentException throws when user list with needed permissions is empty
      */
     @PreAuthorize("hasAuthority('ADMIN') || hasPermission(#id, 'com.globallogic.store.domain.product.Product', 'ADMINISTRATION')")
     @RequestMapping(
@@ -275,23 +278,19 @@ public class ProductRestController {
             value = "Resource to get list if username of users, which have permissions to update (except for merchant of product)",
             notes = "This can only be done by the user with \"administration\" permissions")
     public ResponseEntity<?> getPermissionList(
-            @ApiParam(value = "product id", required = true) @PathVariable long id) {
+            @ApiParam(value = "product id", required = true) @PathVariable long id) throws NotFoundException, NoContentException {
 
-        Product product = productDao.getEntityByKey(id);
+        Product product = productService.getById(id);
         List<String> sids = permissionService.getPrincipalList(product, PermissionName.UPDATE, Product.class);
-
-        if (sids == null || sids.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } else {
-            sids.remove(product.getOwner().getUsername());
-            return ResponseEntity.ok().body(sidConverter.toResources(sids));
-        }
+        return ResponseEntity.ok().body(sidConverter.toResources(sids));
     }
 
     /**
      * Resource to share permissions to other user
      *
      * @param id product id
+     * @throws NotFoundException throws when product with given id not exist
+     * @throws AlreadyExistException throws when permission already exist in database
      */
     @PreAuthorize("hasAuthority('ADMIN') || hasPermission(#id, 'com.globallogic.store.domain.product.Product', 'ADMINISTRATION')")
     @RequestMapping(
@@ -303,9 +302,9 @@ public class ProductRestController {
             notes = "This can only be done by the user with \"administration\" permissions")
     public ResponseEntity<?> sharePermissions(
             @ApiParam(value = "product id", required = true) @PathVariable long id,
-            @ApiParam(value = "shared product object") @Valid @RequestBody SidDTO sid) {
+            @ApiParam(value = "shared product object") @Valid @RequestBody SidDTO sid) throws NotFoundException, AlreadyExistException {
 
-        Product product = productDao.getEntityByKey(id);
+        Product product = productService.getById(id);
         permissionService.addPermission(product, sid.getSid(), PermissionName.UPDATE, Product.class);
         return ResponseEntity.ok().build();
     }
@@ -326,9 +325,9 @@ public class ProductRestController {
             notes = "This can only be done by the user with \"administration\" permissions")
     public ResponseEntity<?> removePermissions(
             @ApiParam(value = "product id", required = true) @PathVariable long id,
-            @ApiParam(value = "username of user of who will be removed permissions", required = true) @PathVariable String username) {
+            @ApiParam(value = "username of user of who will be removed permissions", required = true) @PathVariable String username) throws NotFoundException {
 
-        Product product = productDao.getEntityByKey(id);
+        Product product = productService.getById(id);
         permissionService.deletePermission(product, username, PermissionName.UPDATE, Product.class);
         return ResponseEntity.ok().build();
     }

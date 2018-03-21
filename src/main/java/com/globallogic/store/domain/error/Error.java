@@ -52,6 +52,20 @@ public class Error {
     }
 
     /**
+     * Append message to error details
+     *
+     * @param message error message
+     */
+    public Error message(String message) {
+        if (details == null) {
+            details = new HashMap<>();
+        }
+
+        details.put("message", message);
+        return this;
+    }
+
+    /**
      * @return error code
      */
     public String getCode() {

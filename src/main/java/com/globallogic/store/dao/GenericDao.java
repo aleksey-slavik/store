@@ -84,9 +84,8 @@ public class GenericDao<E> implements DaoAccessible<E, Long> {
         });
     }
 
-    public E deleteEntityByKey(final Long id) {
+    public E deleteEntity(final E entity) {
         return new GenericQuery<E>().processQuery(session -> {
-            E entity = session.get(entityClass, id);
             session.delete(entity);
             return entity;
         });

@@ -58,8 +58,8 @@ public interface DaoAccessible<E, K> {
     /**
      * Delete entity with given key from database
      *
-     * @param id given key
+     * @param entity given entity
      * @return deleted entity
      */
-    E deleteEntityByKey(K id);
+    E deleteEntity(E entity);
 }

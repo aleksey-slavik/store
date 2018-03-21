@@ -212,8 +212,10 @@ public class OrderRestController {
     public ResponseEntity<?> deleteOrderById(
             @ApiParam(value = "order id", required = true) @PathVariable long id) {
 
-        Order deleted = orderDao.deleteEntityByKey(id);
-        return ResponseEntity.ok().body(orderConverter.toResource(deleted));
+        /*Order deleted = orderDao.deleteEntity(id);
+        return ResponseEntity.ok().body(orderConverter.toResource(deleted));*/
+
+        return null;
     }
 
     /**
