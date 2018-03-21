@@ -86,14 +86,19 @@
         <constructor-arg name="productConverter" ref="productConverter"/>
     </bean>
 
-    <bean class="com.globallogic.store.service.UserService">
+    <bean id="userService" class="com.globallogic.store.service.UserService">
         <constructor-arg name="userDao" ref="userDao"/>
+        <constructor-arg name="userConverter" ref="userConverter"/>
+        <constructor-arg name="authorityService" ref="authorityService"/>
+    </bean>
+
+    <bean id="authorityService" class="com.globallogic.store.service.AuthorityService">
+        <constructor-arg name="authorityDao" ref="authorityDao"/>
     </bean>
 
     <!-- Spring Rest Beans -->
     <bean id="userRestController" class="com.globallogic.store.rest.UserRestController">
-        <constructor-arg name="userDao" ref="userDao"/>
-        <constructor-arg name="authorityDao" ref="authorityDao"/>
+        <constructor-arg name="userService" ref="userService"/>
         <constructor-arg name="userConverter" ref="userConverter"/>
         <constructor-arg name="authorityConverter" ref="authorityConverter"/>
         <constructor-arg name="registerUserService" ref="registerUserService"/>

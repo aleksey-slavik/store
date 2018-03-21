@@ -2,7 +2,6 @@ package com.globallogic.store.rest;
 
 import com.globallogic.store.converter.user.AuthorityConverter;
 import com.globallogic.store.converter.user.UserConverter;
-import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.dao.criteria.SearchCriteria;
 import com.globallogic.store.domain.user.Authority;
 import com.globallogic.store.domain.user.User;
@@ -22,7 +21,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,16 +32,6 @@ import java.util.List;
 @RequestMapping(value = "/api/users")
 @Api(value = "/api/users", description = "Operations with users")
 public class UserRestController {
-
-    /**
-     * user DAO
-     */
-    private GenericDao<User> userDao;
-
-    /**
-     * user authority DAO
-     */
-    private GenericDao<Authority> authorityDao;
 
     /**
      * user service
@@ -66,14 +54,10 @@ public class UserRestController {
     private RegisterUserService registerUserService;
 
     public UserRestController(
-            GenericDao<User> userDao,
-            GenericDao<Authority> authorityDao,
             UserService userService,
             UserConverter userConverter,
             AuthorityConverter authorityConverter,
             RegisterUserService registerUserService) {
-        this.userDao = userDao;
-        this.authorityDao = authorityDao;
         this.userService = userService;
         this.userConverter = userConverter;
         this.authorityConverter = authorityConverter;

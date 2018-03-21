@@ -20,9 +20,6 @@ import java.util.Set;
 @Service
 public class UserService {
 
-    /**
-     * user DAO
-     */
     private GenericDao<User> userDao;
 
     private AuthorityService authorityService;
