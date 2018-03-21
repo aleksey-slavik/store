@@ -1,4 +1,4 @@
-package com.globallogic.store.security;
+package com.globallogic.store.web;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:spring-root.xml", "classpath:spring-security.xml"})
 @WebAppConfiguration
-public class WebControllerTest {
+public class WebSecurityControllerTest {
 
     @Autowired
     private WebApplicationContext context;

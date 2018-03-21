@@ -67,15 +67,17 @@ public class PermissionService {
                 .sortBy("id")
                 .order("asc");
 
-        List<String> principals = new ArrayList<>();
+        List<Permission> permissions = permissionDao.getEntityList(criteria);
 
-        for (Permission granted : permissionDao.getEntityList(criteria)) {
-            principals.add(granted.getSid());
-        }
-
-        if (principals.isEmpty()) {
+        if (permissions == null || permissions.isEmpty()) {
             throw new NoContentException("There are no user with " + permission + " permission found!");
         } else {
+            List<String> principals = new ArrayList<>();
+
+            for (Permission granted : permissionDao.getEntityList(criteria)) {
+                principals.add(granted.getSid());
+            }
+
             return principals;
         }
     }
@@ -99,15 +101,17 @@ public class PermissionService {
                 .sortBy("id")
                 .order("asc");
 
-        List<Long> ids = new ArrayList<>();
+        List<Permission> permissions = permissionDao.getEntityList(criteria);
 
-        for (Permission granted : permissionDao.getEntityList(criteria)) {
-            ids.add(granted.getObjectId());
-        }
-
-        if (ids.isEmpty()) {
+        if (permissions == null || permissions.isEmpty()) {
             throw new NoContentException("There are no granted " + permission + " permission for " + principal);
         } else {
+            List<Long> ids = new ArrayList<>();
+
+            for (Permission granted : permissions) {
+                ids.add(granted.getObjectId());
+            }
+
             return ids;
         }
     }
@@ -178,8 +182,10 @@ public class PermissionService {
 
         List<Permission> deleted = permissionDao.getEntityList(criteria);
 
-        for (Permission permission : deleted) {
-            permissionDao.deleteEntity(permission);
+        if (deleted != null && !deleted.isEmpty()) {
+            for (Permission permission : deleted) {
+                permissionDao.deleteEntity(permission);
+            }
         }
     }
 

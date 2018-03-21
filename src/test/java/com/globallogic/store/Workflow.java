@@ -2,6 +2,8 @@ package com.globallogic.store;
 
 import com.globallogic.store.converter.product.ProductConverter;
 import com.globallogic.store.converter.product.ProductPreviewConverter;
+import com.globallogic.store.domain.permission.Permission;
+import com.globallogic.store.domain.permission.PermissionName;
 import com.globallogic.store.domain.product.Product;
 import com.globallogic.store.domain.user.*;
 import com.globallogic.store.dto.product.ProductDTO;
@@ -107,6 +109,26 @@ public class Workflow {
         authority.setId(1);
         authority.setTitle(title);
         return authority;
+    }
+
+    public static Permission createPermission(PermissionName permissionName) {
+        Permission permission = new Permission();
+        permission.setPermission(permissionName);
+        permission.setObjectId(123L);
+        permission.setId(1L);
+        permission.setSid("test");
+        permission.setObjectClass("testClass");
+        return permission;
+    }
+
+    public static List<Permission> createPermissionList() {
+        List<Permission> permissions = new ArrayList<>();
+        permissions.add(createPermission(PermissionName.ADMINISTRATION));
+        permissions.add(createPermission(PermissionName.DELETE));
+        permissions.add(createPermission(PermissionName.UPDATE));
+        permissions.add(createPermission(PermissionName.CREATE));
+        permissions.add(createPermission(PermissionName.READ));
+        return permissions;
     }
 
     public static void loginUser() {

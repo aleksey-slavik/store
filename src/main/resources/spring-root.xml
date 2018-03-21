@@ -83,6 +83,7 @@
     <bean id="productService" class="com.globallogic.store.service.ProductService">
         <constructor-arg name="productDao" ref="productDao"/>
         <constructor-arg name="userService" ref="userService"/>
+        <constructor-arg name="productConverter" ref="productConverter"/>
     </bean>
 
     <bean class="com.globallogic.store.service.UserService">
@@ -99,9 +100,8 @@
     </bean>
 
     <bean id="productRestController" class="com.globallogic.store.rest.ProductRestController">
-        <constructor-arg name="productDao" ref="productDao"/>
-        <constructor-arg name="userDao" ref="userDao"/>
         <constructor-arg name="productService" ref="productService"/>
+        <constructor-arg name="userService" ref="userService"/>
         <constructor-arg name="permissionService" ref="permissionService"/>
         <constructor-arg name="previewConverter" ref="productPreviewConverter"/>
         <constructor-arg name="productConverter" ref="productConverter"/>

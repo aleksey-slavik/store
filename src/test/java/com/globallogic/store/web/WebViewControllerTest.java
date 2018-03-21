@@ -15,7 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @author oleksii.slavik
  */
-public class WebControllerTest {
+public class WebViewControllerTest {
 
     private MockMvc mvc;
 
