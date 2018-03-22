@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.NoResultException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -216,18 +217,16 @@ public class PermissionService {
      * @throws NotFoundException throws when permission not exist
      */
     private Permission checkPermission(long id, String principal, PermissionName permission, String clazz) throws NotFoundException {
-        SearchCriteria criteria = new SearchCriteria()
-                .criteria("objectClass", clazz)
-                .criteria("objectId", id)
-                .criteria("sid", principal)
-                .criteria("permission", permission);
+        try {
+            SearchCriteria criteria = new SearchCriteria()
+                    .criteria("objectClass", clazz)
+                    .criteria("objectId", id)
+                    .criteria("sid", principal)
+                    .criteria("permission", permission);
 
-        Permission checked = permissionDao.getEntity(criteria);
-
-        if (checked == null) {
+            return permissionDao.getEntity(criteria);
+        } catch (NoResultException e) {
             throw new NotFoundException(permission + " permission not found for " + principal);
-        } else {
-            return checked;
         }
     }
 }

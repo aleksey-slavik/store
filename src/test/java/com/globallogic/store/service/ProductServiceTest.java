@@ -1,12 +1,10 @@
 package com.globallogic.store.service;
 
 import com.globallogic.store.Workflow;
-import com.globallogic.store.converter.product.ProductConverter;
 import com.globallogic.store.dao.GenericDao;
 import com.globallogic.store.dao.criteria.SearchCriteria;
 import com.globallogic.store.domain.product.Product;
 import com.globallogic.store.domain.user.User;
-import com.globallogic.store.dto.product.ProductDTO;
 import com.globallogic.store.exception.NoContentException;
 import com.globallogic.store.exception.NotAcceptableException;
 import com.globallogic.store.exception.NotFoundException;
@@ -32,9 +30,6 @@ public class ProductServiceTest {
 
     @Mock
     private UserService userService;
-
-    @Mock
-    private ProductConverter productConverter;
 
     @InjectMocks
     private ProductService productService;
@@ -92,11 +87,9 @@ public class ProductServiceTest {
         Workflow.loginUser();
         User owner = Workflow.createCustomerUser();
         Product expected = Workflow.createDummyProduct(PRODUCT_ID);
-        ProductDTO dto = Workflow.createProductDto(expected);
         when(userService.getById(any(Long.class))).thenReturn(owner);
         when(productDao.createEntity(expected)).thenReturn(expected);
-        when(productConverter.toOrigin(dto)).thenReturn(expected);
-        Product actual = productService.insert(dto);
+        Product actual = productService.insert(expected);
         assertEquals(expected, actual);
         Workflow.logout();
     }
@@ -106,9 +99,8 @@ public class ProductServiceTest {
         try {
             Workflow.loginUser();
             Product product = Workflow.createDummyProduct(PRODUCT_ID);
-            ProductDTO dto = Workflow.createProductDto(product);
             when(userService.getById(any(Long.class))).thenThrow(new NotFoundException(""));
-            productService.insert(dto);
+            productService.insert(product);
             fail("NotAcceptableException don't thrown!");
         } catch (NotAcceptableException e) {
             Workflow.logout();
@@ -118,11 +110,9 @@ public class ProductServiceTest {
     @Test
     public void updateProductTest() throws Exception {
         Product expected = Workflow.createDummyProduct(PRODUCT_ID);
-        ProductDTO dto = Workflow.createProductDto(expected);
         when(productDao.getEntityByKey(PRODUCT_ID)).thenReturn(expected);
         when(productDao.updateEntity(expected)).thenReturn(expected);
-        when(productConverter.toOrigin(dto)).thenReturn(expected);
-        Product actual = productService.update(PRODUCT_ID, dto);
+        Product actual = productService.update(PRODUCT_ID, expected);
         assertEquals(expected, actual);
     }
 
@@ -130,9 +120,8 @@ public class ProductServiceTest {
     public void updateNonExistentProductTest() throws Exception {
         try {
             Product product = Workflow.createDummyProduct(PRODUCT_ID);
-            ProductDTO dto = Workflow.createProductDto(product);
             when(productDao.getEntityByKey(PRODUCT_ID)).thenReturn(null);
-            productService.update(PRODUCT_ID, dto);
+            productService.update(PRODUCT_ID, product);
             fail("NotAcceptableException don't thrown!");
         } catch (NotAcceptableException e) {
             //expected
@@ -140,9 +129,8 @@ public class ProductServiceTest {
 
         try {
             Product product = Workflow.createDummyProduct(PRODUCT_ID);
-            ProductDTO dto = Workflow.createProductDto(product);
             when(userService.getById(any(Long.class))).thenThrow(new NotFoundException(""));
-            productService.update(PRODUCT_ID, dto);
+            productService.update(PRODUCT_ID, product);
             fail("NotAcceptableException don't thrown!");
         } catch (NotAcceptableException e) {
             //expected

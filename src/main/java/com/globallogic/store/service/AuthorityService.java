@@ -7,6 +7,8 @@ import com.globallogic.store.domain.user.AuthorityName;
 import com.globallogic.store.exception.NotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.NoResultException;
+
 @Service
 public class AuthorityService {
 
@@ -27,13 +29,11 @@ public class AuthorityService {
     }
 
     public Authority getByTitle(String title) throws NotFoundException {
-        SearchCriteria criteria = new SearchCriteria().criteria("title", AuthorityName.valueOf(title));
-        Authority authority = authorityDao.getEntity(criteria);
-
-        if (authority == null) {
+        try {
+            SearchCriteria criteria = new SearchCriteria().criteria("title", AuthorityName.valueOf(title));
+            return authorityDao.getEntity(criteria);
+        } catch (NoResultException e) {
             throw new NotFoundException("Authority " + title + " not found!");
-        } else {
-            return authority;
         }
     }
 }

@@ -7,6 +7,7 @@ import com.globallogic.store.exception.NoContentException;
 import com.globallogic.store.exception.NotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.NoResultException;
 import java.util.List;
 
 @Service
@@ -19,16 +20,14 @@ public class OrderItemService {
     }
 
     public OrderItem getByIds(long orderId, long productId) throws NotFoundException {
-        SearchCriteria criteria = new SearchCriteria()
-                .criteria("order", orderId)
-                .criteria("product", productId);
+        try {
+            SearchCriteria criteria = new SearchCriteria()
+                    .criteria("order", orderId)
+                    .criteria("product", productId);
 
-        OrderItem item = orderItemDao.getEntity(criteria);
-
-        if (item == null) {
+            return orderItemDao.getEntity(criteria);
+        } catch (NoResultException e) {
             throw new NotFoundException("Order item with orderId=" + orderId + " and productId=" + productId + " not found!");
-        } else {
-            return item;
         }
     }
 

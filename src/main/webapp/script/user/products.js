@@ -39,18 +39,19 @@ function fillUserProductList(data) {
     var list = data == null ? [] : (data instanceof Array ? data : [data]);
     $('#itemList').find('li').remove();
     $.each(list, function (index, item) {
-        $('#itemList').append('<li><a href="#" data-identity="' + item.id+ '">' + item.name + '</a></li>');
+        $('#itemList').append('<li><a href="#" data-identity="' + item.id + '">' + item.name + '</a></li>');
     });
 }
 
 function fillProductPermissions(data) {
+    $('#share').val('');
     var list = data == null ? [] : (data instanceof Array ? data : [data]);
     $('#sidTable').find('tr').remove();
     $.each(list, function (index, item) {
         $('#sidTable').append(
             '<tr>' +
             '<td>' + item.sid + '</td>' +
-            '<td><img class="icon" src="/images/trash.png" alt="remove" title="remove item" data-identity=">' + item.sid + '"></td>' +
+            '<td><img class="icon" src="/images/trash.png" alt="remove" title="remove item" data-identity="' + item.sid + '"></td>' +
             '</tr>');
     });
 }
@@ -110,10 +111,12 @@ function findUserProductById(id) {
             $('#buttonDelete').show();
         },
 
-        error: function (xhr, textStatus, errorThrown) {
-            console.log(xhr);
-            console.log(textStatus);
-            console.log(errorThrown);
+        error: function (xhr) {
+            switch (xhr.status) {
+                case 404:
+                    alert('Product with id=' + id + ' not found!');
+                    break;
+            }
         }
     });
 }
@@ -134,11 +137,15 @@ function createUserProduct() {
             $('#id').val(data.id);
         },
 
-        error: function (xhr, textStatus, errorThrown) {
-            alert('Some error thrown during create product!');
-            console.log(xhr);
-            console.log(textStatus);
-            console.log(errorThrown);
+        error: function (xhr) {
+            switch (xhr.status) {
+                case 406:
+                    alert('Product owner not exist!');
+                    break;
+                case 409:
+                    alert('Permission already granted!');
+                    break;
+            }
         }
     });
 }
@@ -158,10 +165,12 @@ function updateUserProduct() {
             alert('Product ' + data.name + ' successfully updated!');
         },
 
-        error: function (xhr, textStatus, errorThrown) {
-            console.log(xhr);
-            console.log(textStatus);
-            console.log(errorThrown);
+        error: function (xhr) {
+            switch (xhr.status) {
+                case 406:
+                    alert('Product owner or product not exist!');
+                    break;
+            }
         }
     });
 }
@@ -179,10 +188,12 @@ function deleteUserProduct() {
             clearUserForm();
         },
 
-        error: function (xhr, textStatus, errorThrown) {
-            console.log(xhr);
-            console.log(textStatus);
-            console.log(errorThrown);
+        error: function (xhr) {
+            switch (xhr.status) {
+                case 404:
+                    alert("Can't remove not existed product with id=" + productId);
+                    break;
+            }
         }
     });
 }
@@ -201,14 +212,24 @@ function getPermissionList(id) {
         async: false,
         dataType: "json",
 
-        success: function (data) {
-            fillProductPermissions(data);
+        success: function (data, status, xhr) {
+            switch (xhr.status) {
+                case 200:
+                    fillProductPermissions(data);
+                    break;
+                case 204:
+                    $('#sidTable').find('tr').remove();
+                    console.log('permission list is empty');
+                    break;
+            }
         },
 
-        error: function (xhr, textStatus, errorThrown) {
-            console.log(xhr);
-            console.log(textStatus);
-            console.log(errorThrown);
+        error: function (xhr) {
+            switch (xhr.status) {
+                case 404:
+                    console.log('product with id=' + id + ' not found!');
+                    break;
+            }
         }
     });
 }
@@ -219,6 +240,7 @@ function grantPermission() {
     var sidJson = JSON.stringify({
         "sid": targetUser
     });
+    console.log(sidJson);
 
     $.ajax({
         type: 'POST',
@@ -228,23 +250,31 @@ function grantPermission() {
         data: sidJson,
         async: false,
 
-        success: function () {
-            alert('Permissions for update product with id=' + productId + ' were successfully issued to user ' + targetUser);
-            $('#share').val('');
-            getPermissionList(productId);
+        success: function (data) {
+            alert('Permissions for update product with id=' + productId + ' were successfully issued to user ' + data.sid);
         },
 
-        error: function (xhr, textStatus, errorThrown) {
-            console.log(xhr);
-            console.log(textStatus);
-            console.log(errorThrown);
+        error: function (xhr) {
+            switch (xhr.status) {
+                case 400:
+                    alert('Username of granted user not valid!');
+                    break;
+                case 404:
+                    alert('Product with id=' + productId + ' not found!');
+                    break;
+                case 409 :
+                    alert('Conflict during create permission for product with id=' + productId + ' to user ' + targetUser);
+                    break;
+            }
         }
     });
+
+    $('#share').val('');
+    getPermissionList(productId);
 }
 
 function removePermission(user) {
     var productId = $('#id').val();
-    console.log(userProductItemToJSON());
 
     $.ajax({
         type: 'DELETE',
@@ -256,10 +286,12 @@ function removePermission(user) {
             alert('Permissions for update product with id=' + productId + ' were successfully removed from user ' + user);
         },
 
-        error: function (xhr, textStatus, errorThrown) {
-            console.log(xhr);
-            console.log(textStatus);
-            console.log(errorThrown);
+        error: function (xhr) {
+            switch (xhr.status) {
+                case 404:
+                    alert('Error during remove permission!');
+                    break;
+            }
         }
     });
 }
